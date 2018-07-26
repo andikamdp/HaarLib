@@ -260,7 +260,6 @@ public class HandViewController implements Initializable {
         //find the convex hull of the segmented hand region
         MatOfInt chull = new MatOfInt();
         Imgproc.convexHull(segmented, chull);
-
 //find the most extreme points in the convex hull
 //      #extreme_top = tuple(chull[chull[:, :, 1].argmin()][0])
 //	#extreme_bottom = tuple(chull[chull[:, :, 1].argmax()][0])
@@ -274,19 +273,19 @@ public class HandViewController implements Initializable {
 //	# find the center of the palm
 //	cX = (extreme_left[0] + extreme_right[0]) / 2
 //	cY = (extreme_top[1] + extreme_bottom[1]) / 2
-        //    int cX = (extreme_left[0] + extreme_right[0]) / 2;
-    }
-
-//	# find the maximum euclidean distance between the center of the palm
+        int cX = (chull.cols() - 1) / 2;
+        int cy = (chull.rows() - 1) / 2;
+//      # find the maximum euclidean distance between the center of the palm
 //	# and the most extreme points of the convex hull
 //	distance = pairwise.euclidean_distances([(cX, cY)], Y=[extreme_left, extreme_right, extreme_top, extreme_bottom])[0]
 //	maximum_distance = distance[distance.argmax()]
-//
+
 //	# calculate the radius of the circle with 80% of the max euclidean distance obtained
-//	radius = int (
+//	radius = int ( 0.8 * maximum_distance)
+    }
+
 //
 //
-//0.8 * maximum_distance)
 //
 //	# find the circumference of the circle
 //	circumference = (2 * np.pi * radius)
@@ -321,4 +320,24 @@ public class HandViewController implements Initializable {
 //			count += 1
 //
 //	return count
+    int name = 0;
+
+    @FXML
+    private void capturePictureOnSction(ActionEvent event) {
+
+//        Imgcodecs.imwrite("E:\\TA\\" + name + ".jpg", grabFrame());
+//        name++;
+        Mat compare = new Mat();
+        Mat result = Imgcodecs.imread("E:\\TA\\15.jpg");
+
+        Imgproc.cvtColor(result, result, Imgproc.COLOR_BGR2GRAY);
+
+        for (int i = 0; i < 15; i++) {
+            compare = Imgcodecs.imread("E:\\TA\\" + i + ".jpg");
+            Imgproc.cvtColor(compare, compare, Imgproc.COLOR_BGR2GRAY);
+            Core.absdiff(result, compare, result);
+        }
+        Imgproc.threshold(result, result, 50.0, 255, Imgproc.THRESH_BINARY);
+        Imgcodecs.imwrite("E:\\TA\\resCom.jpg", result);
+    }
 }
