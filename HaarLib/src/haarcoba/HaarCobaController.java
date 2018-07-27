@@ -63,6 +63,10 @@ public class HaarCobaController implements Initializable {
 
     private CascadeClassifier haarCascade;
     private int absoluteFaceSize;
+    @FXML
+    private RadioButton haar8;
+    @FXML
+    private RadioButton haar9;
 
     /**
      * Initializes the controller class.
@@ -77,6 +81,8 @@ public class HaarCobaController implements Initializable {
         haar5.setText("hand");
         haar6.setText("palm");
         haar7.setText("downloadandolme12566172332haarcascadehand");
+        haar8.setText("haarcascade_okaygesture");
+        haar9.setText("haarcascade_vickygesture");
         //
         this.capture = new VideoCapture();
         this.haarCascade = new CascadeClassifier();

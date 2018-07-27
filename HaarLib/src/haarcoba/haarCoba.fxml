@@ -24,6 +24,8 @@
                   <RadioButton id="haar5" fx:id="haar5" mnemonicParsing="false" text="RadioButton" toggleGroup="$haar" />
                   <RadioButton id="haar6" fx:id="haar6" mnemonicParsing="false" text="RadioButton" toggleGroup="$haar" />
                   <RadioButton fx:id="haar7" mnemonicParsing="false" text="RadioButton" toggleGroup="$haar" />
+                  <RadioButton fx:id="haar8" mnemonicParsing="false" text="RadioButton" />
+                  <RadioButton fx:id="haar9" mnemonicParsing="false" text="RadioButton" />
                   <Button id="btnStartCamera" fx:id="btnStartCamera" mnemonicParsing="false" onAction="#StartCameraOnAction" text="Button" />
                </children>
             </VBox>
