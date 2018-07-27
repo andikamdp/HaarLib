@@ -76,7 +76,7 @@ public class HaarCobaController implements Initializable {
         haar4.setText("Hand.Cascade.1");
         haar5.setText("hand");
         haar6.setText("palm");
-        haar7.setText("download.andol.me_1256617233-2-haarcascade-hand");
+        haar7.setText("downloadandolme12566172332haarcascadehand");
         //
         this.capture = new VideoCapture();
         this.haarCascade = new CascadeClassifier();
