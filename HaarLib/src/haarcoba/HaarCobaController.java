@@ -93,7 +93,7 @@ public class HaarCobaController implements Initializable {
     @FXML
     private void StartCameraOnAction(ActionEvent event) {
         String s
-                = "E:\\TA\\New Folder\\backgroud substraction\\HaarLib\\HaarLib\\src\\haarcoba\\resource";
+                = "E:\\TA\\New Folder\\backgroud substraction\\HaarLib\\HaarLib\\src\\haarcoba\\resource\\";
         RadioButton chk = (RadioButton) haar.getSelectedToggle(); // Cast object to radio button
         s += chk.getText() + ".xml";
         haarCascade.load(s);
