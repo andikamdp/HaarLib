@@ -20,9 +20,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
@@ -137,6 +139,7 @@ public class HandViewController implements Initializable {
 
     @FXML
     private void UpdateCameraOnClick(ActionEvent event) {
+        //mengambil gambar background
         Imgcodecs.imwrite("E:\\TA\\opencv.jpg", grabFrame());
     }
 /////////////
@@ -161,6 +164,7 @@ public class HandViewController implements Initializable {
         }
     }
 
+    //update tampilan pada frame utama
     private void updateImageView(ImageView view, Image image) {
         Utils.onFXThread(view.imageProperty(), image);
     }
@@ -209,18 +213,13 @@ public class HandViewController implements Initializable {
         Mat frame2 = frame.clone();
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
         diff = Imgcodecs.imread("E:\\TA\\opencv.jpg");
-///////////        Imgproc.cvtColor(diff, diff, Imgproc.COLOR_BGR2GRAY);
-//        diff = Imgcodecs.imread("E:\\TA\\opencv-test.png");
-//        diff2 = Imgcodecs.imread("E:\\TA\\opencv-logo.jpg");
-//
+
         Imgproc.cvtColor(diff, diff, Imgproc.COLOR_BGR2GRAY);
         Core.flip(diff, diff, 1);
-        //layarBW.setImage(Utils.mat2Image(diff));
-//        Core.convertScaleAbs(frame, diff);
+
         Mat dist = new Mat();
 
         Core.absdiff(diff, frame, dist);
-//        Core.absdiff(diff, diff2, dist);
 //batas minimum treshold
         layarEdge.setImage(Utils.mat2Image(dist));
 
@@ -230,6 +229,7 @@ public class HandViewController implements Initializable {
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(frame.clone(), contours, hierarchy,
                 Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        System.out.println("size contour" + contours.size());
 
         if (hierarchy.size().height > 0 && hierarchy.size().width > 0) {
             // for each contour, display it in blue
@@ -240,88 +240,36 @@ public class HandViewController implements Initializable {
             }
         }
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BayerBG2BGR);
-        layarEdge.setImage(Utils.mat2Image(frame));
-//        layarBW.setImage(Utils.mat2Image(contours.get(0)));
-        Mat c = contours.get(0);
 
-//        for (int i = 0; i < c.cols(); i++) {
-//            for (int j = 0; j < c.rows(); j++) {
-//                System.out.print(c.get(i, j)[0]);
-//
-//            }
-//            System.out.println("");
-//        }
+        HandRec(contours, frame2);
+
         return frame2;
     }
 //method untuk deteksi tangan
+//method menghasilhan kooddinatt untuk convexhull
 
-    private void HandRec(Mat thresholded, MatOfPoint segmented) {
+    private void HandRec(List<MatOfPoint> contours, Mat frame) {
+        List<MatOfPoint> hullList = new ArrayList<>();
+        for (MatOfPoint contour : contours) {
+            MatOfInt hull = new MatOfInt();
+            Imgproc.convexHull(contour, hull);
+            Point[] contourArray = contour.toArray();
+            Point[] hullPoints = new Point[hull.rows()];
+            List<Integer> hullContourIdxList = hull.toList();
+            for (int i = 0; i < hullContourIdxList.size(); i++) {
+                hullPoints[i] = contourArray[hullContourIdxList.get(i)];
+            }
+            hullList.add(new MatOfPoint(hullPoints));
+        }
+        Mat drawing = Mat.zeros(frame.size(), CvType.CV_8UC3);
+        for (int i = 0; i < contours.size(); i++) {
 
-        //find the convex hull of the segmented hand region
-        MatOfInt chull = new MatOfInt();
-        Imgproc.convexHull(segmented, chull);
-//find the most extreme points in the convex hull
-//      #extreme_top = tuple(chull[chull[:, :, 1].argmin()][0])
-//	#extreme_bottom = tuple(chull[chull[:, :, 1].argmax()][0])
-//	#extreme_left   = tuple(chull[chull[:, :, 0].argmin()][0])
-//	#extreme_right  = tuple(chull[chull[:, :, 0].argmax()][0])
-        double[] extreme_top = chull.get(0, 0);
-        double[] extreme_buttom = chull.get(chull.rows() - 1, 0);
-        double[] extreme_right = chull.get(0, chull.cols() - 1);
-        double[] extreme_left = chull.get(0, chull.cols() - 1);
-
-//	# find the center of the palm
-//	cX = (extreme_left[0] + extreme_right[0]) / 2
-//	cY = (extreme_top[1] + extreme_bottom[1]) / 2
-        int cX = (chull.cols() - 1) / 2;
-        int cy = (chull.rows() - 1) / 2;
-//      # find the maximum euclidean distance between the center of the palm
-//	# and the most extreme points of the convex hull
-//	distance = pairwise.euclidean_distances([(cX, cY)], Y=[extreme_left, extreme_right, extreme_top, extreme_bottom])[0]
-//	maximum_distance = distance[distance.argmax()]
-
-//	# calculate the radius of the circle with 80% of the max euclidean distance obtained
-//	radius = int ( 0.8 * maximum_distance)
+            Imgproc.drawContours(frame, hullList, i, new Scalar(0, 255, 0), 3);
+        }
     }
-
-//
-//
-//
-//	# find the circumference of the circle
-//	circumference = (2 * np.pi * radius)
-//
-//	# take out the circular region of interest which has
-//	# the palm and the fingers
-//	circular_roi = np.zeros(thresholded.shape[:2], dtype="uint8")
-//
-//	# draw the circular ROI
-//	cv2.circle(circular_roi, (cX, cY), radius, 255, 1)
-//
-//	# take bit-wise AND between thresholded hand using the circular ROI as the mask
-//	# which gives the cuts obtained using mask on the thresholded hand image
-//	circular_roi = cv2.bitwise_and(thresholded, thresholded, mask=circular_roi)
-//
-//	# compute the contours in the circular ROI
-//	(_, cnts, _) = cv2.findContours(circular_roi.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-//
-//	# initalize the finger count
-//	count = 0
-//
-//	# loop through the contours found
-//	for c in cnts:
-//		# compute the bounding box of the contour
-//		(x, y, w, h) = cv2.boundingRect(c)
-//
-//		# increment the count of fingers only if -
-//		# 1. The contour region is not the wrist (bottom area)
-//		# 2. The number of points along the contour does not exceed
-//		#     25% of the circumference of the circular ROI
-//		if ((cY + (cY * 0.25)) > (y + h)) and ((circumference * 0.25) > c.shape[0]):
-//			count += 1
-//
-//	return count
     int name = 0;
 
+    //method menggambil gambar(image capture)
     @FXML
     private void capturePictureOnSction(ActionEvent event) {
 
