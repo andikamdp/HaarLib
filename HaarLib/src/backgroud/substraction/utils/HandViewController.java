@@ -97,24 +97,15 @@ public class HandViewController implements Initializable {
                         Mat frame = grabFrame();
                         //# flip the frame so that it is not the mirror view
                         Core.flip(frame, frame, 1);
-                        //# clone the frame// belum dipakai
-                        Mat roi;
-                        //# get the height and width of the frame
-                        Size s = frame.size();
-                        //# get the ROI
-//                        Rect rectCrop = new Rect(frame.cols() - 50, frame.rows()
-//                                - 50,
-//                                frame.width() - 50, frame.height() - 50);
-//                        Rect rectCrop = new Rect(235, 235, 235, 235);
-                        //frame = frame.submat(rectCrop);
-                        //# convert the roi to grayscale and blur it
-                        Imgproc.GaussianBlur(frame, frame, new Size(7, 7), 0);
-
-                        //Imgproc.accumulateWeighted(frame, frame, 0.5);
-                        frame = segment(frame);
+                        createBox(frame);
+                        Mat hand = getBox(frame.clone());
 
                         Image imageToMat = Utils.mat2Image(frame);
+
                         updateImageView(layarMain, imageToMat);
+                        hand = segment(hand);
+                        imageToMat = Utils.mat2Image(hand);
+                        updateImageView(layarEdge, imageToMat);
 
                     }
                 };
@@ -143,6 +134,37 @@ public class HandViewController implements Initializable {
         Imgcodecs.imwrite("E:\\TA\\opencv.jpg", grabFrame());
     }
 /////////////
+//method untuk menggambar kotak untuk posisi tangan
+
+    private Mat createBox(Mat frame) {
+        Imgproc.rectangle(frame,
+                new Point(frame.cols(), 10), new Point(
+                        frame.cols() / 2, frame.rows() - (frame.rows() / 3) - 10),
+                new Scalar(0, 0, 255),
+                3);
+        return frame;
+    }
+//method untuk mengambil posisi tangan pada kamere
+
+    private Mat getBox(Mat frame) {
+        Rect rectCrop = new Rect(new Point(frame.cols() - 5, 10 + 5), new Point(
+                frame.cols() / 2 + 5, frame.rows() - (frame.rows() / 3) - 10 - 5)
+        );
+        frame = frame.submat(rectCrop);
+        //# convert the roi to grayscale and blur it
+//        Imgproc.accumulateWeighted(frame, frame, 0.5);
+        Imgproc.GaussianBlur(frame, frame, new Size(7, 7), 0);
+        return frame;
+    }
+//////
+
+    private Mat cleaning(Mat frame) {
+        Mat kernel = new Mat(new Size(3, 3), CvType.CV_16S, new Scalar(255));
+        Imgproc.morphologyEx(frame, frame, Imgproc.MORPH_CLOSE, kernel);
+        Imgproc.morphologyEx(frame, frame, Imgproc.MORPH_OPEN, kernel);
+        Imgproc.dilate(frame, frame, kernel);
+        return frame;
+    }
 
     private void stopAcquisition() {
         if (this.timer != null && !this.timer.isShutdown()) {
@@ -188,8 +210,7 @@ public class HandViewController implements Initializable {
                 // if the frame is not empty, process it
                 if (!frame.empty()) {
                     Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BayerBG2BGR);
-                    ///////////Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
-//                    Imgproc.accumulateWeighted(frame, frame, 50);
+
                 }
 
             } catch (Exception e) {
@@ -218,10 +239,10 @@ public class HandViewController implements Initializable {
         Core.flip(diff, diff, 1);
 
         Mat dist = new Mat();
-
+        diff = getBox(diff);
         Core.absdiff(diff, frame, dist);
 //batas minimum treshold
-        layarEdge.setImage(Utils.mat2Image(dist));
+        layarBW.setImage(Utils.mat2Image(diff));
 
         Imgproc.threshold(dist, frame, tres, 255, Imgproc.THRESH_BINARY);
         ///
@@ -240,7 +261,7 @@ public class HandViewController implements Initializable {
             }
         }
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BayerBG2BGR);
-
+        cleaning(frame2);
         HandRec(contours, frame2);
 
         return frame2;
@@ -266,6 +287,8 @@ public class HandViewController implements Initializable {
 
             Imgproc.drawContours(frame, hullList, i, new Scalar(0, 255, 0), 3);
         }
+        System.out.println(hullList.size() + "size hullist");
+
     }
     int name = 0;
 
@@ -275,17 +298,73 @@ public class HandViewController implements Initializable {
 
 //        Imgcodecs.imwrite("E:\\TA\\" + name + ".jpg", grabFrame());
 //        name++;
-        Mat compare = new Mat();
-        Mat result = Imgcodecs.imread("E:\\TA\\15.jpg");
+//        Mat compare = new Mat();
+//        Mat result = Imgcodecs.imread("E:\\TA\\15.jpg");
+//
+//        Imgproc.cvtColor(result, result, Imgproc.COLOR_BGR2GRAY);
+//
+//        for (int i = 0; i < 15; i++) {
+//            compare = Imgcodecs.imread("E:\\TA\\" + i + ".jpg");
+//            Imgproc.cvtColor(compare, compare, Imgproc.COLOR_BGR2GRAY);
+//            Core.absdiff(result, compare, result);
+//        }
+//        Imgproc.threshold(result, result, 50.0, 255, Imgproc.THRESH_BINARY);
+//        Imgcodecs.imwrite("E:\\TA\\resCom.jpg", result);
+//
+        Mat bg = Imgcodecs.imread("E:\\TA\\bg.jpg");
+        Mat hand = Imgcodecs.imread("E:\\TA\\0.jpg");
+        Mat tresholded = hand.clone();
+        Mat crop;
+        System.out.println(hand.rows() + " " + hand.width());
+        System.out.println(hand.cols() + " " + hand.height());
+        createBox(hand);
+        crop = getBox(hand);
+        crop = segment(crop, "E:\\TA\\bg.jpg");
+//        hand = segment(tresholded, "E:\\TA\\bg.jpg");
+        layarEdge.setImage(Utils.mat2Image(getBox(hand)));
+//         tryi(tresholded);
+        layarMain.setImage(Utils.mat2Image(hand));
+    }
 
-        Imgproc.cvtColor(result, result, Imgproc.COLOR_BGR2GRAY);
+    private Mat segment(Mat frame, String lokasi) {
+        double tres = 50.0;
+        Mat frame2 = frame.clone();
+        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
+        diff = Imgcodecs.imread(lokasi);
 
-        for (int i = 0; i < 15; i++) {
-            compare = Imgcodecs.imread("E:\\TA\\" + i + ".jpg");
-            Imgproc.cvtColor(compare, compare, Imgproc.COLOR_BGR2GRAY);
-            Core.absdiff(result, compare, result);
-        }
-        Imgproc.threshold(result, result, 50.0, 255, Imgproc.THRESH_BINARY);
-        Imgcodecs.imwrite("E:\\TA\\resCom.jpg", result);
+        Imgproc.cvtColor(diff, diff, Imgproc.COLOR_BGR2GRAY);
+        Core.flip(diff, diff, 1);
+
+        Mat dist = new Mat();
+        diff = getBox(diff);
+        Core.absdiff(diff, frame, dist);
+//batas minimum treshold
+        layarEdge.setImage(Utils.mat2Image(dist));
+
+        Imgproc.threshold(dist, frame, tres, 255, Imgproc.THRESH_BINARY);
+        ///
+        Mat hierarchy = new Mat();
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(frame.clone(), contours, hierarchy,
+                Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        System.out.println("size contour" + contours.size());
+
+//        if (hierarchy.size().height > 0 && hierarchy.size().width > 0) {
+//            // for each contour, display it in blue
+//            for (int idx = 0; idx >= 0; idx = (int) hierarchy.get(0, idx)[0]) {
+//                Imgproc.
+//                        drawContours(frame2, contours, idx,
+//                                new Scalar(250, 0, 0), 3);
+//            }
+//        }
+        layarBW.setImage(Utils.mat2Image(frame));
+//        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BayerBG2BGR);
+
+//        HandRec(contours, frame2);
+        return frame;
+    }
+
+    public void tryi(Mat frame) {
+
     }
 }
