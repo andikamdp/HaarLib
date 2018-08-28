@@ -16,8 +16,8 @@
          <left>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#BwToMn" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#EdgeToMn" pickOnBounds="true" preserveRatio="true" />
                   <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#StartCameraOnClick" text="Start Camera" />
                   <Button fx:id="btnUpdateCamera" mnemonicParsing="false" onAction="#UpdateCameraOnClick" text="Update Camera" />
                   <Button mnemonicParsing="false" onAction="#capturePictureOnSction" text="Button" />
