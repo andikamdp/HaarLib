@@ -772,16 +772,16 @@ public class HandViewController implements Initializable {
             }
             listPoint.add(new MatOfPoint(devPoints));
         }
-//        } catch (Exception e) {
-//            System.out.println(e);
-//            System.out.println(
-//                    "toListMatOfPointDevec(List<MatOfPoint> contours,\n"
-//                    + "            List<MatOfInt4> dev)");
-//            //
-//            //error mungkint terjadi pada method ini
-//            //
-//
-//        }
+        //        } catch (Exception e) {
+        //            System.out.println(e);
+        //            System.out.println(
+        //                    "toListMatOfPointDevec(List<MatOfPoint> contours,\n"
+        //                    + "            List<MatOfInt4> dev)");
+        //            //
+        //            //error mungkint terjadi pada method ini
+//        aa //            //
+        //
+        //        }
 
         return listPoint;
     }
