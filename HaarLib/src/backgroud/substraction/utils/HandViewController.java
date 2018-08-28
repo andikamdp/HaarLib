@@ -7,6 +7,8 @@ package backgroud.substraction.utils;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -304,6 +306,14 @@ public class HandViewController implements Initializable {
         Imgproc.findContours(frame.clone(), contours, hierarchy,
                 Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
         System.out.println("size contour" + contours.size());
+        //
+        //
+        MatOfPoint c = contours.get(0);
+        Point[] cPoint = c.toArray();
+        System.out.println("cpoint length" + cPoint.length + "");
+        for (int j = 0; j < cPoint.length; j++) {
+            System.out.println(cPoint[j].toString());
+        }
         return contours;
     }
 //
@@ -734,6 +744,7 @@ public class HandViewController implements Initializable {
             Point[] contourArray = contours.get(0).toArray();
             Point[] devPoints = new Point[dev.get(0).rows() * 4];
             List<Integer> devContourIdxList = dev.get(0).toList();
+            Collections.sort(devContourIdxList);
             System.out.println("devContourIdxList.size "
                     + devContourIdxList.
                             size());
@@ -744,7 +755,9 @@ public class HandViewController implements Initializable {
                     + devContourIdxList.size());
 //                dev.get(0);
             for (int i = 0; i < devContourIdxList.size(); i++) {
-                if (devContourIdxList.get(i) < contourArray.length) {
+                if (devContourIdxList.get(i) < contourArray.length /*&& (i == 0 || devContourIdxList.get(i)
+                        - devContourIdxList.get(i
+                                - 1) > 5)*/) {
                     devPoints[i] = contourArray[devContourIdxList.get(i)];
 //                    System.out.println("point " + devPoints[i].toString());
                 } else {
