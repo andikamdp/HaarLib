@@ -261,13 +261,20 @@ public class HandViewController implements Initializable {
 //method menghasilhan kooddinatt untuk convexhull
 
     private Mat HandRec(List<MatOfPoint> contours, Mat frame) {
-        System.out.println("");
-        System.out.println("con length " + contours.size());
-//        List<MatOfInt> hullList = getHullIndexPoint(contours);
-//        drawContour(toListMatOfPointHull(contours, hullList), frame);
-        ///////
-        List<MatOfInt4> devList = getDevectIndexPoint(contours);
-        drawContour(toListMatOfPointDevec(contours, devList), frame);
+        try {
+            System.out.println("");
+            System.out.println("con length " + contours.size());
+//            List<MatOfInt> hullList = getHullIndexPoint(contours);
+//            drawPointColor(toListMatOfPointHull(contours, hullList), frame);
+            ///////
+            List<MatOfInt4> devList = getDevectIndexPoint(contours);
+            List<MatOfPoint> point = toListMatOfPointDevec(contours, devList);
+            drawPointColor(point, frame);
+        } catch (Exception e) {
+            System.out.println("HandRec(List<MatOfPoint> contours, Mat frame)");
+            System.out.println(e);
+            System.out.println("");
+        }
 
         return frame;
     }
@@ -305,6 +312,7 @@ public class HandViewController implements Initializable {
 
     private List<MatOfInt4> getDevectIndexPoint(List<MatOfPoint> contours
     ) {
+
         List<MatOfInt4> devList = new ArrayList<>();
         List<MatOfInt> hullList = getHullIndexPoint(contours);
 
@@ -324,14 +332,19 @@ public class HandViewController implements Initializable {
 //                System.out.println(e);
 //            }
 //        }
-        MatOfInt4 dev = new MatOfInt4();
-        Imgproc.convexityDefects(contours.get(0), hullList.get(0), dev);
-        devList.add(dev);
-        System.out.println("papap");
         try {
-            devList.get(0);
+            MatOfInt4 dev = new MatOfInt4();
+            MatOfInt hull = hullList.get(0);
+            MatOfPoint cont = contours.get(0);
+            Imgproc.convexityDefects(cont, hull, dev);
+            devList.add(dev);
+            System.out.println("papap");
+            System.out.println("papap");
+
         } catch (Exception e) {
-            System.out.println("get dev list error");
+            System.out.println(
+                    "getDevectIndexPoint(List<MatOfPoint> contours");
+            System.out.println(e);
         }
         return devList;
     }
@@ -350,7 +363,7 @@ public class HandViewController implements Initializable {
         return hullList;
     }
 
-    //method menggambil gambar(image capture)
+    //method menggambil gambar(image capture)melalui button
     @FXML
     private void capturePictureOnSction(ActionEvent event) {
 
@@ -710,11 +723,11 @@ public class HandViewController implements Initializable {
     public List<MatOfPoint> toListMatOfPointDevec(List<MatOfPoint> contours,
             List<MatOfInt4> dev) {
         List<MatOfPoint> listPoint = new ArrayList<>();
-//        System.out.println("isi dari dev  " + dev.size());
-//        System.out.println("isi dari dev row " + dev.get(0).rows());
-//        System.out.println("isi dari dev row " + dev.get(0).cols());
-//        System.out.println("isi dari dev row " + dev.get(0).height());
-//        System.out.println("isi dari dev row " + dev.get(0).width());
+        System.out.println("isi dari dev  " + dev.size());
+        System.out.println("isi dari dev row " + dev.get(0).rows());
+        System.out.println("isi dari dev row " + dev.get(0).cols());
+        System.out.println("isi dari dev row " + dev.get(0).height());
+        System.out.println("isi dari dev row " + dev.get(0).width());
 ////        try {
         for (int j = 0; j < dev.size(); j++) {
 //            System.out.println("iterasi " + j);
@@ -763,6 +776,7 @@ public class HandViewController implements Initializable {
     public void drawContour(List<MatOfPoint> contours, Mat frame
     ) {
         for (int i = 0; i < contours.size(); i++) {
+
             Imgproc.drawContours(frame, contours, i, new Scalar(0, 255, 0), 3);
         }
     }
@@ -787,10 +801,11 @@ public class HandViewController implements Initializable {
     public void drawPointColor(List<MatOfPoint> contours, Mat frame,
             Integer[] index) {
         for (int i = 0; i < contours.get(0).toArray().length; i++) {
-
-            Imgproc.circle(frame, contours.get(0).toArray()[i], right,
-                    new Scalar(0, 255,
-                            0));
+            if (contours.get(0).toArray()[i].x >= 0) {
+                Imgproc.circle(frame, contours.get(0).toArray()[i], right,
+                        new Scalar(0, 255,
+                                0), -1);
+            }
         }
     }
 //
@@ -800,10 +815,11 @@ public class HandViewController implements Initializable {
     public void drawPointColor(List<MatOfPoint> contours, Mat frame
     ) {
         for (int i = 0; i < contours.get(0).toArray().length; i++) {
-
-            Imgproc.circle(frame, contours.get(0).toArray()[i], right,
-                    new Scalar(0, 255,
-                            0));
+            if (contours.get(0).toArray()[i].x >= 0) {
+                Imgproc.circle(frame, contours.get(0).toArray()[i], 10,
+                        new Scalar(0, 0,
+                                255), -1);
+            }
         }
     }
 }
