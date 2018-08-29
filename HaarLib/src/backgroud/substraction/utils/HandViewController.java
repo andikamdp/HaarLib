@@ -372,37 +372,158 @@ public class HandViewController implements Initializable {
         }
         return hullList;
     }
+    //method untuk menggambar contour
+//
+//get list point from hull
+//28/08/2018
 
+    public List<MatOfPoint> toListMatOfPointHull(List<MatOfPoint> contours,
+            List<MatOfInt> hull) {
+        List<MatOfPoint> listPoint = new ArrayList<>();
+        System.out.println("isi dari dev  " + hull.size());
+        System.out.println("isi dari dev row " + hull.get(0).rows());
+        System.out.println("isi dari dev row " + hull.get(0).cols());
+        System.out.println("isi dari dev row " + hull.get(0).height());
+        System.out.println("isi dari dev row " + hull.get(0).width());
+        for (int j = 0; j < hull.size(); j++) {
+
+            Point[] contourArray = contours.get(j).toArray();
+            Point[] hullPoints = new Point[hull.get(j).rows()];
+            List<Integer> hullContourIdxList = hull.get(j).toList();
+            for (int i = 0; i < hullContourIdxList.size(); i++) {
+                hullPoints[i] = contourArray[hullContourIdxList.get(i)];
+            }
+            listPoint.add(new MatOfPoint(hullPoints));
+
+        }
+
+        return listPoint;
+    }
+
+//
+//get list point from dev
+//28/08/2018
+    public List<MatOfPoint> toListMatOfPointDevec(List<MatOfPoint> contours,
+            List<MatOfInt4> dev) {
+        List<MatOfPoint> listPoint = new ArrayList<>();
+        System.out.println("isi dari dev  " + dev.size());
+        System.out.println("isi dari dev row " + dev.get(0).rows());
+        System.out.println("isi dari dev row " + dev.get(0).cols());
+        System.out.println("isi dari dev row " + dev.get(0).height());
+        System.out.println("isi dari dev row " + dev.get(0).width());
+////        try {
+        for (int j = 0; j < dev.size(); j++) {
+//            System.out.println("iterasi " + j);
+            Point[] contourArray = contours.get(0).toArray();
+            Point[] devPoints = new Point[dev.get(0).rows() * 4];
+            List<Integer> devContourIdxList = dev.get(0).toList();
+            Collections.sort(devContourIdxList);
+            System.out.println("devContourIdxList.size "
+                    + devContourIdxList.
+                            size());
+            System.out.println(devContourIdxList.toString());
+            System.out.println("");
+            System.out.println("contourArray.length " + contourArray.length);
+            System.out.println("devContourIdxList.size() "
+                    + devContourIdxList.size());
+//                dev.get(0);
+            for (int i = 0; i < devContourIdxList.size(); i++) {
+                if (devContourIdxList.get(i) < contourArray.length /*&& (i == 0 || devContourIdxList.get(i)
+                        - devContourIdxList.get(i
+                                - 1) > 5)*/) {
+                    devPoints[i] = contourArray[devContourIdxList.get(i)];
+//                    System.out.println("point " + devPoints[i].toString());
+                } else {
+                    devPoints[i] = new Point(-1, -1);
+                }
+            }
+            for (int i = 0; i < devPoints.length; i++) {
+
+                System.out.println("point " + devPoints[i].toString() + "   "
+                        + i);
+
+            }
+            listPoint.add(new MatOfPoint(devPoints));
+        }
+        //        } catch (Exception e) {
+        //            System.out.println(e);
+        //            System.out.println(
+        //                    "toListMatOfPointDevec(List<MatOfPoint> contours,\n"
+        //                    + "            List<MatOfInt4> dev)");
+        //            //
+        //            //error mungkint terjadi pada method ini
+//        aa //            //
+        //
+        //        }
+
+        return listPoint;
+    }
+
+    public void drawContour(List<MatOfPoint> contours, Mat frame
+    ) {
+        for (int i = 0; i < contours.size(); i++) {
+
+            Imgproc.drawContours(frame, contours, i, new Scalar(0, 255, 0), 3);
+        }
+    }
+
+    public void drawContour(List<MatOfPoint> contours, Mat frame,
+            Integer[] Index
+    ) {
+        for (int i = 0; i < contours.size(); i++) {
+            Imgproc.drawContours(frame, contours, i, new Scalar(0, 255, 0), 3);
+        }
+    }
+    int i = 0;
+
+    public void captureImage() {
+        Imgcodecs.imwrite("E:\\TA\\h" + i + ".jpg", grabFrame());
+        i++;
+    }
+//
+//get list point from dev
+//28/08/2018
+
+    public void drawPointColor(List<MatOfPoint> contours, Mat frame,
+            Integer[] index) {
+        for (int i = 0; i < contours.get(0).toArray().length; i++) {
+            if (contours.get(0).toArray()[i].x >= 0) {
+                Imgproc.circle(frame, contours.get(0).toArray()[i], right,
+                        new Scalar(0, 255,
+                                0), -1);
+            }
+        }
+    }
+//
+//get list point from dev
+//28/08/2018
+
+    public void drawPointColor(List<MatOfPoint> contours, Mat frame
+    ) {
+        for (int i = 0; i < contours.get(0).toArray().length; i++) {
+            if (contours.get(0).toArray()[i].x >= 0) {
+                Imgproc.circle(frame, contours.get(0).toArray()[i], 10,
+                        new Scalar(0, 0,
+                                255), -1);
+            }
+        }
+    }
+
+    /*
+    method untuk mencoba pada gambar
+     */
     //method menggambil gambar(image capture)melalui button
     @FXML
     private void capturePictureOnSction(ActionEvent event) {
 
-//        Imgcodecs.imwrite("E:\\TA\\" + name + ".jpg", grabFrame());
-//        name++;
-//        Mat compare = new Mat();
-//        Mat result = Imgcodecs.imread("E:\\TA\\15.jpg");
-//
-//        Imgproc.cvtColor(result, result, Imgproc.COLOR_BGR2GRAY);
-//
-//        for (int i = 0; i < 15; i++) {
-//            compare = Imgcodecs.imread("E:\\TA\\" + i + ".jpg");
-//            Imgproc.cvtColor(compare, compare, Imgproc.COLOR_BGR2GRAY);
-//            Core.absdiff(result, compare, result);
-//        }
-//        Imgproc.threshold(result, result, 50.0, 255, Imgproc.THRESH_BINARY);
-//        Imgcodecs.imwrite("E:\\TA\\resCom.jpg", result);
-//
-//////
-//////
-//////
-//////
-//        Mat bg = Imgcodec
-        Mat bg = Imgcodecs.imread("E:\\TA\\bg.jpg");
-        Mat hand = Imgcodecs.imread("E:\\TA\\Untitled.jpg");
+        String bg = "E:\\TA\\bgFull.jpg";
+        Mat hand = Imgcodecs.imread("E:\\TA\\handFull.jpg");
+
+        Core.flip(hand, hand, 1);
         Mat tresholded = hand.clone();
         createBox(tresholded);
         tresholded = getBox(tresholded);
-        tresholded = segment(tresholded, "E:\\TA\\Untitled - Copy.jpg");
+        tresholded = segment(tresholded, bg);
         layarMain.setImage(Utils.mat2Image(hand));
         //////
         //////
@@ -421,7 +542,6 @@ public class HandViewController implements Initializable {
         Core.flip(diff, diff, 1);
         Mat dist = new Mat();
         diff = getBox(diff);
-
         Core.absdiff(diff, frameAsli, dist);
 //        batas minimum treshold
         Imgproc
@@ -434,53 +554,6 @@ public class HandViewController implements Initializable {
 
     private void LacakDevect(List<MatOfPoint> contours, Mat frame) {
         Mat frame2 = frame.clone();
-//        layarEdge.setImage(Utils.mat2Image(frame2));
-//        List<MatOfPoint> hullList = new ArrayList<>();
-//        List<MatOfPoint> devxList = new ArrayList<>();
-//        for (MatOfPoint contour : contours) {
-//            MatOfInt hull = new MatOfInt();
-//            MatOfInt4 devx = new MatOfInt4();
-//            //
-//            Imgproc.convexHull(contour, hull);
-//            Imgproc.convexityDefects(contour, hull, devx);
-//            //
-//            Point[] contourArray = contour.toArray();
-//            Point[] hullPoints = new Point[hull.rows()];
-//
-//            //
-//            List<Integer> hullContourIdxList = hull.toList();
-//            List<Integer> devxContourIdxList = devx.toList();
-//            Point[] devexPoints = new Point[devxContourIdxList.size()];
-//            System.out.println(hullPoints.length + "panjang hull point");
-//            System.out.
-//                    println(hullContourIdxList.size()
-//                            + "panjang hull list point");
-//            for (int i = 0; i < hullContourIdxList.size(); i++) {
-//                hullPoints[i] = contourArray[hullContourIdxList.get(i)];
-//            }
-//            //
-//            System.out.println(contourArray.length
-//                    + "panjang contourArray point");
-//            System.out.println(devexPoints.length + "panjang devex point");
-//            System.out.
-//                    println(devxContourIdxList.size()
-//                            + "panjang devex list point");
-//            for (int i = 0; i < 10; i++) {
-//                devexPoints[i] = contourArray[devxContourIdxList.get(i)];
-//            }
-//            hullList.add(new MatOfPoint(hullPoints));
-//            devxList.add(new MatOfPoint(devexPoints));
-//        }
-//        Mat drawing = Mat.zeros(frame.size(), CvType.CV_8UC3);
-//        for (int i = 0; i < contours.size(); i++) {
-//
-//            Imgproc.drawContours(frame, hullList, i, new Scalar(0, 255, 0), 3);
-////            Imgproc.drawContours(frame, devxList, i, new Scalar(0, 0, 255), 3);
-//        }
-//        System.out.println(hullList.size() + "size hullist");
-//        System.out.println(contours.size() + "size contours");
-
-///////////////
         Image g;
 
         List<MatOfInt> hullList = new ArrayList<>();
@@ -700,139 +773,4 @@ public class HandViewController implements Initializable {
         drawContour(cont, frame, handIndices);
     }
 
-    //method untuk menggambar contour
-//
-//get list point from hull
-//28/08/2018
-    public List<MatOfPoint> toListMatOfPointHull(List<MatOfPoint> contours,
-            List<MatOfInt> hull) {
-        List<MatOfPoint> listPoint = new ArrayList<>();
-        System.out.println("isi dari dev  " + hull.size());
-        System.out.println("isi dari dev row " + hull.get(0).rows());
-        System.out.println("isi dari dev row " + hull.get(0).cols());
-        System.out.println("isi dari dev row " + hull.get(0).height());
-        System.out.println("isi dari dev row " + hull.get(0).width());
-        for (int j = 0; j < hull.size(); j++) {
-
-            Point[] contourArray = contours.get(j).toArray();
-            Point[] hullPoints = new Point[hull.get(j).rows()];
-            List<Integer> hullContourIdxList = hull.get(j).toList();
-            for (int i = 0; i < hullContourIdxList.size(); i++) {
-                hullPoints[i] = contourArray[hullContourIdxList.get(i)];
-            }
-            listPoint.add(new MatOfPoint(hullPoints));
-
-        }
-
-        return listPoint;
-    }
-
-//
-//get list point from dev
-//28/08/2018
-    public List<MatOfPoint> toListMatOfPointDevec(List<MatOfPoint> contours,
-            List<MatOfInt4> dev) {
-        List<MatOfPoint> listPoint = new ArrayList<>();
-        System.out.println("isi dari dev  " + dev.size());
-        System.out.println("isi dari dev row " + dev.get(0).rows());
-        System.out.println("isi dari dev row " + dev.get(0).cols());
-        System.out.println("isi dari dev row " + dev.get(0).height());
-        System.out.println("isi dari dev row " + dev.get(0).width());
-////        try {
-        for (int j = 0; j < dev.size(); j++) {
-//            System.out.println("iterasi " + j);
-            Point[] contourArray = contours.get(0).toArray();
-            Point[] devPoints = new Point[dev.get(0).rows() * 4];
-            List<Integer> devContourIdxList = dev.get(0).toList();
-            Collections.sort(devContourIdxList);
-            System.out.println("devContourIdxList.size "
-                    + devContourIdxList.
-                            size());
-            System.out.println(devContourIdxList.toString());
-            System.out.println("");
-            System.out.println("contourArray.length " + contourArray.length);
-            System.out.println("devContourIdxList.size() "
-                    + devContourIdxList.size());
-//                dev.get(0);
-            for (int i = 0; i < devContourIdxList.size(); i++) {
-                if (devContourIdxList.get(i) < contourArray.length /*&& (i == 0 || devContourIdxList.get(i)
-                        - devContourIdxList.get(i
-                                - 1) > 5)*/) {
-                    devPoints[i] = contourArray[devContourIdxList.get(i)];
-//                    System.out.println("point " + devPoints[i].toString());
-                } else {
-                    devPoints[i] = new Point(-1, -1);
-                }
-            }
-            for (int i = 0; i < devPoints.length; i++) {
-
-                System.out.println("point " + devPoints[i].toString() + "   "
-                        + i);
-
-            }
-            listPoint.add(new MatOfPoint(devPoints));
-        }
-        //        } catch (Exception e) {
-        //            System.out.println(e);
-        //            System.out.println(
-        //                    "toListMatOfPointDevec(List<MatOfPoint> contours,\n"
-        //                    + "            List<MatOfInt4> dev)");
-        //            //
-        //            //error mungkint terjadi pada method ini
-//        aa //            //
-        //
-        //        }
-
-        return listPoint;
-    }
-
-    public void drawContour(List<MatOfPoint> contours, Mat frame
-    ) {
-        for (int i = 0; i < contours.size(); i++) {
-
-            Imgproc.drawContours(frame, contours, i, new Scalar(0, 255, 0), 3);
-        }
-    }
-
-    public void drawContour(List<MatOfPoint> contours, Mat frame,
-            Integer[] Index
-    ) {
-        for (int i = 0; i < contours.size(); i++) {
-            Imgproc.drawContours(frame, contours, i, new Scalar(0, 255, 0), 3);
-        }
-    }
-    int i = 0;
-
-    public void captureImage() {
-        Imgcodecs.imwrite("E:\\TA\\h" + i + ".jpg", grabFrame());
-        i++;
-    }
-//
-//get list point from dev
-//28/08/2018
-
-    public void drawPointColor(List<MatOfPoint> contours, Mat frame,
-            Integer[] index) {
-        for (int i = 0; i < contours.get(0).toArray().length; i++) {
-            if (contours.get(0).toArray()[i].x >= 0) {
-                Imgproc.circle(frame, contours.get(0).toArray()[i], right,
-                        new Scalar(0, 255,
-                                0), -1);
-            }
-        }
-    }
-//
-//get list point from dev
-//28/08/2018
-
-    public void drawPointColor(List<MatOfPoint> contours, Mat frame
-    ) {
-        for (int i = 0; i < contours.get(0).toArray().length; i++) {
-            if (contours.get(0).toArray()[i].x >= 0) {
-                Imgproc.circle(frame, contours.get(0).toArray()[i], 10,
-                        new Scalar(0, 0,
-                                255), -1);
-            }
-        }
-    }
 }
