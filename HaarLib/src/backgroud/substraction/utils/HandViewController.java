@@ -407,6 +407,8 @@ public class HandViewController implements Initializable {
 //
 //get list point from dev
 //28/08/2018
+    public List<Integer> devContourIdxList;
+
     public List<MatOfPoint> toListMatOfPointDevec(List<MatOfPoint> contours,
             List<MatOfInt4> dev) {
         List<MatOfPoint> listPoint = new ArrayList<>();
@@ -420,7 +422,7 @@ public class HandViewController implements Initializable {
 //            System.out.println("iterasi " + j);
             Point[] contourArray = contours.get(0).toArray();
             Point[] devPoints = new Point[dev.get(0).rows() * 4];
-            List<Integer> devContourIdxList = dev.get(0).toList();
+            devContourIdxList = dev.get(0).toList();
             Collections.sort(devContourIdxList);
             System.out.println("devContourIdxList.size "
                     + devContourIdxList.
@@ -503,11 +505,11 @@ public class HandViewController implements Initializable {
             }
 
             if (index[i] != null && contours.get(0).toArray()[i].x >= 0
-                    && index[i] < 0) {
-//                Imgproc.circle(frame, contours.get(0).toArray()[i], 10,
-//                        s, -1);
-                Imgproc.putText(frame, contours.get(0).toArray()[i].toString(),
-                        contours.get(0).toArray()[i], 2, 0.5, s);
+                    && index[i] >= 0) {
+                Imgproc.circle(frame, contours.get(0).toArray()[i], 10,
+                        s, -1);
+//                Imgproc.putText(frame, contours.get(0).toArray()[i].toString(),
+//                        contours.get(0).toArray()[i], 2, 0.5, s);
                 System.out.println(index[i]);
             }
         }
@@ -531,10 +533,10 @@ public class HandViewController implements Initializable {
                 s = new Scalar(0, 0, 255);
             }
             if (contours.get(0).toArray()[i].x >= 0) {
-//                Imgproc.circle(frame, contours.get(0).toArray()[i], 10,
-//                        s, -1);
-                Imgproc.putText(frame, contours.get(0).toArray()[i].toString(),
-                        contours.get(0).toArray()[i], 2, 0.5, s);
+                Imgproc.circle(frame, contours.get(0).toArray()[i], 10,
+                        s, -1);
+//                Imgproc.putText(frame, contours.get(0).toArray()[i].toString(),
+//                        contours.get(0).toArray()[i], 2, 0.5, s);
 
             }
         }
@@ -547,9 +549,13 @@ public class HandViewController implements Initializable {
     @FXML
     private void capturePictureOnSction(ActionEvent event) {
 
-        String bg = "E:\\TA\\bgFull.jpg";
-        Mat hand = Imgcodecs.imread("E:\\TA\\handFull.jpg");
-
+        String bg = "E:\\TA\\h0.jpg";
+        Mat hand;
+        if (txtH.getText().isEmpty()) {
+            hand = Imgcodecs.imread("E:\\TA\\h1.jpg");
+        } else {
+            hand = Imgcodecs.imread("E:\\TA\\h" + txtH.getText() + ".jpg");
+        }
         Core.flip(hand, hand, 1);
         Mat tresholded = hand.clone();
         createBox(tresholded);
@@ -564,7 +570,6 @@ public class HandViewController implements Initializable {
                 = toListMatOfPointDevec(contous, devOfInt4s);
         System.out.println("titik sebelum dihapus");
         hitungJarakTitik(devOfPoints);
-        System.out.println("");
         System.out.println("");
         hapusTitik(devOfPoints, getBox(hand.clone()));
         hand = HandRec(contous, getBox(hand));
@@ -639,7 +644,9 @@ public class HandViewController implements Initializable {
 
     private void hapusTitik(List<MatOfPoint> contours, Mat hand) {
         Point[] point = contours.get(0).toArray();
-        Integer[] indexPoint = new Integer[point.length];
+//        devContourIdxList.clear();
+//        Integer[] indexPoint = new Integer[point.length];
+//        devContourIdxList.addAll(indexPoint);
 //        Point[] pointBaru = Point[contours.get(0).toArray().length];
         System.out.println("");
         System.out.println("Print jarak antar titik");
@@ -661,43 +668,41 @@ public class HandViewController implements Initializable {
                 if (puncak) {
                     //jika menemukan lembah index dicaatat
                     if (arahTitikY(point[j], point[j + 1])) {
-                        indexPoint[j] = -1;
+//                        indexPoint[j] = -1;
                         puncak = false;
                     } //jika titik lebih tinggi index sebelumnya dihapus
                     else {
-                        indexPoint[j] = j;
+                        devContourIdxList.set(j, -1);
 //                    indexPoint[j + 1] = -1;
                     }
                 } else {
                     //jika menemukan lembah index dicaatat
                     if (arahTitikY(point[j + 1], point[j])) {
-                        indexPoint[j] = -1;
+//                        indexPoint[j] = -1;
                         puncak = true;
                     } //jika titik lebih tinggi index sebelumnya dihapus
                     else {
 
-                        indexPoint[j] = j;
+                        devContourIdxList.set(j, -1);
 //                    indexPoint[j + 1] = -1;
 //                        indexPoint[j - 1] = j - 1;
 
 //                    indexPoint[j] = -1;
                     }
                 }
-            } else {
-                indexPoint[j] = -1;
             }
 
         }
         System.out.println("index yang dibawah 25");
         for (int j = 0; j < point.length; j++) {
-            System.out.println(indexPoint[j]);
+            System.out.println(devContourIdxList.get(j));
         }
         System.out.println("");
         contours.set(0, new MatOfPoint(point));
         System.out.println("titik setelah dihapus");
-        hitungJarakTitik(contours, indexPoint);
+        hitungJarakTitik(contours, (Integer[]) devContourIdxList.toArray());
         System.out.println("");
-        drawPointColor(contours, hand, indexPoint);
+        drawPointColor(contours, hand, (Integer[]) devContourIdxList.toArray());
         layarBW.setImage(Utils.mat2Image(hand));
 
     }
