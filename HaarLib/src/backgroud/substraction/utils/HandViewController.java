@@ -542,6 +542,31 @@ public class HandViewController implements Initializable {
         }
     }
 
+    //
+//get list point from dev
+//28/08/2018
+    public void drawPointColor(List<MatOfPoint> contours, Mat frame,
+            List<Integer> index) {
+        for (Integer integer : index) {
+            Scalar s;
+            if (i == 0) {
+                s = new Scalar(255, 255, 255);
+            } else if (i % 3 == 0) {
+                s = new Scalar(255, 0, 0);
+            } else if (i % 3 == 2) {
+                s = new Scalar(0, 255, 0);
+            } else {
+                s = new Scalar(0, 0, 255);
+            }
+
+            Imgproc.circle(frame, contours.get(0).toArray()[integer], 10,
+                    s, -1);
+//                Imgproc.putText(frame, contours.get(0).toArray()[i].toString(),
+//                        contours.get(0).toArray()[i], 2, 0.5, s);
+
+        }
+    }
+
     /*
     method untuk mencoba pada gambar
      */
@@ -562,6 +587,7 @@ public class HandViewController implements Initializable {
         tresholded = getBox(tresholded);
         tresholded = segment(tresholded, bg);
         layarMain.setImage(Utils.mat2Image(hand));
+        layarBW.setImage(Utils.mat2Image(tresholded));
         //////
         //////
         List<MatOfPoint> contous = getContour(tresholded);
@@ -587,9 +613,10 @@ public class HandViewController implements Initializable {
         Core.flip(diff, diff, 1);
         Mat dist = new Mat();
         diff = getBox(diff);
-        Core.absdiff(diff, frameAsli, dist);
+//        Core.absdiff(diff, frameAsli, dist);
 //        batas minimum treshold
-        Imgproc.threshold(dist, frameAsli, tres, 255, Imgproc.THRESH_BINARY);
+        Imgproc.threshold(frameAsli, frameAsli, 100, 255,
+                Imgproc.THRESH_BINARY_INV);
 
         cleaning(frameAsli);
 
@@ -641,9 +668,11 @@ public class HandViewController implements Initializable {
         return jarak;
 
     }
+    List<Integer> Puncak = new ArrayList<>();
 
     private void hapusTitik(List<MatOfPoint> contours, Mat hand) {
         Point[] point = contours.get(0).toArray();
+//        Puncak.addAll(devContourIdxList);
 //        devContourIdxList.clear();
 //        Integer[] indexPoint = new Integer[point.length];
 //        devContourIdxList.addAll(indexPoint);
@@ -669,6 +698,7 @@ public class HandViewController implements Initializable {
                     //jika menemukan lembah index dicaatat
                     if (arahTitikY(point[j], point[j + 1])) {
 //                        indexPoint[j] = -1;
+                        Puncak.add(j);
                         puncak = false;
                     } //jika titik lebih tinggi index sebelumnya dihapus
                     else {
@@ -682,7 +712,8 @@ public class HandViewController implements Initializable {
                         puncak = true;
                     } //jika titik lebih tinggi index sebelumnya dihapus
                     else {
-
+                        Puncak.remove(Puncak.size() - 1);
+                        Puncak.add(j);
                         devContourIdxList.set(j, -1);
 //                    indexPoint[j + 1] = -1;
 //                        indexPoint[j - 1] = j - 1;
@@ -703,6 +734,7 @@ public class HandViewController implements Initializable {
         hitungJarakTitik(contours, (Integer[]) devContourIdxList.toArray());
         System.out.println("");
         drawPointColor(contours, hand, (Integer[]) devContourIdxList.toArray());
+//        drawPointColor(contours, hand, Puncak);
         layarBW.setImage(Utils.mat2Image(hand));
 
     }
