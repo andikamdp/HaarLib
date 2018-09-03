@@ -547,7 +547,10 @@ public class HandViewController implements Initializable {
 //28/08/2018
     public void drawPointColor(List<MatOfPoint> contours, Mat frame,
             List<Integer> index) {
-        for (Integer integer : index) {
+//        for (Integer integer : index) {
+        Integer k = -1;
+        for (int j = 0; j < index.size(); j++) {
+
             Scalar s;
             if (i == 0) {
                 s = new Scalar(255, 255, 255);
@@ -558,22 +561,49 @@ public class HandViewController implements Initializable {
             } else {
                 s = new Scalar(0, 0, 255);
             }
+            System.out.println(index.get(j));
+            System.out.println("size Contoure " + contours.size());
+            if (index.get(j) < contous.get(0).toArray().length
+                    && index.get(j) >= 0) {
+                Imgproc.
+                        circle(frame, contous.get(0).toArray()[index.get(j)], 10,
+                                s, -1);
+            } else {
+                k = j;
 
-            Imgproc.circle(frame, contours.get(0).toArray()[integer], 10,
-                    s, -1);
+            }
 //                Imgproc.putText(frame, contours.get(0).toArray()[i].toString(),
 //                        contours.get(0).toArray()[i], 2, 0.5, s);
 
         }
+        Puncak.remove(k);
     }
+//
+//get list point from dev
+//28/08/2018
 
+    public void drawJumlahJari(List<MatOfPoint> contours, Mat frame,
+            List<Integer> index) {
+        Scalar s;
+
+        s = new Scalar(0, 0, 255);
+
+        Imgproc.putText(frame, "Jumlah Puncak Jari = " + index.size(),
+                new Point(10.0, 10.0), 2, 0.5, s);
+
+//                I
+    }
     /*
     method untuk mencoba pada gambar
      */
     //method menggambil gambar(image capture)melalui button
+    List<MatOfPoint> contous;
+    List<MatOfInt4> devOfInt4s;
+    List<MatOfPoint> devOfPoints;
+
     @FXML
     private void capturePictureOnSction(ActionEvent event) {
-
+        Puncak = new ArrayList<>();
         String bg = "E:\\TA\\h0.jpg";
         Mat hand;
         if (txtH.getText().isEmpty()) {
@@ -590,18 +620,19 @@ public class HandViewController implements Initializable {
         layarBW.setImage(Utils.mat2Image(tresholded));
         //////
         //////
-        List<MatOfPoint> contous = getContour(tresholded);
-        List<MatOfInt4> devOfInt4s = getDevectIndexPoint(contous);
-        List<MatOfPoint> devOfPoints
+        contous = getContour(tresholded);
+        devOfInt4s = getDevectIndexPoint(contous);
+        devOfPoints
                 = toListMatOfPointDevec(contous, devOfInt4s);
         System.out.println("titik sebelum dihapus");
         hitungJarakTitik(devOfPoints);
         System.out.println("");
         hapusTitik(devOfPoints, getBox(hand.clone()));
-        hand = HandRec(contous, getBox(hand));
+        Mat handEdge = HandRec(contous, getBox(hand.clone()));
 //        layarBW.setImage(Utils.mat2Image(tresholded));
-
-        layarEdge.setImage(Utils.mat2Image(hand));
+        drawJumlahJari(contous, hand, Puncak);
+        layarMain.setImage(Utils.mat2Image(hand));
+//        layarEdge.setImage(Utils.mat2Image(handEdge));
     }
 
     private Mat segment(Mat frameAsli, String lokasi) {
@@ -623,8 +654,8 @@ public class HandViewController implements Initializable {
         return frameAsli;
     }
 
-    private void hitungJarakTitik(List<MatOfPoint> contous) {
-        Point[] point = contous.get(0).toArray();
+    private void hitungJarakTitik(List<MatOfPoint> contour) {
+        Point[] point = contour.get(0).toArray();
         System.out.println("");
         System.out.println("Print jarak antar titik");
         for (int j = 0; j < point.length - 1; j++) {
@@ -641,8 +672,8 @@ public class HandViewController implements Initializable {
 
     }
 
-    private void hitungJarakTitik(List<MatOfPoint> contous, Integer[] index) {
-        Point[] point = contous.get(0).toArray();
+    private void hitungJarakTitik(List<MatOfPoint> contour, Integer[] index) {
+        Point[] point = contour.get(0).toArray();
         int k = 0;
         System.out.println("");
         System.out.println("Print jarak antar titik");
@@ -672,6 +703,16 @@ public class HandViewController implements Initializable {
 
     private void hapusTitik(List<MatOfPoint> contours, Mat hand) {
         Point[] point = contours.get(0).toArray();
+        Puncak.addAll(devContourIdxList);
+        System.out.println("isi puncak awal pisan");
+        for (int j = 0; j < point.length; j++) {
+            System.out.println(Puncak.get(j));
+        }
+        System.out.println("isi puncak awal pisan");
+        for (int j = 0; j < point.length; j++) {
+            System.out.println(devContourIdxList.get(j));
+        }
+//        Collections.sort(Puncak);
 //        Puncak.addAll(devContourIdxList);
 //        devContourIdxList.clear();
 //        Integer[] indexPoint = new Integer[point.length];
@@ -679,8 +720,8 @@ public class HandViewController implements Initializable {
 //        Point[] pointBaru = Point[contours.get(0).toArray().length];
         System.out.println("");
         System.out.println("Print jarak antar titik");
-        System.out.println(hand.rows());
-        System.out.println(hand.cols());
+        System.out.println(point.length);
+        System.out.println(Puncak.size());
         System.out.println("Print jarak antar titik");
         //jika posisi false berarti cari lembah
         //jika posisi true berarti cari puncak
@@ -693,15 +734,17 @@ public class HandViewController implements Initializable {
 //            } else {
 //                indexPoint[j] = -1;
 //            }
-            if (point[j].y < hand.rows() - 1 && point[j + 1].y < hand.rows() - 1) {
+            if (point[j].y < hand.rows() - 1 && point[j + 1].y < hand.rows() - 1
+                    && Puncak.get(j) < contous.get(0).toArray().length) {
                 if (puncak) {
                     //jika menemukan lembah index dicaatat
                     if (arahTitikY(point[j], point[j + 1])) {
 //                        indexPoint[j] = -1;
-                        Puncak.add(j);
+
                         puncak = false;
                     } //jika titik lebih tinggi index sebelumnya dihapus
                     else {
+                        Puncak.set(j, -1);
                         devContourIdxList.set(j, -1);
 //                    indexPoint[j + 1] = -1;
                     }
@@ -709,11 +752,13 @@ public class HandViewController implements Initializable {
                     //jika menemukan lembah index dicaatat
                     if (arahTitikY(point[j + 1], point[j])) {
 //                        indexPoint[j] = -1;
+
+                        Puncak.set(j, -1);
                         puncak = true;
                     } //jika titik lebih tinggi index sebelumnya dihapus
                     else {
-                        Puncak.remove(Puncak.size() - 1);
-                        Puncak.add(j);
+
+                        Puncak.set(j, -1);
                         devContourIdxList.set(j, -1);
 //                    indexPoint[j + 1] = -1;
 //                        indexPoint[j - 1] = j - 1;
@@ -721,21 +766,45 @@ public class HandViewController implements Initializable {
 //                    indexPoint[j] = -1;
                     }
                 }
+            } else {
+                Puncak.set(j, -1);
+                devContourIdxList.set(j, -1);
             }
 
         }
-        System.out.println("index yang dibawah 25");
+
+        System.out.println("");
+//        contours.set(0, new MatOfPoint(point));
+        System.out.println("titik setelah dihapus");
+        System.out.println("");
+//        Collections.sort(Puncak);
+//        Collections.sort(devContourIdxList);
+        System.out.println("isi puncak akhir pisan");
+        System.out.println(Puncak.size());
+        Integer rem = -1;
+        Puncak.remove(rem);
+        while (Puncak.contains(rem)) {
+            Puncak.remove(rem);
+        }
+//        while (devContourIdxList.contains(rem)) {
+//            devContourIdxList.remove(rem);
+//        }
+        System.out.println(Puncak.size());
+        System.out.println("isi puncak akhir pisan");
+        for (int j = 0; j < Puncak.size(); j++) {
+            System.out.println(Puncak.get(j));
+        }
+        System.out.println("isi puncak awal pisan");
         for (int j = 0; j < point.length; j++) {
             System.out.println(devContourIdxList.get(j));
         }
-        System.out.println("");
-        contours.set(0, new MatOfPoint(point));
-        System.out.println("titik setelah dihapus");
-        hitungJarakTitik(contours, (Integer[]) devContourIdxList.toArray());
-        System.out.println("");
-        drawPointColor(contours, hand, (Integer[]) devContourIdxList.toArray());
-//        drawPointColor(contours, hand, Puncak);
-        layarBW.setImage(Utils.mat2Image(hand));
+//        drawPointColor(contours, hand, (Integer[]) Puncak.toArray());
+        Mat hand2 = hand.clone();
+        drawPointColor(contours, hand2, Puncak);
+//        drawJumlahJari(contous, hand2, Puncak);
+        layarBW.setImage(Utils.mat2Image(hand2));
+        drawPointColor(contours, hand, devContourIdxList);
+        layarEdge.setImage(Utils.mat2Image(hand));
 
     }
 //
@@ -759,7 +828,7 @@ public class HandViewController implements Initializable {
 
     public Boolean arahTitikY(Point titikA, Point titikB) {
         if (titikA.y < titikB.y) {
-            System.out.print(" naik");
+            System.out.print(" Puncak->menurun");
             System.out.println(titikA.toString() + " " + titikB.toString());
             return true;
         } else if (titikA.y == titikB.y) {
@@ -768,7 +837,7 @@ public class HandViewController implements Initializable {
         } else {
 
             System.out.println(titikA.toString() + " " + titikB.toString());
-            System.out.print(" turun");
+            System.out.print(" Lembah->menaik");
             return false;
         }
     }
