@@ -18,6 +18,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
@@ -237,5 +238,9 @@ public class HaarCobaController implements Initializable {
      */
     protected void setClosed() {
         this.stopAcquisition();
+    }
+
+    @FXML
+    private void GetPoint(MouseEvent event) {
     }
 }

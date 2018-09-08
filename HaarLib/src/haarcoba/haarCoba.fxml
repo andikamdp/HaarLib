@@ -31,7 +31,7 @@
             </VBox>
          </left>
          <center>
-            <ImageView id="frame" fx:id="frame" fitHeight="554.0" fitWidth="693.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+            <ImageView id="frame" fx:id="frame" fitHeight="554.0" fitWidth="693.0" onMouseClicked="#GetPoint" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </children>
