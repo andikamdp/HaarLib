@@ -111,28 +111,23 @@ public class HandViewController implements Initializable {
                         createBox(frame);
                         Mat hand = getBox(frame.clone());
                         /////////////////////////////////
-
+                        //memperoleh segment image biner
                         Mat tresholded = segment(hand.clone());
                         imageToMat = Utils.mat2Image(tresholded);
                         updateImageView(layarBW, imageToMat);
                         //////////////////////////////////////
                         contous = getContour(tresholded);
                         devOfInt4s = getDevectIndexPoint(contous);
-
                         toListMatOfPointDevec(contous, devOfInt4s);
 //                        HandRec(contous, hand);
 //                        hitungJarakTitik(devOfPoints);
                         hapusTitik(contous, getBox(frame));
 //                        Mat handEdge = HandRec(contous, getBox(hand.clone()));
-//        layarBW.setImage(Utils.mat2Image(tresholded));
+//                        layarBW.setImage(Utils.mat2Image(tresholded));
 //                        drawJumlahJari(contous, frame, Puncak);
                         layarMain.setImage(Utils.mat2Image(frame));
                         imageToMat = Utils.mat2Image(hand);
                         updateImageView(layarEdge, imageToMat);
-//////// ??
-
-                        //////
-                        //////
                     }
                 };
                 this.timer = Executors.newSingleThreadScheduledExecutor();
@@ -159,9 +154,10 @@ public class HandViewController implements Initializable {
         //mengambil gambar background
         Imgcodecs.imwrite("E:\\TA\\opencv.jpg", grabFrame());
     }
+
 /////////////
 //method untuk menggambar kotak untuk posisi tangan
-
+/////////////
     private Mat createBox(Mat frame) {
         Imgproc.rectangle(frame,
                 new Point(frame.cols(), 10), new Point(
@@ -170,8 +166,10 @@ public class HandViewController implements Initializable {
                 3);
         return frame;
     }
-//method untuk mengambil posisi tangan pada kamere
 
+/////////////
+//method untuk mengambil posisi tangan pada kamera
+/////////////
     private Mat getBox(Mat frame) {
         Rect rectCrop = new Rect(new Point(frame.cols() - 5, 10 + 5), new Point(
                 frame.cols() / 2 + 5, frame.rows() - (frame.rows() / 3) - 10 - 5)
@@ -182,8 +180,10 @@ public class HandViewController implements Initializable {
         Imgproc.GaussianBlur(frame, frame, new Size(7, 7), 0);
         return frame;
     }
-//////
 
+/////////////
+//method untuk menghilangkan titk hitam dan putih yang belum bersih dari hasil treshold
+/////////////
     private Mat cleaning(Mat frame) {
         Mat kernel = new Mat(new Size(3, 3), CvType.CV_16S, new Scalar(255));
         Imgproc.morphologyEx(frame, frame, Imgproc.MORPH_CLOSE, kernel);
@@ -192,6 +192,9 @@ public class HandViewController implements Initializable {
         return frame;
     }
 
+/////////////
+//
+/////////////
     private void stopAcquisition() {
         if (this.timer != null && !this.timer.isShutdown()) {
             try {
@@ -212,7 +215,9 @@ public class HandViewController implements Initializable {
         }
     }
 
-    //update tampilan pada frame utama
+/////////////
+//update tampilan pada frame utama
+/////////////
     private void updateImageView(ImageView view, Image image) {
         Utils.onFXThread(view.imageProperty(), image);
     }
@@ -251,29 +256,40 @@ public class HandViewController implements Initializable {
     /**
      * Stop the acquisition from the camera and release all the resources
      */
-    public Image bg;
-    public Mat diff, diff2, treshold;
+/////////////
 //method untuk memisahkan objek dengan background
-
+//kendala background masih harus bersih dan memiliki warna tidak selaras kulit
+/////////////
     private Mat segment(Mat frameAsli) {
-        double tres = 50.0;
-        Mat frameUbah = frameAsli.clone();
-        Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
+        try {
+            double tres = 50.0;
+//        Mat frameUbah = frameAsli.clone();
+//            Scalar upperb = new Scalar(64, 223, 255);
+//            Scalar lowerb = new Scalar(0, 0, 0);
+//            Core.inRange(frameAsli, lowerb, upperb, frameAsli);
+//            updateImageView(layarBW, Utils.mat2Image(frameAsli));
+            Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
 
-        Mat dist = new Mat();
+            Mat dist = new Mat();
 //        batas minimum treshold
-        Imgproc
-                .threshold(frameAsli, frameAsli, 100, 255,
-                        Imgproc.THRESH_BINARY_INV);
+            Imgproc
+                    .threshold(frameAsli, frameAsli, 100, 255,
+                            Imgproc.THRESH_BINARY_INV);
 
-        cleaning(frameAsli);
+            cleaning(frameAsli);
+        } catch (Exception e) {
+            System.out.println("segment(Mat frameAsli)");
+            System.out.println(e);
+            System.out.println("");
+        }
 
         return frameAsli;
 
     }
-//method untuk deteksi tangan
-//method menghasilhan kooddinatt untuk convexhull
 
+/////////////
+//
+/////////////
     private Mat HandRec(List<MatOfPoint> contours, Mat frame) {
         try {
 
@@ -292,6 +308,9 @@ public class HandViewController implements Initializable {
         return frame;
     }
 
+/////////////
+//method untuk menukar image pada layarBW ke Main
+/////////////
     @FXML
     private void BwToMn(MouseEvent event) {
         Image Mn = layarBW.getImage();
@@ -299,6 +318,9 @@ public class HandViewController implements Initializable {
         layarMain.setImage(Mn);
     }
 
+/////////////
+//method untuk menukar image pada layarEdge ke Main
+/////////////
     @FXML
     private void EdgeToMn(MouseEvent event) {
         Image Mn = layarEdge.getImage();
@@ -307,18 +329,16 @@ public class HandViewController implements Initializable {
     }
     ///
     int name = 0;
-//
+
+/////////////
 //get list point from dev
 //28/08/2018
-
+/////////////
     private List<MatOfPoint> getContour(Mat frame) {
         Mat hierarchy = new Mat();
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(frame.clone(), contours, hierarchy,
                 Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
-//        System.out.println("size contour" + contours.size());
-        //
-        //
         if (contours.isEmpty()) {
             Point[] cPoint = null;
         } else {
@@ -328,10 +348,10 @@ public class HandViewController implements Initializable {
 
         return contours;
     }
-//
-//get list point from dev
-//28/08/2018
 
+/////////////
+//
+/////////////
     private List<MatOfInt4> getDevectIndexPoint(List<MatOfPoint> contours
     ) {
 
@@ -366,10 +386,10 @@ public class HandViewController implements Initializable {
         }
         return devList;
     }
-//
-//get list point from dev
-//28/08/2018
 
+/////////////
+//
+/////////////
     private List<MatOfInt> getHullIndexPoint(List<MatOfPoint> contours
     ) {
         List<MatOfInt> hullList = new ArrayList<>();
@@ -381,10 +401,10 @@ public class HandViewController implements Initializable {
         return hullList;
     }
     //method untuk menggambar contour
-//
-//get list point from hull
-//28/08/2018
 
+/////////////
+//
+/////////////
     public List<MatOfPoint> toListMatOfPointHull(List<MatOfPoint> contours,
             List<MatOfInt> hull) {
         List<MatOfPoint> listPoint = new ArrayList<>();
@@ -403,9 +423,9 @@ public class HandViewController implements Initializable {
         return listPoint;
     }
 
+/////////////
 //
-//get list point from dev
-//28/08/2018
+/////////////
     public List<Integer> devContourIdxList;
 
     public List<MatOfPoint> toListMatOfPointDevec(List<MatOfPoint> contours,
@@ -455,6 +475,9 @@ public class HandViewController implements Initializable {
         return listPoint;
     }
 
+/////////////
+//
+/////////////
     public void drawContour(List<MatOfPoint> contours, Mat frame
     ) {
         for (int i = 0; i < contours.size(); i++) {
@@ -463,6 +486,9 @@ public class HandViewController implements Initializable {
         }
     }
 
+/////////////
+//
+/////////////
     public void drawContour(List<MatOfPoint> contours, Mat frame,
             Integer[] Index
     ) {
@@ -470,16 +496,20 @@ public class HandViewController implements Initializable {
             Imgproc.drawContours(frame, contours, i, new Scalar(0, 255, 0), 3);
         }
     }
+
+/////////////
+//
+/////////////
     int i = 0;
 
     public void captureImage() {
         Imgcodecs.imwrite("E:\\TA\\h" + i + ".jpg", grabFrame());
         i++;
     }
-//
-//get list point from dev
-//28/08/2018
 
+/////////////
+//
+/////////////
     public void drawPointColor(List<MatOfPoint> contours, Mat frame,
             Integer[] index) {
         for (int i = 0; i < contours.get(0).toArray().length; i++) {
@@ -504,10 +534,10 @@ public class HandViewController implements Initializable {
             }
         }
     }
-//
-//get list point from dev
-//28/08/2018
 
+/////////////
+//
+/////////////
     public void drawPointColor(List<MatOfPoint> contours, Mat frame
     ) {
         Scalar s;
@@ -532,9 +562,9 @@ public class HandViewController implements Initializable {
         }
     }
 
-    //
-//get list point from dev
-//28/08/2018
+/////////////
+//
+/////////////
     public void drawPointColor(List<MatOfPoint> contours, Mat frame,
             List<Integer> index) {
 //        for (Integer integer : index) {
@@ -566,10 +596,10 @@ public class HandViewController implements Initializable {
         }
         Puncak.remove(k);
     }
-//
-//get list point from dev
-//28/08/2018
 
+/////////////
+//
+/////////////
     public void drawJumlahJari(List<MatOfPoint> contours, Mat frame,
             List<Integer> index) {
         Scalar s;
@@ -581,6 +611,12 @@ public class HandViewController implements Initializable {
 
 //                I
     }
+//****************************************************************************//
+//****************************************************************************//
+//****************************************************************************//
+//****************************************************************************//
+//****************************************************************************//
+//****************************************************************************//
     /*
     method untuk mencoba pada gambar
      */
@@ -622,25 +658,9 @@ public class HandViewController implements Initializable {
         SVMTry(hand);
     }
 
-    private Mat segment(Mat frameAsli, String lokasi) {
-        double tres = 50.0;
-        Mat frameUbah = frameAsli.clone();
-        diff = Imgcodecs.imread(lokasi);
-        Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.cvtColor(diff, diff, Imgproc.COLOR_BGR2GRAY);
-        Core.flip(diff, diff, 1);
-        Mat dist = new Mat();
-        diff = getBox(diff);
-//        Core.absdiff(diff, frameAsli, dist);
-//        batas minimum treshold
-        Imgproc.threshold(frameAsli, frameAsli, 100, 255,
-                Imgproc.THRESH_BINARY_INV);
-
-        cleaning(frameAsli);
-
-        return frameAsli;
-    }
-
+/////////////
+//
+/////////////
     public void SVMTry(Mat hand) {
         Mat m = hand.clone();
         hand = Imgcodecs.imread("E:\\TA\\hfull1.jpg");
@@ -664,6 +684,7 @@ public class HandViewController implements Initializable {
             trainingData[k + 1] = (float) contourPoint[Puncak.get(j)].y;
             k += 2;
         }
+//        Collections.sort(trainingData);
         System.out.println("isi traindata");
         for (float f : trainingData) {
             System.out.println(f);
@@ -697,8 +718,8 @@ public class HandViewController implements Initializable {
         contourPoint = contous.get(0).toArray();
         for (int j = 0; j < Puncak.size(); j++) {
             System.out.println(Puncak.get(j));
-            System.out.println("isi K " + k);
-            System.out.println("panjang contou " + contourPoint.length);
+            System.out.println(contourPoint[Puncak.get(j)].x + " || "
+                    + contourPoint[Puncak.get(j)].y);
             sampleMatData[k] = (float) contourPoint[Puncak.get(j)].x;
             sampleMatData[k + 1] = (float) contourPoint[Puncak.get(j)].y;
             k += 2;
@@ -707,8 +728,8 @@ public class HandViewController implements Initializable {
 //****************************************************************************//
 //****************************************************************************//
         // Set up training data
-        int[] labels = {1, -1, -1, -1};
-        float[] trainingData2 = {501, 10, 255, 10, 501, 255, 10, 501};
+        int[] labels = {1};
+//        float[] trainingData2 = {501, 10, 255, 10, 501, 255, 10, 501};
         Mat trainingDataMat = new Mat(5, 2, CvType.CV_32FC1);
         trainingDataMat.put(0, 0, trainingData);
         Mat labelsMat = new Mat(5, 1, CvType.CV_32SC1);
@@ -722,6 +743,10 @@ public class HandViewController implements Initializable {
 //        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
         svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
         svm.save("E:\\TA\\h1.xml");
+
+//****************************************************************************//
+//****************************************************************************//
+//****************************************************************************//
         // Data for visual representation
         int width = tresholded.width(), height = tresholded.height();
         Mat image = Mat.zeros(height, width, CvType.CV_8UC3);
@@ -741,11 +766,10 @@ public class HandViewController implements Initializable {
 //                sampleMatData[1] = 10;
         sampleMat.put(0, 0, sampleMatData);
         float response = svm.predict(sampleMat);
-//                Imgcodecs.imwrite("E:\\TA\\SVM\\svm" + i + ".jpg", image);
         if (response == 1) {
             System.out.println("berhasil");
-        } else if (response == -1) {
-            System.out.println("gagal");
+        } else {
+            System.out.println(response + " gagal");
         }
 //            }
 //        }
@@ -755,9 +779,9 @@ public class HandViewController implements Initializable {
         // Show the training data
         int thickness = -1;
         int lineType = Core.LINE_8;
-        for (int j = 0; j < 10; j += 2) {
+        for (int j = 0; j < sampleMatData.length; j += 2) {
             Imgproc.circle(image,
-                    new Point(trainingData[j], trainingData[j + 1]), 5,
+                    new Point(sampleMatData[j], sampleMatData[j + 1]), 5,
                     new Scalar(255, 255, 255),
                     thickness, lineType, 0);
         }
@@ -773,7 +797,7 @@ public class HandViewController implements Initializable {
                     * sv.cols() + 1]), 6,
                     new Scalar(255, 0, 0), thickness, lineType, 0);
         }
-        layarEdge.setImage(Utils.mat2Image(hand));
+        layarEdge.setImage(Utils.mat2Image(image));
         svm.predict(sampleMat);
 //****************************************************************************//
 //****************************************************************************//
