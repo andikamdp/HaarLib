@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package haarcoba;
+package src.controller;
 
+import src.Utils;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
@@ -56,18 +57,18 @@ public class HaarCobaController implements Initializable {
     private ImageView frame;
     @FXML
     private ToggleGroup haar;
+    @FXML
+    private RadioButton haar8;
+    @FXML
+    private RadioButton haar9;
 ////
-
+    private MainAppController mainAppController;
     private ScheduledExecutorService timer;
     private VideoCapture capture;
     private boolean cameraActive;
 
     private CascadeClassifier haarCascade;
     private int absoluteFaceSize;
-    @FXML
-    private RadioButton haar8;
-    @FXML
-    private RadioButton haar9;
 
     /**
      * Initializes the controller class.
@@ -242,5 +243,9 @@ public class HaarCobaController implements Initializable {
 
     @FXML
     private void GetPoint(MouseEvent event) {
+    }
+
+    public void setMainController(MainAppController aThis) {
+        mainAppController = aThis;
     }
 }

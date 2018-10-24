@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="AnchorPane" prefHeight="602.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.SetImageController">
+   <children>
+      <BorderPane layoutX="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <center>
+            <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getFramePointOnClick" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+         </center>
+         <left>
+            <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#switchImageBWToMain" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#switchImageEdgeToMain" pickOnBounds="true" preserveRatio="true" />
+                  <Button fx:id="btnflipImage" mnemonicParsing="false" onAction="#FlipImageOnClick" text="Flip Image Y" />
+                  <Button fx:id="btnflipImage1" mnemonicParsing="false" onAction="#FlipImageOnClick" text="Flip Image X" />
+                  <Button fx:id="btnOpenImage" mnemonicParsing="false" onAction="#openImageOnClick" text="Open Image" />
+                  <Button fx:id="btnNextImage" mnemonicParsing="false" onAction="#showNextImageOnClick" text="Next Image" />
+                  <Button fx:id="btnSaveImage" mnemonicParsing="false" onAction="#saveImageOnClick" text="Save Image" />
+                  <TextField fx:id="txtBoxFileName" />
+                  <TextField fx:id="txtBoxFolderName" />
+                  <TextField fx:id="txtS" />
+                  <TextField fx:id="txtValue" />
+               </children>
+            </VBox>
+         </left>
+      </BorderPane>
+   </children>
+</AnchorPane>
