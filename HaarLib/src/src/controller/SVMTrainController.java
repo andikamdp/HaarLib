@@ -68,6 +68,7 @@ public class SVMTrainController implements Initializable {
     @FXML
     private void trainOnClick(ActionEvent event) {
         SVMTry();
+//        SVMTryHOG();
     }
 
     @FXML
@@ -98,18 +99,22 @@ public class SVMTrainController implements Initializable {
         trainingDataMat.push_back(trainingDataMat_3);
         labelsMat.push_back(labelsMat_3);
         //######################################################################
-        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
-        trainingDataMat = null;
-        labelsMat = null;
+//        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+//        trainingDataMat = null;
+//        labelsMat = null;
+        trainingDataMat_2 = null;
+        labelsMat_2 = null;
+        trainingDataMat_3 = null;
+        labelsMat_3 = null;
         System.gc();
         //######################################################################
         System.out.println("Try1JempolTelunjukKelingking");
-//        Mat trainingDataMat_4 = getTrainSVMEdge("Try1JempolTelunjukKelingking");
-//        Mat labelsMat_4 = getLabel(trainingDataMat_4.rows(), 125);
-//        trainingDataMat.push_back(trainingDataMat_4);
-//        labelsMat.push_back(labelsMat_4);
-        trainingDataMat = getTrainSVMEdge("Try1JempolTelunjukKelingking");
-        labelsMat = getLabel(trainingDataMat.rows(), 125);
+        Mat trainingDataMat_4 = getTrainSVMEdge("Try1JempolTelunjukKelingking");
+        Mat labelsMat_4 = getLabel(trainingDataMat_4.rows(), 125);
+        trainingDataMat.push_back(trainingDataMat_4);
+        labelsMat.push_back(labelsMat_4);
+//        trainingDataMat = getTrainSVMEdge("Try1JempolTelunjukKelingking");
+//        labelsMat = getLabel(trainingDataMat.rows(), 125);
         //######################################################################
         System.out.println("Try1JempolTelunjukTengah");
         Mat trainingDataMat_5 = getTrainSVMEdge("Try1JempolTelunjukTengah");
@@ -123,28 +128,36 @@ public class SVMTrainController implements Initializable {
         trainingDataMat.push_back(trainingDataMat_6);
         labelsMat.push_back(labelsMat_6);
         //######################################################################
-        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
-        trainingDataMat = null;
-        labelsMat = null;
+//        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+//        trainingDataMat = null;
+//        labelsMat = null;
+        trainingDataMat_4 = null;
+        labelsMat_4 = null;
+        trainingDataMat_5 = null;
+        labelsMat_5 = null;
+        trainingDataMat_6 = null;
+        labelsMat_6 = null;
         System.gc();
         //######################################################################
-        System.out.println("Try1TelunjukKelingking");
+//        System.out.println("Try1TelunjukKelingking");
 //        Mat trainingDataMat_7 = getTrainSVMEdge("Try1TelunjukKelingking");
 //        Mat labelsMat_7 = getLabel(trainingDataMat_7.rows(), 25);
 //        trainingDataMat.push_back(trainingDataMat_7);
 //        labelsMat.push_back(labelsMat_7);
-        trainingDataMat = getTrainSVMEdge("Try1TelunjukKelingking");
-        labelsMat = getLabel(trainingDataMat.rows(), 25);
+//        trainingDataMat = getTrainSVMEdge("Try1TelunjukKelingking");
+//        labelsMat = getLabel(trainingDataMat.rows(), 25);
         //######################################################################
-        System.out.println("Try1telunjukTengah");
-        Mat trainingDataMat_8 = getTrainSVMEdge("Try1telunjukTengah");
-        Mat labelsMat_8 = getLabel(trainingDataMat_8.rows(), 23);
-        trainingDataMat.push_back(trainingDataMat_8);
-        labelsMat.push_back(labelsMat_8);
+//        System.out.println("Try1telunjukTengah");
+//        Mat trainingDataMat_8 = getTrainSVMEdge("Try1telunjukTengah");
+//        Mat labelsMat_8 = getLabel(trainingDataMat_8.rows(), 23);
+//        trainingDataMat.push_back(trainingDataMat_8);
+//        labelsMat.push_back(labelsMat_8);
         //################svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);######################################################
-        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
-        trainingDataMat = null;
-        labelsMat = null;
+//        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+//        trainingDataMat_7 = null;
+//        labelsMat_7 = null;
+//        trainingDataMat_8 = null;
+//        labelsMat_8 = null;
         System.gc();
         //######################################################################
         svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
@@ -164,6 +177,98 @@ public class SVMTrainController implements Initializable {
             System.out.println(listOfFiles[j].getName() + ": " + label);
         }
         svm.save("E:\\TA\\hCoba.xml");
+    }
+
+    public void SVMTryHOG() {
+        SVM svm = SVM.create();
+        svm.setType(SVM.C_SVC);
+        svm.setKernel(SVM.LINEAR);
+        svm.setTermCriteria(new TermCriteria(TermCriteria.MAX_ITER, 100, 1e-6));
+        //######################################################################
+        System.out.println("Try1HandFull");
+        Mat trainingDataMat = getTrainSVMHOG("Try1HandFull");
+        Mat labelsMat = getLabel(trainingDataMat.rows(), 12345);
+//        trainingDataMat.push_back(trainingDataMat);
+//        labelsMat.push_back(labelsMat);
+        //######################################################################
+        System.out.println("Try1JempolKelingking");
+        Mat trainingDataMat_2 = getTrainSVMHOG("Try1JempolKelingking");
+        Mat labelsMat_2 = getLabel(trainingDataMat_2.rows(), 15);
+        trainingDataMat.push_back(trainingDataMat_2);
+        labelsMat.push_back(labelsMat_2);
+        //######################################################################
+        System.out.println("Try1JempolTelunjuk");
+        Mat trainingDataMat_3 = getTrainSVMHOG("Try1JempolTelunjuk");
+        Mat labelsMat_3 = getLabel(trainingDataMat_3.rows(), 12);
+        trainingDataMat.push_back(trainingDataMat_3);
+        labelsMat.push_back(labelsMat_3);
+        //######################################################################
+        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+        trainingDataMat = null;
+        labelsMat = null;
+        System.gc();
+        //######################################################################
+//        System.out.println("Try1JempolTelunjukKelingking");
+////        Mat trainingDataMat_4 = getTrainSVMHOG("Try1JempolTelunjukKelingking");
+////        Mat labelsMat_4 = getLabel(trainingDataMat_4.rows(), 125);
+////        trainingDataMat.push_back(trainingDataMat_4);
+////        labelsMat.push_back(labelsMat_4);
+//        trainingDataMat = getTrainSVMHOG("Try1JempolTelunjukKelingking");
+//        labelsMat = getLabel(trainingDataMat.rows(), 125);
+//        //######################################################################
+//        System.out.println("Try1JempolTelunjukTengah");
+//        Mat trainingDataMat_5 = getTrainSVMHOG("Try1JempolTelunjukTengah");
+//        Mat labelsMat_5 = getLabel(trainingDataMat_5.rows(), 123);
+//        trainingDataMat.push_back(trainingDataMat_5);
+//        labelsMat.push_back(labelsMat_5);
+//        //######################################################################
+//        System.out.println("Try1telunjuk");
+//        Mat trainingDataMat_6 = getTrainSVMHOG("Try1telunjuk");
+//        Mat labelsMat_6 = getLabel(trainingDataMat_6.rows(), 2);
+//        trainingDataMat.push_back(trainingDataMat_6);
+//        labelsMat.push_back(labelsMat_6);
+//        //######################################################################
+//        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+//        trainingDataMat = null;
+//        labelsMat = null;
+//        System.gc();
+//        //######################################################################
+//        System.out.println("Try1TelunjukKelingking");
+////        Mat trainingDataMat_7 = getTrainSVMHOG("Try1TelunjukKelingking");
+////        Mat labelsMat_7 = getLabel(trainingDataMat_7.rows(), 25);
+////        trainingDataMat.push_back(trainingDataMat_7);
+////        labelsMat.push_back(labelsMat_7);
+//        trainingDataMat = getTrainSVMHOG("Try1TelunjukKelingking");
+//        labelsMat = getLabel(trainingDataMat.rows(), 25);
+//        //######################################################################
+//        System.out.println("Try1telunjukTengah");
+//        Mat trainingDataMat_8 = getTrainSVMHOG("Try1telunjukTengah");
+//        Mat labelsMat_8 = getLabel(trainingDataMat_8.rows(), 23);
+//        trainingDataMat.push_back(trainingDataMat_8);
+//        labelsMat.push_back(labelsMat_8);
+//        //################svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);######################################################
+//        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+//        trainingDataMat = null;
+//        labelsMat = null;
+//        System.gc();
+//        //######################################################################
+//        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+//        svm.save("E:\\TA\\hCoba.xml");
+//        //######################################################################
+////        List<Mat> sampleDataMat = getSampleSVM("penuhSample");
+////        System.out.println("trainingDataMat.rows() " + sampleDataMat.size());
+////        for (Mat mat : sampleDataMat) {
+////            float label = svm.predict(mat);
+////            System.out.println("label " + label);
+////        }
+//        Mat sampleDataMat = getSampleSVMHOG("a");
+//        File folder = new File("E:\\TA\\HandLearnSVM\\Try1\\Sample");
+//        File[] listOfFiles = folder.listFiles();
+//        for (int j = 0; j < sampleDataMat.rows(); j++) {
+//            float label = svm.predict(sampleDataMat.row(j));
+//            System.out.println(listOfFiles[j].getName() + ": " + label);
+//        }
+//        svm.save("E:\\TA\\hCoba.xml");
     }
 
     public Mat getTrainSVM(String lokasi) {
@@ -503,15 +608,47 @@ public class SVMTrainController implements Initializable {
         for (int i = 0; i < listOfFiles.length; i++) {
             Mat hand = Imgcodecs.imread(folder.getPath() + "\\" + listOfFiles[i].getName(), CvType.CV_32F);
             Imgproc.cvtColor(hand, hand, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.resize(hand, hand, new Size(640, 480));
             hog.compute(hand, descriptors);
-
+            System.out.println("descriptors.size() " + descriptors.size() + "descriptors.get(0,0)[0] " + descriptors.get(0, 0)[0]);
             float[] trainingData = new float[descriptors.rows()];
-            for (int j = 0; j < hand.cols(); j++) {
-                trainingData[j] = (float) hand.get(j, 0)[0];
+            for (int j = 0; j < descriptors.rows(); j++) {
+                trainingData[j] = (float) descriptors.get(j, 0)[0];
             }
 
             trainingDataMat.put(i, 0, trainingData);
 
+        }
+        return trainingDataMat;
+    }
+
+    public Mat getSampleSVMHOG(String lokasi) {
+        File folder = new File("E:\\TA\\HandLearnSVM\\Try1\\Sample");
+//        File folder = new File("E:\\TA\\HandLearnSVM\\leapGestRecog\\sample");
+//        File folder = new File("E:\\TA\\HandLearnSVM\\hand-gestures\\s");
+        File[] listOfFiles = folder.listFiles();
+/////////////
+//prepate Mat
+/////////////
+        Mat trainingDataMat = new Mat(listOfFiles.length, 480 * 640, CvType.CV_32FC1);
+
+        System.out.println(listOfFiles.length);
+        System.out.println(folder.getPath());
+        HOGDescriptor hog = new HOGDescriptor();
+        MatOfFloat descriptors = new MatOfFloat();
+
+        for (int i = 0; i < listOfFiles.length; i++) {
+            Mat hand = Imgcodecs.imread(folder.getPath() + "\\" + listOfFiles[i].getName(), CvType.CV_32F);
+            Imgproc.cvtColor(hand, hand, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.resize(hand, hand, new Size(640, 480));
+            hog.compute(hand, descriptors);
+            System.out.println("descriptors.size() " + descriptors.size() + "descriptors.get(0,0)[0] " + descriptors.get(0, 0)[0]);
+//            float[] trainingData = new float[descriptors.rows()];
+//            for (int j = 0; j < descriptors.rows(); j++) {
+//                trainingData[j] = (float) descriptors.get(j, 0)[0];
+//            }
+
+//            trainingDataMat.put(i, 0, trainingData);
         }
         return trainingDataMat;
     }

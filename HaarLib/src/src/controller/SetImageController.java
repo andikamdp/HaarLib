@@ -27,6 +27,7 @@ import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.ml.SVM;
 import src.Utils;
 import src.utils.Preprocessing;
 
@@ -62,10 +63,15 @@ public class SetImageController implements Initializable {
     private Button btnflipImage1;
     @FXML
     private Button btnOpenImage;
+    @FXML
+    private Button btnPredictImage;
 ///
     private File folder;
     private File[] listOfFiles;
     private int indexFile, index;
+    private SVM svm;
+    @FXML
+    private TextField txtIndexFile;
 
     /**
      * Initializes the controller class.
@@ -74,6 +80,7 @@ public class SetImageController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         location = "";
+//        svm = SVM.load("E:\\TA\\hCoba.xml");
     }
 
     @FXML
@@ -99,14 +106,16 @@ public class SetImageController implements Initializable {
 
     @FXML
     private void showNextImageOnClick(ActionEvent event) {
-
+//        if (!txtIndexFile.equals(null)) {
+//            index = (int) txtIndexFile.getText();
+//        }
         Mat hand = Imgcodecs.imread(folder.getAbsolutePath() + "\\" + listOfFiles[index].getName());
         txtBoxFileName.setText(listOfFiles[index].getName());
 //        layarMain.setImage(Utils.mat2Image(hand));
 //        Mat tresholdedHand = Preprocessing.segment(hand.clone());
 //        layarBW.setImage(Utils.mat2Image(tresholdedHand));
 //        Start(hand);
-        hog(hand);
+//        hog(hand);
         if (index < indexFile) {
             index++;
         } else {
@@ -225,8 +234,7 @@ public class SetImageController implements Initializable {
 //            drawPointColor(contous, hand, devContourIdxList);
             layarEdge.setImage(Utils.mat2Image(hand2));
         } catch (Exception e) {
-            System.out.
-                    println("hapusTitik(List<MatOfPoint> contours, Mat hand)");
+            System.out.println("hapusTitik(List<MatOfPoint> contours, Mat hand)");
             System.out.println(e);
             System.out.println("");
         }
@@ -237,6 +245,7 @@ public class SetImageController implements Initializable {
         Image imageToMat;
         Core.flip(frame, frame, 1);
         Mat hand = Preprocessing.getBox(frame.clone());
+//        Mat hand = frame.clone();
 //        Mat hand = frame;
 //        Mat tresholded = Preprocessing.segment(hand.clone());
         Mat tresholded = Preprocessing.segmentInvers(hand.clone());
@@ -245,6 +254,7 @@ public class SetImageController implements Initializable {
 
         List<MatOfPoint> contous = Preprocessing.getContour(tresholded);
         Preprocessing.toListContour(contous.get(0));
+        System.out.println("contous " + contous.get(0).rows() + " " + contous.get(0).size());
         List<MatOfInt4> devOfInt4s = Preprocessing.getDevectIndexPoint(contous);
         devContourIdxList = devOfInt4s.get(0).toList();
 //        Preprocessing.toListMatOfPointDevec(contous, devOfInt4s, devContourIdxList);
@@ -255,6 +265,33 @@ public class SetImageController implements Initializable {
         layarMain.setImage(Utils.mat2Image(frame));
         imageToMat = Utils.mat2Image(hand);
 
+    }
+
+    public Mat getSampleSVMEdge() {
+
+/////////////
+//prepate Mat
+/////////////
+        Mat trainingDataMat = new Mat(1, 480 * 640, CvType.CV_32FC1);
+
+        System.out.println(listOfFiles.length);
+
+//        for (int i = 0; i < listOfFiles.length; i++) {
+        Mat hand = Imgcodecs.imread(folder.getAbsolutePath() + "\\" + listOfFiles[index].getName(), CvType.CV_32F);
+        layarMain.setImage(Utils.mat2Image(hand));
+//        Mat hand = Imgcodecs.imread(folder.getPath() + "\\" + listOfFiles[i].getName(), CvType.CV_32F);
+        layarEdge.setImage(Utils.mat2Image(Preprocessing.getEdge_2(hand.clone())));
+        hand = Preprocessing.getEdge(hand);
+//            System.out.println("hand " + hand.rows() + " " + hand.cols());
+        float[] trainingData = new float[hand.cols()];
+        for (int j = 0; j < hand.cols(); j++) {
+            trainingData[j] = (float) hand.get(0, j)[0];
+        }
+        System.out.println("trainingData.length " + trainingData.length);
+        trainingDataMat.put(0, 0, trainingData);
+
+//        }
+        return trainingDataMat;
     }
 
     private void hog(Mat frame) {
@@ -284,8 +321,18 @@ public class SetImageController implements Initializable {
         System.out.println("mag.cols() " + mag.cols());
         System.out.println("mag.type() " + mag.type());
         System.out.println("mag.channels() " + mag.channels());
-        layarMain.setImage(Utils.mat2Image(mag));
-        layarBW.setImage(Utils.mat2Image(gx));
-        layarEdge.setImage(Utils.mat2Image(gy));
+//        layarMain.setImage(Utils.mat2Image(mag));
+//        layarBW.setImage(Utils.mat2Image(gx));
+//        layarEdge.setImage(Utils.mat2Image(gy));
+    }
+
+    @FXML
+    private void predictImageOnClick(ActionEvent event) {
+        Mat sampleDataMat = getSampleSVMEdge();
+        File folder = new File("E:\\TA\\HandLearnSVM\\Try1\\Sample");
+        File[] listOfFiles = folder.listFiles();
+
+//        float label = svm.predict(sampleDataMat);
+//        System.out.println("label " + label);
     }
 }

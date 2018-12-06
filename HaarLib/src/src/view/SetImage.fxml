@@ -22,7 +22,9 @@
                   <Button fx:id="btnflipImage1" mnemonicParsing="false" onAction="#FlipImageOnClick" text="Flip Image X" />
                   <Button fx:id="btnOpenImage" mnemonicParsing="false" onAction="#openImageOnClick" text="Open Image" />
                   <Button fx:id="btnNextImage" mnemonicParsing="false" onAction="#showNextImageOnClick" text="Next Image" />
+                  <Button fx:id="btnPredictImage" mnemonicParsing="false" onAction="#predictImageOnClick" text="Predict Image" />
                   <Button fx:id="btnSaveImage" mnemonicParsing="false" onAction="#saveImageOnClick" text="Save Image" />
+                  <TextField fx:id="txtIndexFile" />
                   <TextField fx:id="txtBoxFileName" />
                   <TextField fx:id="txtBoxFolderName" />
                   <TextField fx:id="txtS" />

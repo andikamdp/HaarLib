@@ -220,7 +220,7 @@ public class HandViewController implements Initializable {
         Core.flip(frame, frame, 1);
         Preprocessing.drawRect(frame);
         Mat hand = Preprocessing.getBox(frame.clone());
-        Mat tresholded = Preprocessing.segmentInvers(hand.clone());
+        Mat tresholded = Preprocessing.segment(hand.clone());
         imageToMat = Utils.mat2Image(tresholded);
         updateImageView(layarBW, imageToMat);
         contous = Preprocessing.getContour(tresholded);

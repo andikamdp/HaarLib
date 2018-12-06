@@ -13,23 +13,15 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.layout.AnchorPane;
-import src.controller.HaarCobaController;
 import src.controller.HaarCobaController;
 import java.io.IOException;
 import java.util.logging.Logger;
 import javafx.scene.Scene;
 
 import java.util.logging.Level;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.core.Size;
-import org.opencv.imgproc.Imgproc;
 import src.MainApp;
 
 /**
@@ -59,6 +51,10 @@ public class MainAppController implements Initializable {
     }
     private Stage haarWindow;
 
+    /**
+     * onClick action Membuka window baru Haar testing
+     *
+     */
     @FXML
     private void haarOpenWindowOnClick(ActionEvent event) {
         try {
@@ -80,6 +76,10 @@ public class MainAppController implements Initializable {
 
     }
 
+    /**
+     * onClick action membuka window baru berisi gui training SVM
+     *
+     */
     @FXML
     private void svmTrainWindowOnClick(ActionEvent event) {
         try {
@@ -100,6 +100,10 @@ public class MainAppController implements Initializable {
         }
     }
 
+    /**
+     * onClick action membuka window baru berisi live capture image
+     *
+     */
     @FXML
     private void svmPredictOnClick(ActionEvent event) {
         try {
@@ -120,6 +124,9 @@ public class MainAppController implements Initializable {
         }
     }
 
+    /**
+     * onClick action membuka window baru berisi predict pergambar
+     */
     @FXML
     private void setImageViewOnClick(ActionEvent event) {
         try {
