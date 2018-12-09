@@ -269,9 +269,6 @@ public class SetImageController implements Initializable {
 
     public Mat getSampleSVMEdge() {
 
-/////////////
-//prepate Mat
-/////////////
         Mat trainingDataMat = new Mat(1, 480 * 640, CvType.CV_32FC1);
 
         System.out.println(listOfFiles.length);
@@ -292,38 +289,6 @@ public class SetImageController implements Initializable {
 
 //        }
         return trainingDataMat;
-    }
-
-    private void hog(Mat frame) {
-//        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
-        System.out.println("frame.rows() " + frame.rows());
-        System.out.println("frame.cols() " + frame.cols());
-        System.out.println("frame.type() " + frame.type());
-        System.out.println("frame.channels() " + frame.channels());
-//        frame = Preprocessing.segmentInvers(frame);
-//        frame.convertTo(frame, CvType.CV_32F);
-        Mat gx = new Mat(), gy = new Mat();
-        Imgproc.Sobel(frame, gx, CvType.CV_32F, 1, 0);
-        Imgproc.Sobel(frame, gy, CvType.CV_32F, 0, 1);
-//
-        Mat mag = new Mat(), angel = new Mat();
-        Core.cartToPolar(gx, gy, mag, angel, true);
-
-        System.out.println("gx.rows() " + gx.rows());
-        System.out.println("gx.cols() " + gx.cols());
-        System.out.println("gx.type() " + gx.type());
-        System.out.println("gx.channels() " + gx.channels());
-        System.out.println("gy.rows() " + gy.rows());
-        System.out.println("gy.cols() " + gy.cols());
-        System.out.println("gy.type() " + gy.type());
-        System.out.println("gy.channels() " + gy.channels());
-        System.out.println("mag.rows() " + mag.rows());
-        System.out.println("mag.cols() " + mag.cols());
-        System.out.println("mag.type() " + mag.type());
-        System.out.println("mag.channels() " + mag.channels());
-//        layarMain.setImage(Utils.mat2Image(mag));
-//        layarBW.setImage(Utils.mat2Image(gx));
-//        layarEdge.setImage(Utils.mat2Image(gy));
     }
 
     @FXML

@@ -170,16 +170,12 @@ public final class Preprocessing {
      */
     public static Mat getEdge(Mat frame) {
         frame = segment(frame);
-//        frame = frame.reshape(1, 1);
         Core.flip(frame, frame, 1);
-//        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
         Mat dist = new Mat();
-//        batas minimum treshold
         Imgproc.threshold(frame, frame, 100, 255, Imgproc.THRESH_BINARY_INV);
         cleaning(frame);
-
-        Imgproc.resize(frame, frame, new Size(640, 480));
-//        Imgproc.Canny(frame, frame, 0.2, 0.2);
+        Imgproc.resize(frame, frame, new Size(64, 48));
+        Imgproc.Canny(frame, frame, 0.2, 0.2);
         frame = frame.reshape(1, 1);
         return frame;
     }
