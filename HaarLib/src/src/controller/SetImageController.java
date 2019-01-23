@@ -248,7 +248,7 @@ public class SetImageController implements Initializable {
 //        Mat hand = frame.clone();
 //        Mat hand = frame;
 //        Mat tresholded = Preprocessing.segment(hand.clone());
-        Mat tresholded = Preprocessing.segmentInvers(hand.clone());
+        Mat tresholded = Preprocessing.segmentInvers(hand.clone(), Double.valueOf(txtValue.getText()));
         layarBW.setImage(Utils.mat2Image(tresholded));
         imageToMat = Utils.mat2Image(tresholded);
 

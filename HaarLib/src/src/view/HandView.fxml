@@ -11,15 +11,15 @@
    <children>
       <BorderPane layoutX="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
-            <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#GetPoint" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+            <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getPoint" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </center>
          <left>
             <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#BwToMn" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#EdgeToMn" pickOnBounds="true" preserveRatio="true" />
-                  <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#StartCameraOnClick" text="Start Camera" />
-                  <Button fx:id="btnUpdateCamera" mnemonicParsing="false" onAction="#UpdateCameraOnClick" text="Update Camera" />
+                  <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#bwToMn" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#edgeToMn" pickOnBounds="true" preserveRatio="true" />
+                  <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" />
+                  <Button fx:id="btnUpdateCamera" mnemonicParsing="false" onAction="#updateCameraOnClick" text="Update Camera" />
                   <Button mnemonicParsing="false" onAction="#capturePictureOnSction" text="Button" />
                   <TextField fx:id="txtH" />
                   <TextField fx:id="txtV" />

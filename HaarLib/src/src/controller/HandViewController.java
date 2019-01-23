@@ -159,9 +159,9 @@ public class HandViewController implements Initializable {
         Mat hand = Preprocessing.getBox(frame.clone());
         Mat tresholded;
         if (txtS.getText().isEmpty()) {
-            tresholded = Preprocessing.segment(hand.clone());
+            tresholded = Preprocessing.segment(hand.clone(), Double.valueOf(txtValue.getText()));
         } else {
-            tresholded = Preprocessing.segmentInvers(hand.clone());
+            tresholded = Preprocessing.segmentInvers(hand.clone(), Double.valueOf(txtValue.getText()));
         }
         imageToMat = Utils.mat2Image(tresholded);
         updateImageView(layarBW, imageToMat);
@@ -181,7 +181,8 @@ public class HandViewController implements Initializable {
         Point p_ = new Point(x_ + 10, y_);
         //
 
-        Mat handView = Preprocessing.drawRect(hand.clone(), p, p_);
+//        Mat handView = Preprocessing.drawRect(hand.clone(), p, p_);
+        Mat handView = Preprocessing.getEdge_2(hand.clone());
 //        hapusTitik(contous, Preprocessing.getBox(frame));
         layarMain.setImage(Utils.mat2Image(frame));
         imageToMat = Utils.mat2Image(tresholded);
@@ -189,8 +190,23 @@ public class HandViewController implements Initializable {
         imageToMat = Utils.mat2Image(handView);
         updateImageView(layarEdge, imageToMat);
         hand = Preprocessing.getBox(hand, p, p_);
-
-        captureImage(hand);
+        System.out.println(handView.get(0, 0).length);
+//        captureImage(hand);
+        for (int j = 0; j < handView.rows(); j++) {
+            for (int k = 0; k < handView.cols(); k++) {
+                System.out.print(handView.get(j, k)[0] + " ");
+            }
+            System.out.println("");
+        }
+        System.out.println("p");
+        handView = Preprocessing.getEdge(hand.clone());
+        for (int j = 0; j < handView.rows(); j++) {
+            for (int k = 0; k < handView.cols(); k++) {
+                System.out.print(handView.get(j, k)[0] + " ");
+            }
+            System.out.println("");
+        }
+        System.out.println("q");
 
     }
 
@@ -328,7 +344,7 @@ public class HandViewController implements Initializable {
      * ImageView layarMain
      */
     @FXML
-    private void BwToMn(MouseEvent event) {
+    private void bwToMn(MouseEvent event) {
         Image Mn = layarBW.getImage();
         layarBW.setImage(layarMain.getImage());
         layarMain.setImage(Mn);
@@ -344,7 +360,7 @@ public class HandViewController implements Initializable {
      * ImageView layarMain
      */
     @FXML
-    private void EdgeToMn(MouseEvent event) {
+    private void edgeToMn(MouseEvent event) {
         Image Mn = layarEdge.getImage();
         layarEdge.setImage(layarMain.getImage());
         layarMain.setImage(Mn);
@@ -364,14 +380,16 @@ public class HandViewController implements Initializable {
      */
     @FXML
     private void capturePictureOnSction(ActionEvent event) {
-        String bg = "E:\\TA\\h0.jpg";
+//        String bg = "E:\\TA\\h0.jpg";
         Mat hand;
         if (txtH.getText().isEmpty()) {
-            hand = Imgcodecs.imread("E:\\TA\\HandLearnSVM\\penuh\\hfull0.jpg");
+            hand = Imgcodecs.imread("C:\\Users\\Andika Mulyawan\\Desktop\\1.jpg");
         } else {
             hand = Imgcodecs.imread("E:\\TA\\HandLearnSVM\\penuh\\hfull" + txtH.getText() + ".jpg");
         }
-//        Start(hand);
+        start(hand);
+//        Image edge = layarEdge.getImage();
+
     }
 
 //######################################################################

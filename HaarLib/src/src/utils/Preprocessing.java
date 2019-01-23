@@ -14,11 +14,13 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfInt4;
+import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
+import org.opencv.features2d.ORB;
 import org.opencv.imgproc.Imgproc;
 
 /**
@@ -154,7 +156,7 @@ public final class Preprocessing {
      * Mat frame : berisi gambar awal
      */
     public static Mat getEdge_2(Mat frame) {
-        frame = segment(frame);
+        frame = segment(frame, 0);
         Imgproc.Canny(frame, frame, 0.2, 0.2);
         return frame;
     }
@@ -169,11 +171,11 @@ public final class Preprocessing {
      *
      */
     public static Mat getEdge(Mat frame) {
-        frame = segment(frame);
-        Core.flip(frame, frame, 1);
-        Mat dist = new Mat();
-        Imgproc.threshold(frame, frame, 100, 255, Imgproc.THRESH_BINARY_INV);
-        cleaning(frame);
+        frame = segment(frame, 0);
+//        Core.flip(frame, frame, 1);
+//        Mat dist = new Mat();
+//        Imgproc.threshold(frame, frame, 100, 255, Imgproc.THRESH_BINARY_INV);
+//        cleaning(frame);
         Imgproc.resize(frame, frame, new Size(64, 48));
         Imgproc.Canny(frame, frame, 0.2, 0.2);
         frame = frame.reshape(1, 1);
@@ -189,18 +191,17 @@ public final class Preprocessing {
      * Mat frameAsli : berisi gambar dengan warna utuh
      * 12/6/18 6:59 AM
      */
-    public static Mat segmentInvers(Mat frameAsli) {
+    public static Mat segmentInvers(Mat frameAsli, double tres) {
         try {
-            double tres = 0.5;
+
 //            Scalar upperb = new Scalar(64, 223, 255);
 //            Scalar lowerb = new Scalar(0, 0, 0);
 //            Core.inRange(frameAsli, lowerb, upperb, frameAsli););
-
             Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
-//        Imgproc.accumulateWeighted(frame, frame, 0.5);
             Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
+//        Imgproc.accumulateWeighted(frame, frame, 0.5);
             Mat dist = new Mat();
-            Imgproc.threshold(frameAsli, frameAsli, 0, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
+            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
             cleaning(frameAsli);
         } catch (Exception e) {
             System.out.println("segment(Mat frameAsli)");
@@ -220,17 +221,15 @@ public final class Preprocessing {
      * Mat frameAsli : berisi gambar dengan warna utuh
      * 12/6/18 6:59 AM
      */
-    public static Mat segment(Mat frameAsli) {
+    public static Mat segment(Mat frameAsli, double tres) {
         try {
-//            double tres = 50.0;
-            double tres = .5;
 //            Scalar upperb = new Scalar(64, 223, 255);
 //            Scalar lowerb = new Scalar(0, 0, 0);
 //            Core.inRange(frameAsli, lowerb, upperb, frameAsli);
             Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
 //            Imgproc.accumulateWeighted(frameAsli, frameAsli, 10000);
             Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
-            Imgproc.threshold(frameAsli, frameAsli, 0, 255,
+            Imgproc.threshold(frameAsli, frameAsli, tres, 255,
                     Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
             cleaning(frameAsli);
         } catch (Exception e) {
@@ -261,7 +260,6 @@ public final class Preprocessing {
          * belum berhasil di jalamkan
          * Imgproc.accumulateWeighted(frame, frame, 0.5);
          */
-        Imgproc.GaussianBlur(frame, frame, new Size(7, 7), 0);
         return frame;
     }
 //######################################################################
@@ -280,7 +278,6 @@ public final class Preprocessing {
         frame = frame.submat(rectCrop);
         //# convert the roi to grayscale and blur it
 //        Imgproc.accumulateWeighted(frame, frame, 0.5);
-        Imgproc.GaussianBlur(frame, frame, new Size(7, 7), 0);
         return frame;
     }
 //######################################################################
@@ -660,5 +657,23 @@ public final class Preprocessing {
             }
         });
         return listPoint;
+    }
+//######################################################################
+
+    /**
+     * Mencoba menggunakan fature detection orb
+     */
+    public static void orb(Mat image) {
+
+        Imgproc.resize(image, image, new Size(64, 48));
+        ORB b = ORB.create();
+
+        MatOfKeyPoint keyPoints = new MatOfKeyPoint();
+        b.detect(image, keyPoints);
+//        System.out.println("keyPoints.rows() " + keyPoints.rows() + "keyPoints.cols()" + keyPoints.rows());
+        Mat des = new Mat();
+        b.compute(image, keyPoints, des);
+//        System.out.println("des.rows() " + des.rows() + "des.cols()" + des.rows());
+//        Imgproc.drawMarker(image, keyPoints.get(0, 0), new Scalar(255, 0, 0));
     }
 }

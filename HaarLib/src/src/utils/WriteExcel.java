@@ -11,7 +11,10 @@ package src.utils;
  */
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import jxl.CellView;
 import jxl.Workbook;
@@ -131,10 +134,38 @@ public class WriteExcel {
     }
 
     public static void main(String[] args) throws WriteException, IOException {
-        WriteExcel test = new WriteExcel();
-        test.setOutputFile("C:/Users/Andika Mulyawan/Desktop/lars.xls");
-        test.write();
+//        WriteExcel test = new WriteExcel();
+//        test.setOutputFile("C:/Users/Andika Mulyawan/Desktop/lars.xls");
+//        test.write();
+
+        Random rand = new Random();
+        List<String> givenList = new ArrayList<>();
+        givenList.add("one");
+        givenList.add("two");
+        givenList.add("three");
+        givenList.add("Please");
+        givenList.add("check");
+        givenList.add("the");
+        givenList.add("result");
+        givenList.add("file");
+        givenList.add("c:");
+        givenList.add("temp");
+        givenList.add("lars");
+        givenList.add("under");
+        for (String string : givenList) {
+            System.out.print(string + " ");
+        }
+        System.out.println("");
+        int numberOfElements = 2;
+
+        for (int i = 0; i < numberOfElements; i++) {
+            int randomIndex = rand.nextInt(givenList.size());
+            String randomElement = givenList.get(randomIndex);
+            givenList.remove(randomIndex);
+            System.out.println(randomIndex + " " + randomElement);
+
+        }
         System.out
-                .println("Please check the result file under c:/temp/lars.xls ");
+                .println("Please check the result filep under c:/temp/lars.xls ");
     }
 }
