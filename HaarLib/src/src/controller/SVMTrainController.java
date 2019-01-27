@@ -782,7 +782,7 @@ public class SVMTrainController implements Initializable {
         System.gc();
         //######################################################################
         svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
-        svm.save("E:\\TA\\hCoba.xml");
+        svm.save("E:\\TA\\Bisindo.xml");
 //        trainingDataMat = null;
         labelsMat = null;
         System.gc();
@@ -831,7 +831,7 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
         }
         confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
-        svm.save("E:\\TA\\hCoba.xml");
+
         //######################################################################
         txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
         confusionMatrix = new int[6][6];
@@ -876,7 +876,7 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
         }
         confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
-        svm.save("E:\\TA\\hCoba.xml");
+        svm.save("E:\\TA\\Bisindo.xml");
     }
 //######################################################################
 

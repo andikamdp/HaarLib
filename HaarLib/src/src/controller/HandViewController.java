@@ -5,6 +5,7 @@
  */
 package src.controller;
 
+import java.io.File;
 import src.Utils;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,22 +15,29 @@ import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfFloat;
 import org.opencv.core.MatOfInt4;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.SVM;
+import org.opencv.objdetect.HOGDescriptor;
 import org.opencv.videoio.VideoCapture;
 import src.utils.Preprocessing;
 
@@ -45,32 +53,34 @@ public class HandViewController implements Initializable {
     @FXML
     private ImageView layarEdge;
     @FXML
+    private ImageView layarMain;
+    @FXML
     private Button btnStartCamera;
     @FXML
     private Button btnUpdateCamera;
     @FXML
-    private TextField txtH;
+    private TextField txtFileLocation;
     @FXML
-    private TextField txtV;
+    private TextField txtFileName;
     @FXML
     private TextField txtS;
     @FXML
     private TextField txtValue;
     @FXML
-    private ImageView layarMain;
+    private TextField txtMainFramePoint;
+    @FXML
+    private TextField txtPredictedResult;
+    @FXML
+    private ComboBox<String> cmbClassifier;
+    @FXML
+    private ComboBox<String> cmbTresholdType;
 //
     private MainAppController mainAppController;
     private ScheduledExecutorService timer;
     private VideoCapture capture;
     private boolean cameraActive;
-    int i = 0;
-    SVM s;
-//    List<Integer> devContourIdxList;
-//    List<MatOfPoint> contous;
-//    List<MatOfInt4> devOfInt4s;
-//    List<MatOfPoint> devOfPoints;
-//    List<Integer> puncak = new ArrayList<>();
-//    List<Integer> lembah = new ArrayList<>();
+    private int i;
+    private SVM svmJariTerangkatHOG, svmBisindoEdge;
 
     /**
      * Initializes the controller class.
@@ -81,7 +91,16 @@ public class HandViewController implements Initializable {
         capture = new VideoCapture();
         cameraActive = false;
         i = 0;
-
+        svmBisindoEdge = SVM.load("E:\\TA\\Bisindo.xml");
+        svmJariTerangkatHOG = SVM.load("E:\\TA\\hCoba.xml");
+        ObservableList<String> typeTreshold = FXCollections.observableArrayList();
+        typeTreshold.add("Bynary");
+        typeTreshold.add("Bynary Inverse");
+        ObservableList<String> typeClassifier = FXCollections.observableArrayList();
+        typeClassifier.add("Bisindo Edge");
+        typeClassifier.add("Jari Hog");
+        cmbTresholdType.setItems(typeTreshold);
+        cmbClassifier.setItems(typeClassifier);
     }
 
     public void setMainController(MainAppController aThis) {
@@ -101,7 +120,6 @@ public class HandViewController implements Initializable {
      */
     @FXML
     private void startCameraOnClick(ActionEvent event) {
-//        s = SVM.load("E:\\TA\\hCoba.xml");
         if (!cameraActive) {
             capture.open(0);
             if (this.capture.isOpened()) {
@@ -114,10 +132,8 @@ public class HandViewController implements Initializable {
                             frame = grabFrame();
                             start(frame);
                         } catch (Exception e) {
-                            System.out.println(e);
+                            System.out.println("startCameraOnClick " + e);
                         }
-//                        s.predict(frame);
-//                        Start(frame);
                     }
                 };
                 this.timer = Executors.newSingleThreadScheduledExecutor();
@@ -153,22 +169,40 @@ public class HandViewController implements Initializable {
      * List<MatOfPoint> devOfPoints :
      */
     private void start(Mat frame) {
-        Image imageToMat;
         Core.flip(frame, frame, 1);
         Preprocessing.drawRect(frame);
+        updateImageView(layarMain, frame);
         Mat hand = Preprocessing.getBox(frame.clone());
+        //
         Mat tresholded;
-        if (txtS.getText().isEmpty()) {
+        if (cmbTresholdType.getValue().equals("Bynary")) {
             tresholded = Preprocessing.segment(hand.clone(), Double.valueOf(txtValue.getText()));
         } else {
             tresholded = Preprocessing.segmentInvers(hand.clone(), Double.valueOf(txtValue.getText()));
         }
-        imageToMat = Utils.mat2Image(tresholded);
-        updateImageView(layarBW, imageToMat);
+        Point[] extremePoint = getExtremePoint(tresholded);
+        Mat handView = Preprocessing.getEdge_2(hand.clone());
+        updateImageView(layarEdge, handView);
+        //
+        Mat handPredict = Preprocessing.getBox(hand.clone(), extremePoint[0], extremePoint[1]);
+
+//
+        hand = Preprocessing.drawRect(hand, extremePoint[0], extremePoint[1]);
+        updateImageView(layarBW, hand);
+    }
+//######################################################################
+
+    /**
+     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
+     * semakin kecil nilai titik pada frame semakin tinggi
+     * var:
+     *
+     */
+    public Point[] getExtremePoint(Mat tresholded) {
         List<MatOfPoint> contour = Preprocessing.getContour(tresholded);
         List<MatOfInt4> devOfInt4s = Preprocessing.getDevectIndexPoint(contour);
-//        Preprocessing.toListMatOfPointDevec(contour, devOfInt4s, devContourIdxList);
         List<Point> pointContourSorted = Preprocessing.toListContour(contour.get(0));
+        Point[] extremePoint = new Point[2];
         //ambil titik ekstreme
         double x, x_, y, y_;
         pointContourSorted = Preprocessing.sortPointByX(pointContourSorted);
@@ -179,53 +213,93 @@ public class HandViewController implements Initializable {
         y_ = pointContourSorted.get(pointContourSorted.size() - 1).y;
         Point p = new Point(x - 10, y - 10);
         Point p_ = new Point(x_ + 10, y_);
-        //
+        extremePoint[0] = p;
+        extremePoint[1] = p_;
+        return extremePoint;
+    }
+    //######################################################################
 
-//        Mat handView = Preprocessing.drawRect(hand.clone(), p, p_);
-        Mat handView = Preprocessing.getEdge_2(hand.clone());
-//        hapusTitik(contous, Preprocessing.getBox(frame));
-        layarMain.setImage(Utils.mat2Image(frame));
-        imageToMat = Utils.mat2Image(tresholded);
-        updateImageView(layarBW, imageToMat);
-        imageToMat = Utils.mat2Image(handView);
-        updateImageView(layarEdge, imageToMat);
-        hand = Preprocessing.getBox(hand, p, p_);
-        System.out.println(handView.get(0, 0).length);
-//        captureImage(hand);
-        for (int j = 0; j < handView.rows(); j++) {
-            for (int k = 0; k < handView.cols(); k++) {
-                System.out.print(handView.get(j, k)[0] + " ");
-            }
-            System.out.println("");
+    /**
+     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
+     * semakin kecil nilai titik pada frame semakin tinggi
+     * var:
+     *
+     */
+    public void getPredictedResult(Mat hand) {
+        if (cmbClassifier.getValue().equals("Bisindo Edge")) {
+            hand = getDataSVMEdgeDELETE(hand);
+            txtPredictedResult.setText(String.valueOf(svmBisindoEdge.predict(hand)));
+        } else if (cmbClassifier.getValue().equals("Jari Hog")) {
+            hand = getDataSVMHogDELETE(hand);
+            txtPredictedResult.setText(String.valueOf(svmJariTerangkatHOG.predict(hand)));
         }
-        System.out.println("p");
-        handView = Preprocessing.getEdge(hand.clone());
-        for (int j = 0; j < handView.rows(); j++) {
-            for (int k = 0; k < handView.cols(); k++) {
-                System.out.print(handView.get(j, k)[0] + " ");
-            }
-            System.out.println("");
-        }
-        System.out.println("q");
-
     }
 
+    //######################################################################
+    /**
+     * method untuk memeriksa memperoleh data training berdasarkan fitur HOG
+     * var:
+     * File folder : lokasi direktori data gambar
+     * File[] listOfFiles :
+     * Mat trainingDataMat :
+     * Mat hand :
+     * float[] trainingData:
+     */
+    public Mat getDataSVMHogDELETE(Mat predict) {
+        Mat trainingDataMat;
+        trainingDataMat = new Mat(1, 192780, CvType.CV_32FC1);
+        HOGDescriptor gDescriptor = new HOGDescriptor();
+        Imgproc.resize(predict, predict, new Size(192, 144));
+        MatOfFloat descriptors = new MatOfFloat();
+        gDescriptor.compute(predict, descriptors);
+        float[] trainingData = descriptors.toArray();
+        for (int j = 0; j < trainingData.length; j++) {
+            trainingData[j] = Math.round(trainingData[j] * 100000) / 100;
+        }
+        trainingDataMat.put(0, 0, trainingData);
+
+        return trainingDataMat;
+    }
 //######################################################################
+
+    /**
+     * method untuk memeriksa memperoleh data training berdasarkan fitur garis tepi
+     * var:
+     * File folder : lokasi direktori data gambar
+     * File[] listOfFiles :
+     * Mat trainingDataMat :
+     * Mat hand :
+     * float[] trainingData:
+     */
+    public Mat getDataSVMEdgeDELETE(Mat predict) {
+
+        Mat trainingDataMat;
+        trainingDataMat = new Mat(1, 48 * 64, CvType.CV_32FC1);
+
+        predict = Preprocessing.getEdge(predict);
+
+        float[] trainingData = new float[predict.cols()];
+        for (int j = 0; j < predict.cols(); j++) {
+            trainingData[j] = (float) predict.get(0, j)[0];
+        }
+        trainingDataMat.put(0, 0, trainingData);
+
+        return trainingDataMat;
+    }
+//######################################################################
+
     /**
      * method button btnUpdateCamera OnClick
      * var:
      * int i : reset nomor urut gambar yang di simpan
      */
     @FXML
-    private void updateCameraOnClick(ActionEvent event) {
-        //mengambil gambar background
-//        Imgcodecs.imwrite("E:\\TA\\opencv.jpg", grabFrame());
-//        captureImage();
-//        imwrite_DELETE();
+    private void updateCameraOnClick(ActionEvent event
+    ) {
         i = 0;
     }
+    //######################################################################
 
-//######################################################################
     /**
      * method untuk menyimpan gambar dalam frame utama
      * nama yang digunakan meruapak nomor urut dari index i
@@ -249,7 +323,7 @@ public class HandViewController implements Initializable {
      *
      */
     public void captureImage(Mat frame) {
-        Imgcodecs.imwrite("E:\\TA\\HandLearnSVM\\BISINDO\\" + txtH.getText() + "\\" + txtV.getText() + "_" + i
+        Imgcodecs.imwrite("E:\\TA\\HandLearnSVM\\BISINDO\\" + txtFileLocation.getText() + "\\" + txtFileName.getText() + "_" + i
                 + ".jpg",
                 frame);
         i++;
@@ -289,8 +363,10 @@ public class HandViewController implements Initializable {
      * var:
      *
      */
-    private void updateImageView(ImageView view, Image image) {
-        Utils.onFXThread(view.imageProperty(), image);
+    private void updateImageView(ImageView view, Mat image) {
+        Image imageToMat;
+        imageToMat = Utils.mat2Image(image);
+        Utils.onFXThread(view.imageProperty(), imageToMat);
     }
 
 //######################################################################
@@ -380,15 +456,6 @@ public class HandViewController implements Initializable {
      */
     @FXML
     private void capturePictureOnSction(ActionEvent event) {
-//        String bg = "E:\\TA\\h0.jpg";
-        Mat hand;
-        if (txtH.getText().isEmpty()) {
-            hand = Imgcodecs.imread("C:\\Users\\Andika Mulyawan\\Desktop\\1.jpg");
-        } else {
-            hand = Imgcodecs.imread("E:\\TA\\HandLearnSVM\\penuh\\hfull" + txtH.getText() + ".jpg");
-        }
-        start(hand);
-//        Image edge = layarEdge.getImage();
 
     }
 
@@ -494,8 +561,7 @@ public class HandViewController implements Initializable {
      */
     @FXML
     private void getPoint(MouseEvent event) {
-        txtV.setText(String.valueOf(event.getX()));
-        txtS.setText(String.valueOf(event.getY()));
+        txtMainFramePoint.setText("(" + String.valueOf(event.getX()) + ", " + String.valueOf(event.getY()) + ")");
     }
 
 }
