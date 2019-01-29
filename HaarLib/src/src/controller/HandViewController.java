@@ -107,8 +107,8 @@ public class HandViewController implements Initializable {
         mainAppController = aThis;
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * Method awal untuk membuka kamera dan memanggil method
      * var:
      * boolean cameraActive : titik saat ini
@@ -153,8 +153,8 @@ public class HandViewController implements Initializable {
         }
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
      * semakin kecil nilai titik pada frame semakin tinggi
      * var:
@@ -190,9 +190,9 @@ public class HandViewController implements Initializable {
         hand = Preprocessing.drawRect(hand, extremePoint[0], extremePoint[1]);
         updateImageView(layarBW, hand);
     }
-//######################################################################
 
     /**
+     * ######################################################################
      * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
      * semakin kecil nilai titik pada frame semakin tinggi
      * var:
@@ -217,9 +217,9 @@ public class HandViewController implements Initializable {
         extremePoint[1] = p_;
         return extremePoint;
     }
-    //######################################################################
 
     /**
+     * ######################################################################
      * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
      * semakin kecil nilai titik pada frame semakin tinggi
      * var:
@@ -235,8 +235,8 @@ public class HandViewController implements Initializable {
         }
     }
 
-    //######################################################################
     /**
+     * ######################################################################
      * method untuk memeriksa memperoleh data training berdasarkan fitur HOG
      * var:
      * File folder : lokasi direktori data gambar
@@ -260,9 +260,9 @@ public class HandViewController implements Initializable {
 
         return trainingDataMat;
     }
-//######################################################################
 
     /**
+     * ######################################################################
      * method untuk memeriksa memperoleh data training berdasarkan fitur garis tepi
      * var:
      * File folder : lokasi direktori data gambar
@@ -286,9 +286,9 @@ public class HandViewController implements Initializable {
 
         return trainingDataMat;
     }
-//######################################################################
 
     /**
+     * ######################################################################
      * method button btnUpdateCamera OnClick
      * var:
      * int i : reset nomor urut gambar yang di simpan
@@ -298,39 +298,9 @@ public class HandViewController implements Initializable {
     ) {
         i = 0;
     }
-    //######################################################################
 
     /**
-     * method untuk menyimpan gambar dalam frame utama
-     * nama yang digunakan meruapak nomor urut dari index i
-     * var:
-     * int 1 : nomor urut gambar yang akan digunakan sebagai nama
-     */
-    public void captureImage() {
-        Imgcodecs.imwrite("E:\\TA\\HandLearnSVM\\handFullTry1\\" + i
-                + ".jpg",
-                grabFrame());
-        i++;
-    }
-
-//######################################################################
-    /**
-     * method untuk menyimpan gambar dalam frame utama
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
-     * Point titikA : titik saat ini
-     * Point titikB : titik sebelumnya
-     *
-     */
-    public void captureImage(Mat frame) {
-        Imgcodecs.imwrite("E:\\TA\\HandLearnSVM\\BISINDO\\" + txtFileLocation.getText() + "\\" + txtFileName.getText() + "_" + i
-                + ".jpg",
-                frame);
-        i++;
-    }
-
-//######################################################################
-    /**
+     * ######################################################################
      * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
      * semakin kecil nilai titik pada frame semakin tinggi
      * var:
@@ -357,8 +327,8 @@ public class HandViewController implements Initializable {
         }
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * update tampilan pada frame utama
      * var:
      *
@@ -369,8 +339,8 @@ public class HandViewController implements Initializable {
         Utils.onFXThread(view.imageProperty(), imageToMat);
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * On application close, stop the acquisition from the camera
      * var:
      *
@@ -379,8 +349,8 @@ public class HandViewController implements Initializable {
         this.stopAcquisition();
     }
 
-//######################################################################
     /**
+     * ######################################################################
      *
      * var:
      * VideoCapture capture :
@@ -410,8 +380,8 @@ public class HandViewController implements Initializable {
         return frame;
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * method layarBW OnClick
      * method untuk menukar image pada layarBW ke Main
      * var:
@@ -426,8 +396,8 @@ public class HandViewController implements Initializable {
         layarMain.setImage(Mn);
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * method layarEdge OnClick
      * method untuk menukar image pada layarEdge ke Main
      * var:
@@ -442,11 +412,8 @@ public class HandViewController implements Initializable {
         layarMain.setImage(Mn);
     }
 
-    /*
-    method untuk mencoba pada gambar
-     */
-//######################################################################
     /**
+     * ######################################################################
      * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
      * method menggambil gambar(image capture)melalui button
      * var:
@@ -459,8 +426,8 @@ public class HandViewController implements Initializable {
 
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
      * semakin kecil nilai titik pada frame semakin tinggi
      * var:
@@ -550,8 +517,8 @@ public class HandViewController implements Initializable {
         return puncak;
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * method layarMain OnClick
      * memperoleh nilai koordinat layarMain
      * var:

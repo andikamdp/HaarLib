@@ -26,11 +26,8 @@ public class MainApp extends Application {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(MainApp.class.getResource("view/MainAppView.fxml"));
-//        loader.setLocation(MainApp.class.getResource("backgroud/substraction/utils/HandView.fxml"));
-//        loader.setLocation(MainApp.class.getResource("haarCoba/haarCoba.fxml"));
         AnchorPane root = loader.load();
         Scene scane = new Scene(root);
-
         primaryStage.setScene(scane);
         primaryStage.show();
     }
