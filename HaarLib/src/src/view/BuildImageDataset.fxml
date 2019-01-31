@@ -25,7 +25,7 @@
                      <children>
                         <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" />
                         <Button fx:id="btnBrowsSaveFile" mnemonicParsing="false" onAction="#browsSaveFileOnClick" text="Browse" />
-                        <Label fx:id="lblSaveFileLocation" text="Image Location" />
+                        <TextField fx:id="txtSaveFileLocation" promptText="Image Location" />
                      </children>
                   </VBox>
                   <Button fx:id="btnCreateFolder" mnemonicParsing="false" onAction="#createFolderOnClick" text="Create Folder" />

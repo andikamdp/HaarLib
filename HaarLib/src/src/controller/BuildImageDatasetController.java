@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -44,7 +45,7 @@ public class BuildImageDatasetController implements Initializable {
     @FXML
     private Button btnBrowsSaveFile;
     @FXML
-    private Label lblSaveFileLocation;
+    private TextField txtSaveFileLocation;
     @FXML
     private Button btnCreateFolder;
     @FXML
@@ -63,9 +64,14 @@ public class BuildImageDatasetController implements Initializable {
     private boolean cameraActive;
     private int i;
     private MainAppController mainAppController;
+    private File imgDir, imgLblDir;
+    private Alert alert;
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -74,14 +80,17 @@ public class BuildImageDatasetController implements Initializable {
         cameraActive = false;
         i = 0;
         txtIndex.setText(String.valueOf(i));
+        imgDir = null;
+        imgLblDir = null;
+        alert = new Alert(Alert.AlertType.ERROR);
     }
 
     /**
      * ######################################################################
      * Method awal untuk membuka kamera dan memanggil method
      * var:
-     * boolean cameraActive : titik saat ini
-     * VideoCapture capture : titik sebelumnya
+     * boolean cameraActive :
+     * VideoCapture capture :
      * Runnable frameGrabber :
      * Mat frame :
      * ScheduledExecutorService timer :
@@ -89,36 +98,44 @@ public class BuildImageDatasetController implements Initializable {
      */
     @FXML
     private void startCameraOnClick(ActionEvent event) {
-        if (!cameraActive) {
-            capture.open(0);
-            if (this.capture.isOpened()) {
-                cameraActive = true;
-                Runnable frameGrabber = new Runnable() {
-                    @Override
-                    public void run() {
-                        Mat frame = null;
-                        try {
-                            frame = grabFrame();
-                            start(frame);
-                        } catch (Exception e) {
-                            System.out.println("startCameraOnClick " + e);
+        if (!txtFolderName.getText().equals("") && !txtSaveFileLocation.getText().equals("") && imgDir.exists() && imgLblDir.exists()) {
+            if (!cameraActive) {
+                capture.open(0);
+                if (this.capture.isOpened()) {
+                    cameraActive = true;
+                    Runnable frameGrabber = new Runnable() {
+                        @Override
+                        public void run() {
+                            Mat frame = null;
+                            try {
+                                frame = grabFrame();
+                                start(frame);
+                            } catch (Exception e) {
+                                System.out.println("startCameraOnClick " + e);
+                            }
                         }
-                    }
-                };
-                this.timer = Executors.newSingleThreadScheduledExecutor();
-                timer.scheduleAtFixedRate(frameGrabber, 0, 33,
-                        TimeUnit.MILLISECONDS);
-                btnStartCamera.setText("stop Camera");
+                    };
+
+                    this.timer = Executors.newSingleThreadScheduledExecutor();
+
+                    timer.scheduleAtFixedRate(frameGrabber,
+                            0, 33,
+                            TimeUnit.MILLISECONDS);
+                    btnStartCamera.setText(
+                            "stop Camera");
+                } else {
+                    System.err.println("tidak dapat membuka kamera");
+                }
             } else {
-                System.err.println("tidak dapat membuka kamera");
+                // the camera is not active at this point
+                this.cameraActive = false;
+                // update again the button content
+                this.btnStartCamera.setText("Start Camera");
+                // stop the timer
+                this.stopAcquisition();
             }
         } else {
-            // the camera is not active at this point
-            this.cameraActive = false;
-            // update again the button content
-            this.btnStartCamera.setText("Start Camera");
-            // stop the timer
-            this.stopAcquisition();
+            alert.show();
         }
     }
 
@@ -129,29 +146,41 @@ public class BuildImageDatasetController implements Initializable {
      *
      */
     @FXML
-    private void browsSaveFileOnClick(ActionEvent event) {
+    private void browsSaveFileOnClick(ActionEvent event
+    ) {
         DirectoryChooser brows = new DirectoryChooser();
+        brows.setInitialDirectory(imgDir);
         brows.setTitle("Buka Folder Data Training");
-        File Path = brows.showDialog(apGetImage.getScene().getWindow());
-        if (Path != null) {
-            lblSaveFileLocation.setText(Path.getAbsolutePath());
+        imgDir = brows.showDialog(apGetImage.getScene().getWindow());
+        if (imgDir != null) {
+            txtSaveFileLocation.setText(imgDir.getAbsolutePath());
         }
     }
 
     /**
      * ######################################################################
-     * OnCllick Action untuk membuat folder baru
+     * OnCllick Action creating new folder
      * var:
-     *
+     * File file : lable file location
      */
     @FXML
-    private void createFolderOnClick(ActionEvent event) {
-        File file = new File(lblSaveFileLocation.getText() + "\\" + txtFolderName);
-        file.mkdir();
+    private void createFolderOnClick(ActionEvent event
+    ) {
+        File file = new File(imgDir + "\\" + txtFolderName.getText());
+        txtIndexLabel.setText(String.valueOf(imgDir.list().length));
+        if (!file.exists() && !txtFolderName.getText().equals("")) {
+            file.mkdir();
+        } else {
+            alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Directory Already Exist");
+            alert.show();
+        }
+        imgLblDir = file;
     }
 
     @FXML
-    private void getFramePointOnClick(MouseEvent event) {
+    private void getFramePointOnClick(MouseEvent event
+    ) {
     }
 
     /**
@@ -240,9 +269,18 @@ public class BuildImageDatasetController implements Initializable {
         updateImageView(layarMain, frame);
         Mat hand = Preprocessing.getBox(frame.clone());
         //
-        Imgcodecs.imwrite(lblSaveFileLocation.getText() + "\\" + txtFolderName.getText() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", hand);
-        i++;
-        txtIndex.setText(String.valueOf(i));
+        if (imgDir.exists() && imgLblDir.exists()) {
+            if (i < 1200) {
+                Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", hand
+                );
+                i++;
+                txtIndex.setText(String.valueOf(i));
+            }
+        } else {
+            alert.setContentText("Directory Not Exist");
+            alert.show();
+        }
+
     }
 
     void setMainController(MainAppController aThis) {

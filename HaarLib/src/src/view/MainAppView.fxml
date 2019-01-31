@@ -12,7 +12,7 @@
          <children>
             <Button fx:id="btnSvmTrain" mnemonicParsing="false" onAction="#svmTrainWindowOnClick" text="SVM Training" />
             <Button fx:id="btnSvmPredict" mnemonicParsing="false" onAction="#svmPredictOnClick" prefHeight="25.0" prefWidth="88.0" text="SVM Predict" />
-            <Button fx:id="btnSetImage" mnemonicParsing="false" onAction="#setImageViewOnClick" prefHeight="25.0" prefWidth="88.0" text="Set Image" />
+            <Button fx:id="btnSetImage" mnemonicParsing="false" onAction="#setImageViewOnClick" prefHeight="25.0" prefWidth="88.0" text="Get Image" />
          </children>
       </VBox>
    </children>

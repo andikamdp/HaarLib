@@ -7,11 +7,9 @@ package src.controller;
 
 import java.io.File;
 import java.net.URL;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Observable;
 import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
@@ -25,19 +23,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat;
-import org.opencv.core.Size;
-import org.opencv.core.TermCriteria;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.Ml;
 import org.opencv.ml.SVM;
-import org.opencv.objdetect.HOGDescriptor;
 import src.utils.DataTrainingPrep;
-import src.utils.Preprocessing;
 
 /**
  * FXML Controller class
@@ -67,11 +56,13 @@ public class SVMTrainController implements Initializable {
     private int seed;
     private List<Double> akurasiSeedSample;
     private List<Double> akurasiSeedTrain;
-    private LocalTime time;
 //
 
     /**
      * Initializes the controller class.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -82,15 +73,17 @@ public class SVMTrainController implements Initializable {
         svm.setKernel(SVM.LINEAR);
         svm.setType(SVM.C_SVC);
         seed = 0;
-        akurasiSeedTrain = new ArrayList<Double>();
-        akurasiSeedSample = new ArrayList<Double>();
+        akurasiSeedTrain = new ArrayList<>();
+        akurasiSeedSample = new ArrayList<>();
     }
 
     /**
      * ######################################################################
-     * OnClick Action memulai Training dan Testing
+     * OnClick Action memulai Training diikuti Testing
+     * training dan testing akan dilakukan sebanyak 10 kali dengan data teracak setiap training
+     * training dengan deskripsi gambar edge dan hog
      * var:
-     * float TP, TN, FP, FN: fariabel True, Positif, False, Negatif
+     *
      */
     @FXML
     private void trainOnClick(ActionEvent event) {
@@ -98,17 +91,15 @@ public class SVMTrainController implements Initializable {
         akurasiSeedSample.clear();
         if (cmbType.getValue().equals("Edge")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
-            for (int i = 0; i < 10; i++) {
-                seed = i;
-                svmEdgeRandom();
-            }
+//            for (int i = 0; i < 10; i++) {
+            seed = 0;
+            svmEdgeRandom();
+//            }
             rataRataAkurasiSeed();
         } else if (cmbType.getValue().equals("Hog")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
 //            for (int i = 0; i < 10; i++) {
-            time = java.time.LocalTime.now();
-//            System.out.println("time : " + time);
-//            seed = 0;
+            seed = 0;
             svmHogRandom();
 //            }
             rataRataAkurasiSeed();
@@ -116,17 +107,18 @@ public class SVMTrainController implements Initializable {
 
     }
 
+    /**
+     * ######################################################################
+     * OnClick Action
+     *
+     */
     @FXML
     private void predictOnAction(ActionEvent event) {
     }
 
     /**
      * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
-     * Point titikA : titik saat ini
-     * Point titikB : titik sebelumnya
+     * method set Main Controller
      *
      */
     void setMainController(MainAppController aThis) {
@@ -135,24 +127,23 @@ public class SVMTrainController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk train SVM dengan data gambar kombinasi jari terangkat
+     * method untuk train SVM dengan deskripsi gambar Edge
      * var:
-     * SVM svm : titik saat ini
-     * Mat trainingDataMat :
-     * Mat labelsMat :
-     * Mat sampleDataMat :
+     * SVM svm : variabel klasifikasi dengan SVM
+     * Mat trainingDataMat : variabel penampung data training
+     * Mat labelsMat : variabel penampung label data training
+     * Mat sampleDataMat : variabel penampung data testing
      * int rows :
-     * File folder :
-     * File[] listOfFiles :
-     * int[][] confusionMatrix :
-     * float label :
-     * int l,m :
+     * File file : variabel penampung lokasi file data gambar
+     * File[] listOfFiles : variabe penampung isi file data gambar
+     * int[][] confusionMatrix : variabel penampung confussion matriks
      */
     public void svmEdgeRandom() {
         File file = new File(lblImageLocation.getText());
         File[] listFiles = file.listFiles();
-        List<Integer> index = getRandomIndex(listFiles[2].listFiles().length);
-        List<String> labels = new ArrayList<String>();
+//######################################################################
+        List<Integer> index = getRandomIndex(listFiles[0].listFiles().length);
+        List<String> labels = new ArrayList<>();
         //
         File files;
         Mat trainingDataMat = new Mat();
@@ -164,21 +155,18 @@ public class SVMTrainController implements Initializable {
         //
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
-            txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
             trainingDataMat.push_back(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true));
             if (i == 0) {
                 rows = trainingDataMat.rows();
             }
-            System.out.println("rows: " + rows);
             labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
             sampleDataMat.push_back(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false));
             fileNameT.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, true));
             fileName.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, false));
             labels.add(files.getName());
+            txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
         }
         svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
-        labelsMat = null;
-        System.gc();
         //######################################################################
         int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
@@ -186,18 +174,26 @@ public class SVMTrainController implements Initializable {
         confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
         svm.save(file.getAbsolutePath() + "\\Edge.xml");
+        System.gc();
     }
 
     /**
      * ######################################################################
-     * method untuk menghitung rata-rata akurasi
+     * method untuk train SVM dengan deskripsi gambar Hog
      * var:
-     * float i : menghitung jumlah akurasi
+     * SVM svm : variabel klasifikasi dengan SVM
+     * Mat trainingDataMat : variabel penampung data training
+     * Mat labelsMat : variabel penampung label data training
+     * Mat sampleDataMat : variabel penampung data testing
+     * int rows :
+     * File file : variabel penampung lokasi file data gambar
+     * File[] listOfFiles : variabe penampung isi file data gambar
+     * int[][] confusionMatrix : variabel penampung confussion matriks
      */
     public void svmHogRandom() {
         File file = new File(lblImageLocation.getText());
         File[] listFiles = file.listFiles();
-        List<Integer> index = getRandomIndex(listFiles[2].listFiles().length);
+        List<Integer> index = getRandomIndex(listFiles[0].listFiles().length);
         List<String> labels = new ArrayList<String>();
         //
         File files;
@@ -210,21 +206,18 @@ public class SVMTrainController implements Initializable {
         //
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
-            txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
             trainingDataMat.push_back(DataTrainingPrep.getDataSVMHog(files.getAbsolutePath(), index, true));
             if (i == 0) {
                 rows = trainingDataMat.rows();
             }
-            System.out.println("rows: " + rows);
             labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
             sampleDataMat.push_back(DataTrainingPrep.getDataSVMHog(files.getAbsolutePath(), index, false));
             fileNameT.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, true));
             fileName.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, false));
             labels.add(files.getName());
+            txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
         }
         svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
-        labelsMat = null;
-        System.gc();
         //######################################################################
         int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
@@ -232,19 +225,20 @@ public class SVMTrainController implements Initializable {
         confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
         svm.save(file.getAbsolutePath() + "\\Hog.xml");
+        System.gc();
     }
 
     /**
      * ######################################################################
      * OnClick Action untuk memperoleh lokasi data gambar
      * var:
-     * float TP, TN, FP, FN: fariabel True, Positif, False, Negatif
+     * DirectoryChooser brows :
+     * File Path :
      */
     @FXML
     private void browsImageOnClick(ActionEvent event) {
         DirectoryChooser brows = new DirectoryChooser();
         brows.setTitle("Buka Folder Data Training");
-
         File Path = brows.showDialog(apTrainWindow.getScene().getWindow());
         if (Path != null) {
             lblImageLocation.setText(Path.getAbsolutePath());
@@ -254,9 +248,14 @@ public class SVMTrainController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk menghitung akurasi
+     * method untuk menghitung akurasi training
      * var:
-     * float TP, TN, FP, FN: fariabel True, Positif, False, Negatif
+     * float TP, TN, FP, FN : fariabel penampung nilai True, Positif, False, Negatif
+     * float precision, recall, accuracy :
+     *
+     * @param predict
+     * @param jumlahData
+     * @param train
      */
     public void confusionMatriks(int[][] predict, int jumlahData, boolean train) {
         float TP = 0, TN = 0, FP = 0, FN = 0;
@@ -274,7 +273,6 @@ public class SVMTrainController implements Initializable {
                     FP += predict[j][i];
                 }
             }
-
         }
         float precision, recall, accuracy;
         precision = TP / (TP + FP);
@@ -333,17 +331,17 @@ public class SVMTrainController implements Initializable {
     /**
      * ######################################################################
      * method untuk train SVM dengan data gambar kombinasi jari terangkat
+     * param:
+     * int jumlahData : variabel penampung jumlah data training perClass(label)
      * var:
-     * SVM svm : titik saat ini
-     * Mat trainingDataMat :
-     * Mat labelsMat :
-     * Mat sampleDataMat :
-     * int rows :
-     * File folder :
-     * File[] listOfFiles :
-     * int[][] confusionMatrix :
-     * float label :
-     * int l,m :
+     * List<Integer> index : variabel penampung urutan angka sebanyak jumlahData
+     * List<Integer> indexSample : variabel penampung angka random
+     * Random rand : variabel penampung jumlah data training
+     * int numberOfElements :
+     *
+     *
+     * @param jumlahData
+     * @return
      */
     public List<Integer> getRandomIndex(int jumlahData) {
         List<Integer> index = new ArrayList<>();
@@ -352,17 +350,16 @@ public class SVMTrainController implements Initializable {
             index.add(i);
         }
         Random rand = new Random(seed);
-//        int numberOfElements = ratio;
-        int numberOfElements = (int) (((double) ratio / 100.0) * (double) jumlahData);;
-        System.out.println("Daftar Random Index :" + numberOfElements);
+        int numberOfElements = (int) (((double) ratio / 100.0) * (double) jumlahData);
         for (int i = 0; i < numberOfElements; i++) {
             int randomIndex = rand.nextInt(index.size());
-            System.out.print(randomIndex + " ");
             indexSample.add(index.get(randomIndex));
             index.remove(randomIndex);
         }
         Collections.sort(indexSample);
-        System.out.println("");
+        for (Integer integer : indexSample) {
+            System.out.println(integer);
+        }
         return indexSample;
     }
 
