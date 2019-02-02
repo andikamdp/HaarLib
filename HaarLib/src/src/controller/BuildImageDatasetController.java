@@ -98,6 +98,7 @@ public class BuildImageDatasetController implements Initializable {
      */
     @FXML
     private void startCameraOnClick(ActionEvent event) {
+        i = 0;
         if (!txtFolderName.getText().equals("") && !txtSaveFileLocation.getText().equals("") && imgDir.exists() && imgLblDir.exists()) {
             if (!cameraActive) {
                 capture.open(0);
@@ -167,7 +168,7 @@ public class BuildImageDatasetController implements Initializable {
     private void createFolderOnClick(ActionEvent event
     ) {
         File file = new File(imgDir + "\\" + txtFolderName.getText());
-        txtIndexLabel.setText(String.valueOf(imgDir.list().length));
+
         if (!file.exists() && !txtFolderName.getText().equals("")) {
             file.mkdir();
         } else {
@@ -175,6 +176,8 @@ public class BuildImageDatasetController implements Initializable {
             alert.setContentText("Directory Already Exist");
             alert.show();
         }
+        imgDir = new File(imgDir.getAbsolutePath());
+        txtIndexLabel.setText(String.valueOf(imgDir.list().length));
         imgLblDir = file;
     }
 
@@ -270,7 +273,7 @@ public class BuildImageDatasetController implements Initializable {
         Mat hand = Preprocessing.getBox(frame.clone());
         //
         if (imgDir.exists() && imgLblDir.exists()) {
-            if (i < 1200) {
+            if (i < 1800) {
                 Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", hand
                 );
                 i++;

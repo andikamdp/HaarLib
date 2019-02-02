@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
@@ -32,6 +31,8 @@ public final class Preprocessing {
     /**
      * method untuk membarsihkan gambar dari titk hitam dan putih dari hasil treshold
      *
+     * @param frame
+     * @return
      */
     public static Mat cleaning(Mat frame) {
         Mat kernel = new Mat(new Size(3, 3), CvType.CV_16S, new Scalar(255));
@@ -55,6 +56,9 @@ public final class Preprocessing {
      * Point titikA : titik saat ini
      * Point titikB : titik sebelumnya
      *
+     * @param titikA
+     * @param titikB
+     * @return
      */
     public static Boolean arahTitikY(Point titikA, Point titikB) {
         if (titikA.y < titikB.y) {
@@ -602,9 +606,6 @@ public final class Preprocessing {
     }
 
 //######################################################################
-/////////////
-//
-/////////////
     public static List<Point> toListContour(MatOfPoint contours) {
         List<Point> listPoint = new ArrayList<>();
         Point p = new Point();
@@ -620,11 +621,14 @@ public final class Preprocessing {
 //######################################################################
 
     /**
+     * ######################################################################
      * method untuk mengrutkan nilai titik(point) berdasarkan x
      * var:
      * List<Point> listPoint : berisi nilai titik tepi
      * Mat hierarchy :
      *
+     * @param listPoint
+     * @return
      */
     public static List<Point> sortPointByX(List<Point> listPoint) {
         Collections.sort(listPoint, new Comparator<Point>() {
@@ -638,38 +642,22 @@ public final class Preprocessing {
 //######################################################################
 
     /**
+     * ######################################################################
      * method untuk mengrutkan nilai titik(point) berdasarkan Y
      * var:
      * List<Point> listPoint : berisi nilai titik tepi
      * Mat hierarchy :
      *
+     * @param listPoint
+     * @return
      */
     public static List<Point> sortPointByY(List<Point> listPoint) {
         Collections.sort(listPoint, new Comparator<Point>() {
             @Override
             public int compare(Point o1, Point o2) {
-
                 return (int) (o1.y - o2.y);
             }
         });
         return listPoint;
-    }
-//######################################################################
-
-    /**
-     * Mencoba menggunakan fature detection orb
-     */
-    public static void orb(Mat image) {
-
-        Imgproc.resize(image, image, new Size(64, 48));
-        ORB b = ORB.create();
-
-        MatOfKeyPoint keyPoints = new MatOfKeyPoint();
-        b.detect(image, keyPoints);
-//        System.out.println("keyPoints.rows() " + keyPoints.rows() + "keyPoints.cols()" + keyPoints.rows());
-        Mat des = new Mat();
-        b.compute(image, keyPoints, des);
-//        System.out.println("des.rows() " + des.rows() + "des.cols()" + des.rows());
-//        Imgproc.drawMarker(image, keyPoints.get(0, 0), new Scalar(255, 0, 0));
     }
 }

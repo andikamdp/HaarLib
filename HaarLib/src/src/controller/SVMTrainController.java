@@ -5,13 +5,22 @@
  */
 package src.controller;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringReader;
 import java.net.URL;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -21,6 +30,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import org.opencv.core.Mat;
@@ -38,8 +48,6 @@ public class SVMTrainController implements Initializable {
     @FXML
     private Button btnTrain;
     @FXML
-    private Button btnPredict;
-    @FXML
     private TextArea txtAreaStatus;
     @FXML
     private ComboBox<String> cmbType;
@@ -49,6 +57,14 @@ public class SVMTrainController implements Initializable {
     private Label lblImageLocation;
     @FXML
     private AnchorPane apTrainWindow;
+    @FXML
+    private Button btnBrowsClassification;
+    @FXML
+    private Label lblClassificationLocation;
+    @FXML
+    private Button btnSaveClasification;
+    @FXML
+    private TextField txtBoxFileName;
 //
     private int ratio;
     private MainAppController mainAppController;
@@ -91,29 +107,25 @@ public class SVMTrainController implements Initializable {
         akurasiSeedSample.clear();
         if (cmbType.getValue().equals("Edge")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
-//            for (int i = 0; i < 10; i++) {
-            seed = 0;
-            svmEdgeRandom();
-//            }
+            txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
+            for (int i = 0; i < 30; i++) {
+                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
+                seed = i;
+                svmEdgeRandom();
+            }
             rataRataAkurasiSeed();
         } else if (cmbType.getValue().equals("Hog")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
 //            for (int i = 0; i < 10; i++) {
+//                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi" + (i + 1) + " \n");
             seed = 0;
             svmHogRandom();
 //            }
             rataRataAkurasiSeed();
         }
 
-    }
-
-    /**
-     * ######################################################################
-     * OnClick Action
-     *
-     */
-    @FXML
-    private void predictOnAction(ActionEvent event) {
     }
 
     /**
@@ -139,6 +151,7 @@ public class SVMTrainController implements Initializable {
      * int[][] confusionMatrix : variabel penampung confussion matriks
      */
     public void svmEdgeRandom() {
+
         File file = new File(lblImageLocation.getText());
         File[] listFiles = file.listFiles();
 //######################################################################
@@ -166,14 +179,17 @@ public class SVMTrainController implements Initializable {
             labels.add(files.getName());
             txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
         }
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
         svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
         //######################################################################
         int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
         //######################################################################
         confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
-        svm.save(file.getAbsolutePath() + "\\Edge.xml");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
         System.gc();
     }
 
@@ -217,14 +233,17 @@ public class SVMTrainController implements Initializable {
             labels.add(files.getName());
             txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
         }
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
         svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
         //######################################################################
         int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
         //######################################################################
         confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
-        svm.save(file.getAbsolutePath() + "\\Hog.xml");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
         System.gc();
     }
 
@@ -358,7 +377,6 @@ public class SVMTrainController implements Initializable {
         }
         Collections.sort(indexSample);
         for (Integer integer : indexSample) {
-            System.out.println(integer);
         }
         return indexSample;
     }
@@ -370,6 +388,10 @@ public class SVMTrainController implements Initializable {
      *
      * var:
      *
+     * @param fileName
+     * @param labels
+     * @param sampleDataMat
+     * @return
      */
     public int[][] predictClassifier(List<String> fileName, List<String> labels, Mat sampleDataMat) {
         int[][] confusionMatrix = new int[6][6];
@@ -411,6 +433,37 @@ public class SVMTrainController implements Initializable {
             }
             txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
         }
+        txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
         return confusionMatrix;
+    }
+
+    @FXML
+    private void browsClassificationOnClick(ActionEvent event) {
+        DirectoryChooser brows = new DirectoryChooser();
+        brows.setTitle("Buka Folder Classification Save Lokasi");
+        File Path = brows.showDialog(apTrainWindow.getScene().getWindow());
+        if (Path != null) {
+            lblClassificationLocation.setText(Path.getAbsolutePath());
+        }
+    }
+
+    @FXML
+    private void saveClasssificationOnClilck(ActionEvent event) {
+        try {
+            String string = txtAreaStatus.getText();
+            File file = new File(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + ".txt");
+            try (
+                    BufferedReader reader = new BufferedReader(new StringReader(string));
+                    PrintWriter writer = new PrintWriter(new FileWriter(file));) {
+                reader.lines().forEach(new Consumer<String>() {
+                    @Override
+                    public void accept(String line) {
+                        writer.println(line);
+                    }
+                });
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(SVMTrainController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

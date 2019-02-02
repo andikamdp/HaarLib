@@ -76,11 +76,9 @@ public class DataTrainingPrep {
         for (int i = 0; i < listOfFiles.length; i++) {
             if (!index.contains(i) && train) {
                 trainingDataMat.put(row, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
-                System.out.println("T " + listOfFiles[i].getName() + " i " + i);
                 row++;
             } else if (index.contains(i) && !train) {
                 trainingDataMat.put(row, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
-                System.out.println("S " + listOfFiles[i].getName() + " i " + i);
                 row++;
             }
         }

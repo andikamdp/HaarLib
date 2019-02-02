@@ -18,7 +18,6 @@
             <VBox prefHeight="400.0" prefWidth="199.0" spacing="20.0">
                <children>
                   <Button fx:id="btnTrain" mnemonicParsing="false" onAction="#trainOnClick" prefHeight="25.0" prefWidth="53.0" text="Train" />
-                  <Button fx:id="btnPredict" mnemonicParsing="false" onAction="#predictOnAction" text="Predict" />
                   <ComboBox fx:id="cmbType" prefWidth="150.0" promptText="Descriptor Method" />
                   <VBox prefHeight="61.0" prefWidth="199.0" spacing="5.0" style="-fx-border-insets: 1;">
                      <children>
@@ -26,6 +25,14 @@
                         <Label fx:id="lblImageLocation" text="Image Folder" />
                      </children>
                   </VBox>
+                  <VBox prefHeight="120.0" prefWidth="199.0" spacing="10.0">
+                     <children>
+                        <Button fx:id="btnBrowsClassification" mnemonicParsing="false" onAction="#browsClassificationOnClick" text="Brows Save Classificarion" />
+                        <Label fx:id="lblClassificationLocation" text="Classification Folder" />
+                        <Button fx:id="btnSaveClasification" mnemonicParsing="false" onAction="#saveClasssificationOnClilck" text="Save" />
+                     </children>
+                  </VBox>
+                  <TextField fx:id="txtBoxFileName" promptText="File Name" />
                </children>
             </VBox>
             <TextArea fx:id="txtAreaStatus" prefHeight="400.0" prefWidth="401.0" />
