@@ -255,6 +255,11 @@ public final class Preprocessing {
                 new Point(frame.cols() - 5, 10 + 5),
                 new Point(frame.cols() / 2 + 5, frame.rows() - (frame.rows() / 3) - 10 - 5));
         frame = frame.submat(rectCrop);
+        /**
+         * convert the roi to grayscale and blur it
+         * belum berhasil di jalamkan
+         * Imgproc.accumulateWeighted(frame, frame, 0.5);
+         */
         return frame;
     }
 //######################################################################
