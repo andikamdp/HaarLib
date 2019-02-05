@@ -109,11 +109,11 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-            for (int i = 0; i < 30; i++) {
-                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
-                seed = i;
-                svmEdgeRandom();
-            }
+//            for (int i = 0; i < 30; i++) {
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (0 + 1) + " \n");
+            seed = 0;
+            svmEdgeRandom();
+//            }
             rataRataAkurasiSeed();
         } else if (cmbType.getValue().equals("Hog")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
@@ -252,15 +252,15 @@ public class SVMTrainController implements Initializable {
      * OnClick Action untuk memperoleh lokasi data gambar
      * var:
      * DirectoryChooser brows :
-     * File Path :
+     * File path :
      */
     @FXML
     private void browsImageOnClick(ActionEvent event) {
         DirectoryChooser brows = new DirectoryChooser();
         brows.setTitle("Buka Folder Data Training");
-        File Path = brows.showDialog(apTrainWindow.getScene().getWindow());
-        if (Path != null) {
-            lblImageLocation.setText(Path.getAbsolutePath());
+        File path = brows.showDialog(apTrainWindow.getScene().getWindow());
+        if (path != null) {
+            lblImageLocation.setText(path.getAbsolutePath());
         }
 
     }

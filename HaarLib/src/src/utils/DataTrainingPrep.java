@@ -199,6 +199,7 @@ public class DataTrainingPrep {
         } else {
             for (Integer listOfFile : index) {
                 folderName.add(listOfFiles[listOfFile].getName());
+                System.out.println(listOfFiles[listOfFile].getName());
             }
         }
         return folderName;

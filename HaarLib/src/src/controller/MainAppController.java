@@ -38,6 +38,8 @@ public class MainAppController implements Initializable {
     private AnchorPane mainAppView;
     @FXML
     private Button btnSetImage;
+    @FXML
+    private Button btnRenameFile;
 
     /**
      * Initializes the controller class.
@@ -53,7 +55,7 @@ public class MainAppController implements Initializable {
      *
      */
     @FXML
-    private void svmTrainWindowOnClick(ActionEvent event) {
+    private void svmTrainViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/SVMTrain.fxml"));
@@ -77,7 +79,7 @@ public class MainAppController implements Initializable {
      *
      */
     @FXML
-    private void svmPredictOnClick(ActionEvent event) {
+    private void handViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/HandView.fxml"));
@@ -100,12 +102,35 @@ public class MainAppController implements Initializable {
      * onClick action membuka window baru berisi predict pergambar
      */
     @FXML
-    private void setImageViewOnClick(ActionEvent event) {
+    private void buildImageDatasetViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/BuildImageDataset.fxml"));
             AnchorPane root = loader.load();
             BuildImageDatasetController controller = loader.getController();
+            controller.setMainController(this);
+            Scene scene = new Scene(root);
+            stage = new Stage();
+            stage.initOwner(mainAppView.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException iOException) {
+            Logger.getLogger(MainAppController.class.getName()).
+                    log(Level.SEVERE, null, iOException);
+        }
+    }
+
+    /**
+     * onClick action membuka window baru untuk melakukan rename file
+     */
+    @FXML
+    private void renameFileViewOnClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/RenameData.fxml"));
+            AnchorPane root = loader.load();
+            RenameDataController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
             stage = new Stage();

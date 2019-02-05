@@ -7,13 +7,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane id="AnchorPane" fx:id="mainAppView" prefHeight="156.0" prefWidth="265.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.MainAppController">
-   <children>
-      <VBox alignment="CENTER" layoutY="-1.0" prefHeight="150.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <children>
-            <Button fx:id="btnSvmTrain" mnemonicParsing="false" onAction="#svmTrainWindowOnClick" text="SVM Training" />
-            <Button fx:id="btnSvmPredict" mnemonicParsing="false" onAction="#svmPredictOnClick" prefHeight="25.0" prefWidth="88.0" text="SVM Predict" />
-            <Button fx:id="btnSetImage" mnemonicParsing="false" onAction="#setImageViewOnClick" prefHeight="25.0" prefWidth="88.0" text="Get Image" />
-         </children>
-      </VBox>
-   </children>
+    <children>
+        <VBox alignment="CENTER" layoutY="-1.0" prefHeight="150.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <Button fx:id="btnSvmTrain" mnemonicParsing="false" onAction="#svmTrainViewOnClick" text="SVM Training" />
+                <Button fx:id="btnSvmPredict" mnemonicParsing="false" onAction="#handViewOnClick" prefHeight="25.0" prefWidth="88.0" text="SVM Predict" />
+                <Button fx:id="btnSetImage" mnemonicParsing="false" onAction="#buildImageDatasetViewOnClick" prefHeight="25.0" prefWidth="88.0" text="Get Image" />
+                <Button fx:id="btnRenameData" mnemonicParsing="false" onAction="#renameFileViewOnClick" text="RenameData" />
+            </children>
+        </VBox>
+    </children>
 </AnchorPane>
