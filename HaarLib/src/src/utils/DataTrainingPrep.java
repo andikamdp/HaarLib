@@ -15,6 +15,7 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.HOGDescriptor;
+import src.entity.Data;
 
 /**
  *
@@ -62,27 +63,29 @@ public class DataTrainingPrep {
      * @param train
      * @return
      */
-    public static Mat getDataSVMEdge(String lokasi, List<Integer> index, Boolean train) {
+    public static List<Data> getDataSVMEdge(String lokasi, List<Integer> index, Boolean train) {
         File folder = new File(lokasi);
         File[] listOfFiles = folder.listFiles();
         Mat trainingDataMat;
-        if (train) {
-            trainingDataMat = new Mat(listOfFiles.length - index.size(), 48 * 64, CvType.CV_32FC1);
-        } else {
-            trainingDataMat = new Mat(index.size(), 48 * 64, CvType.CV_32FC1);
-        }
+        List<Data> datas = new ArrayList<>();
         int row = 0;
 
         for (int i = 0; i < listOfFiles.length; i++) {
             if (!index.contains(i) && train) {
-                trainingDataMat.put(row, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
+                Mat dataFile = new Mat(1, 48 * 64, CvType.CV_32FC1);
+                dataFile.put(row, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
+                Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
+                datas.add(dataTraining);
                 row++;
             } else if (index.contains(i) && !train) {
-                trainingDataMat.put(row, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
+                Mat dataFile = new Mat(1, 48 * 64, CvType.CV_32FC1);
+                dataFile.put(row, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
+                Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
+                datas.add(dataTraining);
                 row++;
             }
         }
-        return trainingDataMat;
+        return datas;
     }
 
 //######################################################################
@@ -199,9 +202,20 @@ public class DataTrainingPrep {
         } else {
             for (Integer listOfFile : index) {
                 folderName.add(listOfFiles[listOfFile].getName());
-                System.out.println(listOfFiles[listOfFile].getName());
             }
         }
         return folderName;
+    }
+
+    //######################################################################
+    /**
+     *
+     */
+    public static Mat getDataMat(List<Data> data) {
+        Mat dataMat = new Mat();
+        for (Data data1 : data) {
+            dataMat.push_back(dataMat);
+        }
+        return dataMat;
     }
 }

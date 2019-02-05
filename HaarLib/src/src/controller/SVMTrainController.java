@@ -36,6 +36,7 @@ import javafx.stage.DirectoryChooser;
 import org.opencv.core.Mat;
 import org.opencv.ml.Ml;
 import org.opencv.ml.SVM;
+import src.entity.Data;
 import src.utils.DataTrainingPrep;
 
 /**
@@ -109,11 +110,11 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-//            for (int i = 0; i < 30; i++) {
-            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (0 + 1) + " \n");
-            seed = 0;
-            svmEdgeRandom();
-//            }
+            for (int i = 0; i < 30; i++) {
+                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
+                seed = i;
+                svmEdgeRandom();
+            }
             rataRataAkurasiSeed();
         } else if (cmbType.getValue().equals("Hog")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
@@ -159,36 +160,38 @@ public class SVMTrainController implements Initializable {
         List<String> labels = new ArrayList<>();
         //
         File files;
-        Mat trainingDataMat = new Mat();
         int rows = 0;
+        Mat dataTraining = new Mat();
+        List<Data> trainingDataMat = new ArrayList<>();
+        List<Data> sampleDataMat = new ArrayList<>();
         Mat labelsMat = new Mat();
-        Mat sampleDataMat = new Mat();
         List<String> fileNameT = new ArrayList<>();
         List<String> fileName = new ArrayList<>();
         //
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
-            trainingDataMat.push_back(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true));
+            trainingDataMat = DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true);
+            sampleDataMat = DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false);
             if (i == 0) {
-                rows = trainingDataMat.rows();
+                rows = trainingDataMat.size();
             }
             labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
-            sampleDataMat.push_back(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false));
             fileNameT.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, true));
             fileName.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, false));
             labels.add(files.getName());
             txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
         }
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
-        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+        dataTraining = DataTrainingPrep.getDataMat(trainingDataMat);
+        svm.train(dataTraining, Ml.ROW_SAMPLE, labelsMat);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
         //######################################################################
         int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
-        confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
+        confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
         //######################################################################
         confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
-        confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
+        confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
         System.gc();
     }
@@ -237,13 +240,13 @@ public class SVMTrainController implements Initializable {
         svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
         //######################################################################
-        int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
-        confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
+//        int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
+//        confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
+//        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
         //######################################################################
-        confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
-        confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
+//        confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
+//        confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
+//        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
         System.gc();
     }
 
@@ -252,15 +255,15 @@ public class SVMTrainController implements Initializable {
      * OnClick Action untuk memperoleh lokasi data gambar
      * var:
      * DirectoryChooser brows :
-     * File path :
+     * File Path :
      */
     @FXML
     private void browsImageOnClick(ActionEvent event) {
         DirectoryChooser brows = new DirectoryChooser();
         brows.setTitle("Buka Folder Data Training");
-        File path = brows.showDialog(apTrainWindow.getScene().getWindow());
-        if (path != null) {
-            lblImageLocation.setText(path.getAbsolutePath());
+        File Path = brows.showDialog(apTrainWindow.getScene().getWindow());
+        if (Path != null) {
+            lblImageLocation.setText(Path.getAbsolutePath());
         }
 
     }
@@ -393,22 +396,23 @@ public class SVMTrainController implements Initializable {
      * @param sampleDataMat
      * @return
      */
-    public int[][] predictClassifier(List<String> fileName, List<String> labels, Mat sampleDataMat) {
+    public int[][] predictClassifier(List<String> fileName, List<String> labels, List<Data> sampleDataMat) {
         int[][] confusionMatrix = new int[6][6];
-        for (int j = 0; j < sampleDataMat.rows(); j++) {
-            float label = svm.predict(sampleDataMat.row(j));
+        for (int j = 0; j < sampleDataMat.size(); j++) {
+            float label = svm.predict(sampleDataMat.get(j).getDataMat());
             int l = 0, m = 0;
-            if (fileName.get(j).contains(labels.get(0))) {
+            System.out.println(sampleDataMat.get(j).getDataFile().getAbsolutePath() + " " + sampleDataMat.get(j).getIndex() + " : " + label);
+            if (sampleDataMat.get(j).getDataName().contains(labels.get(0).substring(0, 1))) {
                 l = 0;
-            } else if (fileName.get(j).contains(labels.get(1).substring(0, 1))) {
+            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(1).substring(0, 1))) {
                 l = 1;
-            } else if (fileName.get(j).contains(labels.get(2).substring(0, 1))) {
+            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(2).substring(0, 1))) {
                 l = 2;
-            } else if (fileName.get(j).contains(labels.get(3).substring(0, 1))) {
+            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(3).substring(0, 1))) {
                 l = 3;
-            } else if (fileName.get(j).contains(labels.get(4).substring(0, 1))) {
+            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(4).substring(0, 1))) {
                 l = 4;
-            } else if (fileName.get(j).contains(labels.get(5).substring(0, 1))) {
+            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(5).substring(0, 1))) {
                 l = 5;
             }
             if (label == 0) {
