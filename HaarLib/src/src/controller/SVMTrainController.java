@@ -14,6 +14,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -71,8 +72,10 @@ public class SVMTrainController implements Initializable {
     private MainAppController mainAppController;
     private SVM svm;
     private int seed;
-    private List<Double> akurasiSeedSample;
-    private List<Double> akurasiSeedTrain;
+    private List<Double> akurasiSeedSampleAvg;
+    private List<Double> akurasiSeedTrainAvg;
+    private List<Double> akurasiSeedSampleAll;
+    private List<Double> akurasiSeedTrainAll;
 //
 
     /**
@@ -90,8 +93,8 @@ public class SVMTrainController implements Initializable {
         svm.setKernel(SVM.LINEAR);
         svm.setType(SVM.C_SVC);
         seed = 0;
-        akurasiSeedTrain = new ArrayList<>();
-        akurasiSeedSample = new ArrayList<>();
+        akurasiSeedTrainAvg = new ArrayList<>();
+        akurasiSeedSampleAvg = new ArrayList<>();
     }
 
     /**
@@ -104,8 +107,8 @@ public class SVMTrainController implements Initializable {
      */
     @FXML
     private void trainOnClick(ActionEvent event) {
-        akurasiSeedTrain.clear();
-        akurasiSeedSample.clear();
+        akurasiSeedTrainAvg.clear();
+        akurasiSeedSampleAvg.clear();
         if (cmbType.getValue().equals("Edge")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
@@ -279,37 +282,44 @@ public class SVMTrainController implements Initializable {
      * @param train
      */
     public void confusionMatriks(int[][] predict, int jumlahData, boolean train) {
-        float TP = 0, TN = 0, FP = 0, FN = 0;
+        float[] TP = new float[predict.length], TN = new float[predict.length], FP = new float[predict.length], FN = new float[predict.length];
         for (int i = 0; i < predict.length; i++) {
             for (int j = 0; j < predict.length; j++) {
-                for (int k = 0; k < predict.length; k++) {
-                    if (i != j && i != k) {
-                        TN += predict[j][k];
-                    }
-                }
                 if (i == j) {
-                    TP += predict[i][j];
-                } else {
-                    FN += predict[i][j];
-                    FP += predict[j][i];
+                    TP[i] = predict[i][j];
+                } else if (i != j) {
+                    FP[i] += predict[i][j];
+                    FN[i] += predict[j][i];
                 }
             }
+            TN[i] = jumlahData - (TP[i] + FP[i] + FN[i]);
         }
-        float precision, recall, accuracy;
-        precision = TP / (TP + FP);
-        recall = TP / (TP + FN);
-        accuracy = TP / jumlahData;
-        txtAreaStatus.setText(txtAreaStatus.getText() + "TP: " + TP + " \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "TN: " + TN + " \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "FP: " + FP + " \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "FN: " + FN + " \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "precision: " + precision + " \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "recall: " + recall + " \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "accuracy: " + accuracy + " \n\n");
+        float[] precision = new float[predict.length], recall = new float[predict.length], accuracy = new float[predict.length];
+        float avgAccuracy = 0, overAllAccuracy = 0;
+        for (int i = 0; i < predict.length; i++) {
+            precision[i] = TP[i] / (TP[i] + FP[i]);
+            recall[i] = TP[i] / (TP[i] + FN[i]);
+            accuracy[i] = (TP[i] + TN[i]) / jumlahData;
+            avgAccuracy += accuracy[i];
+            overAllAccuracy += TP[i];
+        }
+        overAllAccuracy /= predict.length;
+        avgAccuracy /= predict.length;
+        txtAreaStatus.setText(txtAreaStatus.getText() + "TP: " + Arrays.toString(TP) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "TN: " + Arrays.toString(TN) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "FP: " + Arrays.toString(FP) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "FN: " + Arrays.toString(FN) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "precision: " + Arrays.toString(precision) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "recall: " + Arrays.toString(recall) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "accuracy: " + Arrays.toString(accuracy) + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Avg accuracy: " + avgAccuracy + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "overAllAccuracy: " + overAllAccuracy + " \n\n");
         if (train) {
-            akurasiSeedTrain.add(Double.valueOf(accuracy));
+            akurasiSeedTrainAvg.add(Double.valueOf(avgAccuracy));
+            akurasiSeedTrainAll.add(Double.valueOf(overAllAccuracy));
         } else {
-            akurasiSeedSample.add(Double.valueOf(accuracy));
+            akurasiSeedSampleAvg.add(Double.valueOf(avgAccuracy));
+            akurasiSeedSampleAll.add(Double.valueOf(overAllAccuracy));
         }
     }
 
@@ -321,16 +331,16 @@ public class SVMTrainController implements Initializable {
      */
     private void rataRataAkurasiSeed() {
         float i = 0;
-        for (Double integer : akurasiSeedTrain) {
+        for (Double integer : akurasiSeedTrainAvg) {
             i += integer;
         }
-        i /= akurasiSeedTrain.size();
+        i /= akurasiSeedTrainAvg.size();
         txtAreaStatus.setText(txtAreaStatus.getText() + "Rata-rata akurasi Train: " + i + " \n\n");
         i = 0;
-        for (Double integer : akurasiSeedSample) {
+        for (Double integer : akurasiSeedSampleAvg) {
             i += integer;
         }
-        i /= akurasiSeedSample.size();
+        i /= akurasiSeedSampleAvg.size();
         txtAreaStatus.setText(txtAreaStatus.getText() + "Rata-rata akurasi Sample: " + i + " \n\n");
     }
 
@@ -426,7 +436,7 @@ public class SVMTrainController implements Initializable {
             } else if (label == 5) {
                 m = 5;
             }
-            confusionMatrix[l][m] += 1;
+            confusionMatrix[m][l] += 1;
             // txtAreaStatus.setText(txtAreaStatus.getText() + fileName.get(j) + " : " + label + " \n");
         }
         for (int i = 0; i < 6; i++) {
