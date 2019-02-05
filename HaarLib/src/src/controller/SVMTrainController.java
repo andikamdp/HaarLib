@@ -95,6 +95,8 @@ public class SVMTrainController implements Initializable {
         seed = 0;
         akurasiSeedTrainAvg = new ArrayList<>();
         akurasiSeedSampleAvg = new ArrayList<>();
+        akurasiSeedSampleAll = new ArrayList<>();
+        akurasiSeedTrainAll = new ArrayList<>();
     }
 
     /**
@@ -109,11 +111,14 @@ public class SVMTrainController implements Initializable {
     private void trainOnClick(ActionEvent event) {
         akurasiSeedTrainAvg.clear();
         akurasiSeedSampleAvg.clear();
+        akurasiSeedSampleAll.clear();
+        akurasiSeedTrainAll.clear();
+        txtAreaStatus.setText("");
         if (cmbType.getValue().equals("Edge")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1; i++) {
                 txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
                 seed = i;
                 svmEdgeRandom();
@@ -302,7 +307,7 @@ public class SVMTrainController implements Initializable {
             avgAccuracy += accuracy[i];
             overAllAccuracy += TP[i];
         }
-        overAllAccuracy /= predict.length;
+        overAllAccuracy /= jumlahData;
         avgAccuracy /= predict.length;
         txtAreaStatus.setText(txtAreaStatus.getText() + "TP: " + Arrays.toString(TP) + " \n");
         txtAreaStatus.setText(txtAreaStatus.getText() + "TN: " + Arrays.toString(TN) + " \n");
@@ -329,18 +334,17 @@ public class SVMTrainController implements Initializable {
      * float i : menghitung jumlah akurasi
      */
     private void rataRataAkurasiSeed() {
-        float i = 0;
-        for (Double integer : akurasiSeedTrainAvg) {
-            i += integer;
+        float avgT = 0, avgS = 0, allT = 0, allS = 0;
+        for (int j = 0; j < akurasiSeedTrainAvg.size(); j++) {
+            avgT += akurasiSeedTrainAvg.get(j);
+            avgS += akurasiSeedSampleAvg.get(j);
+            allT += akurasiSeedTrainAll.get(j);
+            allS += akurasiSeedSampleAll.get(j);
         }
-        i /= akurasiSeedTrainAvg.size();
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Rata-rata akurasi Train: " + i + " \n\n");
-        i = 0;
-        for (Double integer : akurasiSeedSampleAvg) {
-            i += integer;
-        }
-        i /= akurasiSeedSampleAvg.size();
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Rata-rata akurasi Sample: " + i + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Rata-rata akurasi Train: " + (avgT / akurasiSeedTrainAvg.size()) + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Rata-rata akurasi Sample: " + (avgS / akurasiSeedSampleAvg.size()) + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Keseluruhan akurasi Train: " + (allT / akurasiSeedTrainAll.size()) + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Keseluruhan akurasi Sample: " + (allS / akurasiSeedSampleAll.size()) + " \n\n");
     }
 
     /**
