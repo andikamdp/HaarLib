@@ -110,11 +110,11 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-//            for (int i = 0; i < 30; i++) {
-            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (0 + 1) + " \n");
-            seed = 0;
-            svmEdgeRandom();
-//            }
+            for (int i = 0; i < 20; i++) {
+                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
+                seed = i;
+                svmEdgeRandom();
+            }
             rataRataAkurasiSeed();
         } else if (cmbType.getValue().equals("Hog")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
@@ -182,24 +182,17 @@ public class SVMTrainController implements Initializable {
         }
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
 
-        System.out.println("Train" + LocalTime.now());
         dataTraining = DataTrainingPrep.getDataMat(trainingDataMat);
         svm.train(dataTraining, Ml.ROW_SAMPLE, labelsMat);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
-
-        System.out.println("Finish Train" + LocalTime.now());
         //######################################################################
         int[][] confusionMatrix = predictClassifier(labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
-
-        System.out.println("testing sample" + LocalTime.now());
         //######################################################################
         confusionMatrix = predictClassifier(labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
-
-        System.out.println("testing training" + LocalTime.now());
         System.gc();
     }
 
@@ -219,41 +212,41 @@ public class SVMTrainController implements Initializable {
     public void svmHogRandom() {
         File file = new File(lblImageLocation.getText());
         File[] listFiles = file.listFiles();
+//######################################################################
         List<Integer> index = getRandomIndex(listFiles[0].listFiles().length);
-        List<String> labels = new ArrayList<String>();
+        List<String> labels = new ArrayList<>();
         //
         File files;
-        Mat trainingDataMat = new Mat();
         int rows = 0;
+        Mat dataTraining = new Mat();
+        List<Data> trainingDataMat = new ArrayList<>();
+        List<Data> sampleDataMat = new ArrayList<>();
         Mat labelsMat = new Mat();
-        Mat sampleDataMat = new Mat();
-        List<String> fileNameT = new ArrayList<>();
-        List<String> fileName = new ArrayList<>();
-        //
         for (int i = 0; i < listFiles.length; i++) {
+            //
             files = listFiles[i];
-            trainingDataMat.push_back(DataTrainingPrep.getDataSVMHog(files.getAbsolutePath(), index, true));
+            trainingDataMat.addAll(DataTrainingPrep.getDataSVMHog(files.getAbsolutePath(), index, true));
+            sampleDataMat.addAll(DataTrainingPrep.getDataSVMHog(files.getAbsolutePath(), index, false));
             if (i == 0) {
-                rows = trainingDataMat.rows();
+                rows = trainingDataMat.size();
             }
             labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
-            sampleDataMat.push_back(DataTrainingPrep.getDataSVMHog(files.getAbsolutePath(), index, false));
-            fileNameT.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, true));
-            fileName.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, false));
             labels.add(files.getName());
             txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
+
         }
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
-        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
+        dataTraining = DataTrainingPrep.getDataMat(trainingDataMat);
+        svm.train(dataTraining, Ml.ROW_SAMPLE, labelsMat);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
         //######################################################################
-//        int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
-//        confusionMatriks(confusionMatrix, sampleDataMat.rows(), false);
-//        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
+        int[][] confusionMatrix = predictClassifier(labels, sampleDataMat);
+        confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
         //######################################################################
-//        confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
-//        confusionMatriks(confusionMatrix, trainingDataMat.rows(), true);
-//        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
+        confusionMatrix = predictClassifier(labels, trainingDataMat);
+        confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
         System.gc();
     }
 

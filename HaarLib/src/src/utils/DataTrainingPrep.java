@@ -66,10 +66,8 @@ public class DataTrainingPrep {
     public static List<Data> getDataSVMEdge(String lokasi, List<Integer> index, Boolean train) {
         File folder = new File(lokasi);
         File[] listOfFiles = folder.listFiles();
-        Mat trainingDataMat;
         List<Data> datas = new ArrayList<>();
         int row = 0;
-
         for (int i = 0; i < listOfFiles.length; i++) {
             if (!index.contains(i) && train) {
                 Mat dataFile = new Mat(1, 48 * 64, CvType.CV_32FC1);
@@ -119,28 +117,33 @@ public class DataTrainingPrep {
      * Mat trainingDataMat :
      * Mat hand :
      * float[] trainingData:
+     *
+     * @param lokasi
+     * @param index
+     * @param train
+     * @return
      */
-    public static Mat getDataSVMHog(String lokasi, List<Integer> index, Boolean train) {
-
+    public static List<Data> getDataSVMHog(String lokasi, List<Integer> index, Boolean train) {
         File folder = new File(lokasi);
         File[] listOfFiles = folder.listFiles();
-        Mat trainingDataMat;
-        if (train) {
-            trainingDataMat = new Mat(listOfFiles.length - index.size(), 192780, CvType.CV_32FC1);
-        } else {
-            trainingDataMat = new Mat(index.size(), 192780, CvType.CV_32FC1);
-        }
+        List<Data> datas = new ArrayList<>();
         int row = 0;
         for (int i = 0; i < listOfFiles.length; i++) {
             if (!index.contains(i) && train) {
-                trainingDataMat.put(row, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
+                Mat dataFile = new Mat(1, 192780, CvType.CV_32FC1);
+                dataFile.put(0, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
+                Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
+                datas.add(dataTraining);
                 row++;
             } else if (index.contains(i) && !train) {
-                trainingDataMat.put(row, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
+                Mat dataFile = new Mat(1, 192780, CvType.CV_32FC1);
+                dataFile.put(0, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
+                Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
+                datas.add(dataTraining);
                 row++;
             }
         }
-        return trainingDataMat;
+        return datas;
     }
 
 //######################################################################
@@ -168,43 +171,6 @@ public class DataTrainingPrep {
             trainingData[j] = Math.round(trainingData[j] * 100000) / 100;
         }
         return trainingData;
-    }
-
-//######################################################################
-    /**
-     * method untuk nama file dari data sampel dan training
-     * param:
-     * String lokasi : lokasi data training
-     * List<Integer> index : indeks file untuk sampel
-     * Boolean train : menentukan data untuk sampel atau training
-     * var:
-     * Mat hand :
-     * List<String> folderName : wadah nama fariabel gambar
-     * File folder : lokasi direktori data gambar
-     * File[] listOfFiles : wadah array file gambar dalam folder
-     *
-     * @param lokasi
-     * @param index
-     * @param train
-     * @return
-     */
-    public static List<String> getFileName(String lokasi, List<Integer> index, Boolean train) {
-        List<String> folderName = new ArrayList<>();
-        File folder = new File(lokasi);
-
-        File[] listOfFiles = folder.listFiles();
-        if (train) {
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (!index.contains(i)) {
-                    folderName.add(listOfFiles[i].getName());
-                }
-            }
-        } else {
-            for (Integer listOfFile : index) {
-                folderName.add(listOfFiles[listOfFile].getName());
-            }
-        }
-        return folderName;
     }
 
     //######################################################################
