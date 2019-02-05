@@ -168,7 +168,6 @@ public class SVMTrainController implements Initializable {
         List<String> fileNameT = new ArrayList<>();
         List<String> fileName = new ArrayList<>();
         //
-        System.out.println("Data Prepare" + LocalTime.now());
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
             trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true));
