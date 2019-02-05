@@ -398,6 +398,8 @@ public class SVMTrainController implements Initializable {
         for (int j = 0; j < sampleDataMat.rows(); j++) {
             float label = svm.predict(sampleDataMat.row(j));
             int l = 0, m = 0;
+
+            System.out.println(fileName.get(j) + " : " + label);
             if (fileName.get(j).contains(labels.get(0))) {
                 l = 0;
             } else if (fileName.get(j).contains(labels.get(1).substring(0, 1))) {
