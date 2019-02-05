@@ -273,7 +273,7 @@ public class BuildImageDatasetController implements Initializable {
         Mat hand = Preprocessing.getBox(frame.clone());
         //
         if (imgDir.exists() && imgLblDir.exists()) {
-            if (i < 1800) {
+            if (i < 1810) {
                 Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", hand
                 );
                 i++;
