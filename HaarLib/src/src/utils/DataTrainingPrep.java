@@ -69,19 +69,18 @@ public class DataTrainingPrep {
         Mat trainingDataMat;
         List<Data> datas = new ArrayList<>();
         int row = 0;
-        Mat dataFile = new Mat(1, 48 * 64, CvType.CV_32FC1);
 
         for (int i = 0; i < listOfFiles.length; i++) {
             if (!index.contains(i) && train) {
+                Mat dataFile = new Mat(1, 48 * 64, CvType.CV_32FC1);
                 dataFile.put(0, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
-                System.out.println(listOfFiles[i].getAbsolutePath() + " i " + i);
                 datas.add(dataTraining);
                 row++;
             } else if (index.contains(i) && !train) {
+                Mat dataFile = new Mat(1, 48 * 64, CvType.CV_32FC1);
                 dataFile.put(0, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
-                System.out.println(listOfFiles[i].getAbsolutePath() + " i " + i);
                 datas.add(dataTraining);
                 row++;
             }

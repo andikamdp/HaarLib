@@ -170,11 +170,10 @@ public class SVMTrainController implements Initializable {
         //
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
-            trainingDataMat = DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true);
-            sampleDataMat = DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false);
+            trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true));
+            sampleDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false));
             if (i == 0) {
                 rows = trainingDataMat.size();
-                System.out.println("rows " + rows);
             }
             labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
             fileNameT.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, true));
@@ -402,7 +401,6 @@ public class SVMTrainController implements Initializable {
         for (int j = 0; j < sampleDataMat.size(); j++) {
             float label = svm.predict(sampleDataMat.get(j).getDataMat());
             int l = 0, m = 0;
-            System.out.println(sampleDataMat.get(j).getDataFile().getAbsolutePath() + " " + sampleDataMat.get(j).getIndex() + " : " + label);
             if (sampleDataMat.get(j).getDataName().contains(labels.get(0).substring(0, 1))) {
                 l = 0;
             } else if (sampleDataMat.get(j).getDataName().contains(labels.get(1).substring(0, 1))) {
