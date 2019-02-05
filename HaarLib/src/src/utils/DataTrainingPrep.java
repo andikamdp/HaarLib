@@ -214,7 +214,7 @@ public class DataTrainingPrep {
     public static Mat getDataMat(List<Data> data) {
         Mat dataMat = new Mat();
         for (Data data1 : data) {
-            dataMat.push_back(dataMat);
+            dataMat.push_back(data1.getDataMat());
         }
         return dataMat;
     }
