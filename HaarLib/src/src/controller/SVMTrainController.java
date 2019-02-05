@@ -110,11 +110,11 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-            for (int i = 0; i < 30; i++) {
-                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
-                seed = i;
-                svmEdgeRandom();
-            }
+//            for (int i = 0; i < 30; i++) {
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (0 + 1) + " \n");
+            seed = 0;
+            svmEdgeRandom();
+//            }
             rataRataAkurasiSeed();
         } else if (cmbType.getValue().equals("Hog")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
@@ -168,6 +168,7 @@ public class SVMTrainController implements Initializable {
         List<String> fileNameT = new ArrayList<>();
         List<String> fileName = new ArrayList<>();
         //
+        System.out.println("Data Prepare" + LocalTime.now());
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
             trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true));
@@ -176,23 +177,29 @@ public class SVMTrainController implements Initializable {
                 rows = trainingDataMat.size();
             }
             labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
-            fileNameT.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, true));
-            fileName.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, false));
             labels.add(files.getName());
             txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
         }
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
+
+        System.out.println("Train" + LocalTime.now());
         dataTraining = DataTrainingPrep.getDataMat(trainingDataMat);
         svm.train(dataTraining, Ml.ROW_SAMPLE, labelsMat);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
+
+        System.out.println("Finish Train" + LocalTime.now());
         //######################################################################
-        int[][] confusionMatrix = predictClassifier(fileName, labels, sampleDataMat);
+        int[][] confusionMatrix = predictClassifier(labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
+
+        System.out.println("testing sample" + LocalTime.now());
         //######################################################################
-        confusionMatrix = predictClassifier(fileNameT, labels, trainingDataMat);
+        confusionMatrix = predictClassifier(labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
+
+        System.out.println("testing training" + LocalTime.now());
         System.gc();
     }
 
@@ -396,7 +403,7 @@ public class SVMTrainController implements Initializable {
      * @param sampleDataMat
      * @return
      */
-    public int[][] predictClassifier(List<String> fileName, List<String> labels, List<Data> sampleDataMat) {
+    public int[][] predictClassifier(List<String> labels, List<Data> sampleDataMat) {
         int[][] confusionMatrix = new int[6][6];
         for (int j = 0; j < sampleDataMat.size(); j++) {
             float label = svm.predict(sampleDataMat.get(j).getDataMat());
