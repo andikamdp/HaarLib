@@ -174,6 +174,7 @@ public class SVMTrainController implements Initializable {
             sampleDataMat = DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false);
             if (i == 0) {
                 rows = trainingDataMat.size();
+                System.out.println("rows " + rows);
             }
             labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
             fileNameT.addAll(DataTrainingPrep.getFileName(files.getAbsolutePath(), index, true));
