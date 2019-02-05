@@ -75,13 +75,13 @@ public class DataTrainingPrep {
             if (!index.contains(i) && train) {
                 dataFile.put(0, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
-                System.out.println(dataFile.rows() + " " + dataFile.cols());
+                System.out.println(listOfFiles[i].getAbsolutePath() + " i " + i);
                 datas.add(dataTraining);
                 row++;
             } else if (index.contains(i) && !train) {
                 dataFile.put(0, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
-                System.out.println(dataFile.rows() + " " + dataFile.cols());
+                System.out.println(listOfFiles[i].getAbsolutePath() + " i " + i);
                 datas.add(dataTraining);
                 row++;
             }
