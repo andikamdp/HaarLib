@@ -183,18 +183,17 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
         }
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
-
         dataTraining = DataTrainingPrep.getDataMat(trainingDataMat);
         svm.train(dataTraining, Ml.ROW_SAMPLE, labelsMat);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n\n");
         //######################################################################
         int[][] confusionMatrix = predictClassifier(labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n\n");
         //######################################################################
         confusionMatrix = predictClassifier(labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n\n");
         System.gc();
     }
 
