@@ -12,21 +12,21 @@ import org.opencv.core.Mat;
  *
  * @author Andika Mulyawan
  */
-public class DataTraining {
+public class Data {
 
     private File dataFile;
     private Mat dataMat;
     private String dataName;
     private int index;
 
-    public DataTraining(File dataFile, Mat dataMat, String dataName, int index) {
+    public Data(File dataFile, Mat dataMat, String dataName, int index) {
         this.dataFile = dataFile;
         this.dataMat = dataMat;
         this.dataName = dataName;
         this.index = index;
     }
 
-    public DataTraining() {
+    public Data() {
     }
 
     public int getIndex() {
