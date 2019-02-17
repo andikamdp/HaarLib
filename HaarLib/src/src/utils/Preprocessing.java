@@ -161,7 +161,9 @@ public final class Preprocessing {
      */
     public static Mat getEdge_2(Mat frame) {
         frame = segment(frame, 0);
-        Imgproc.Canny(frame, frame, 0, 0);
+        Imgproc.resize(frame, frame, new Size(64, 48));
+//        Imgproc.resize(frame, frame, new Size(frame.width() * 0.8, frame.height() * 0.8));
+        Imgproc.Canny(frame, frame, 0, 255);
         return frame;
     }
 
@@ -175,10 +177,15 @@ public final class Preprocessing {
      *
      */
     public static Mat getEdge(Mat frame) {
+
         frame = segment(frame, 0);
-//        Imgproc.resize(frame, frame, new Size(64, 48));
-        Imgproc.resize(frame, frame, new Size(frame.width() * 0.8, frame.height() * 0.8));
-        Imgproc.Canny(frame, frame, 0, 0);
+        Imgproc.resize(frame, frame, new Size(64, 48));
+//        Imgproc.resize(frame, frame, new Size(frame.width() * 0.8, frame.height() * 0.8));
+        try {
+            Imgproc.Canny(frame, frame, 0, 255);
+        } catch (Exception e) {
+            System.out.println("getEdge(Mat frame)" + e);
+        }
         frame = frame.reshape(1, 1);
         return frame;
     }

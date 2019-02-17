@@ -124,6 +124,7 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
+            System.out.println(LocalTime.now());
             for (int i = 0; i < 1; i++) {
                 initSvm();
                 txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
@@ -399,8 +400,6 @@ public class SVMTrainController implements Initializable {
             index.remove(randomIndex);
         }
         Collections.sort(indexSample);
-        for (Integer integer : indexSample) {
-        }
         return indexSample;
     }
 

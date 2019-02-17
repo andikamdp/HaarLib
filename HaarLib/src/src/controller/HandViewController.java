@@ -210,17 +210,19 @@ public class HandViewController implements Initializable {
      *
      */
     public void getPredictedResult(Mat hand) {
-        float[] trainingData = DataTrainingPrep.getImageEdgeDescriptor(hand.clone());
-        Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
-        dataFile.put(0, 0, trainingData);
         try {
+            float[] trainingData = DataTrainingPrep.getImageEdgeDescriptor(hand.clone());
+//            Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
+//            dataFile.put(0, 0, trainingData);
+            Mat dataFile = Preprocessing.getEdge(hand);
             float label = svm.predict(dataFile);
-//            txtPredictedResult.setText(String.valueOf(svm.predict(Preprocessing.getEdge(dataFile))));
+            txtPredictedResult.setText(String.valueOf(svm.predict(Preprocessing.getEdge(dataFile))));
+
+            System.out.println(dataFile.rows() + " " + dataFile.cols());
+            System.out.println(hand.rows() + " " + hand.cols());
         } catch (Exception e) {
             System.out.println("getPredictedResult " + e);
         }
-        System.out.println(dataFile.rows() + " " + dataFile.cols());
-        System.out.println(hand.rows() + " " + hand.cols());
     }
 
     /**
