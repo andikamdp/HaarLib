@@ -212,10 +212,10 @@ public class HandViewController implements Initializable {
      */
     public void getPredictedResult(Mat hand) {
         try {
-            float[] trainingData = DataTrainingPrep.getImageEdgeDescriptor(hand.clone());
+//            float[] trainingData = DataTrainingPrep.getImageEdgeDescriptor(hand.clone());
 //            Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
 //            dataFile.put(0, 0, trainingData);
-            Mat dataFile = Preprocessing.getEdge(hand);
+            Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone());
             float label = svm.predict(dataFile);
             txtPredictedResult.setText(String.valueOf(svm.predict(Preprocessing.getEdge(dataFile))));
             System.out.println(dataFile.rows() + " " + dataFile.cols());
@@ -377,10 +377,12 @@ public class HandViewController implements Initializable {
 
     @FXML
     private void getClassifierOnClick(ActionEvent event) {
-        svm = SVM.create();
+        svm = SVM.load("‪E:\\TA\\Bisindo.xml");
 
-        svm.load(cmbClassifier.getValue());
-
+//        svm.load(cmbClassifier.getValue());
+//        svm.load("‪E:\\TA\\file\\Res\\33333_0.xml");
+        System.out.println(CvType.CV_32F);
+        System.out.println(CvType.CV_32FC1);
     }
 
 }

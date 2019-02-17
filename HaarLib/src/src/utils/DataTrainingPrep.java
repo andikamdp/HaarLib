@@ -70,18 +70,12 @@ public class DataTrainingPrep {
         int row = 0;
         for (int i = 0; i < listOfFiles.length; i++) {
             if (!index.contains(i) && train) {
-                float[] trainingData = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath());
-                Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
-                dataFile.put(0, 0, trainingData);
-//                Mat dataFile = getImageEdgeDescriptorED(listOfFiles[i].getAbsolutePath());
+                Mat dataFile = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath());
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
                 datas.add(dataTraining);
                 row++;
             } else if (index.contains(i) && !train) {
-                float[] trainingData = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath());
-                Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
-                dataFile.put(0, 0, trainingData);
-//                Mat dataFile = getImageEdgeDescriptorED(listOfFiles[i].getAbsolutePath());
+                Mat dataFile = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath());
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
                 datas.add(dataTraining);
                 row++;
@@ -102,23 +96,31 @@ public class DataTrainingPrep {
      * @param lokasi
      * @return
      */
-    public static float[] getImageEdgeDescriptor(String lokasi) {
+    public static Mat getImageEdgeDescriptor(String lokasi) {
         Mat hand = Imgcodecs.imread(lokasi, CvType.CV_32FC1);
+        Mat trainingDataMat;
         hand = Preprocessing.getEdge(hand);
         float[] trainingData = new float[hand.cols()];
+        trainingDataMat = new Mat(1, hand.cols(), CvType.CV_32F);
+        System.out.println(hand.cols());
         for (int j = 0; j < hand.cols(); j++) {
             trainingData[j] = (float) hand.get(0, j)[0];
         }
-        return trainingData;
+        trainingDataMat.put(0, 0, trainingData);
+        return trainingDataMat;
     }
 
-    public static float[] getImageEdgeDescriptor(Mat hand) {
+    public static Mat getImageEdgeDescriptor(Mat hand) {
+        Mat trainingDataMat;
         hand = Preprocessing.getEdge(hand);
         float[] trainingData = new float[hand.cols()];
+        trainingDataMat = new Mat(1, hand.cols(), CvType.CV_32F);
+        System.out.println(hand.cols());
         for (int j = 0; j < hand.cols(); j++) {
             trainingData[j] = (float) hand.get(0, j)[0];
         }
-        return trainingData;
+        trainingDataMat.put(0, 0, trainingData);
+        return trainingDataMat;
     }
 //
 //    public static Mat getImageEdgeDescriptorED(String lokasi) {
