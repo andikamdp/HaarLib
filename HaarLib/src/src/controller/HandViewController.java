@@ -377,7 +377,7 @@ public class HandViewController implements Initializable {
 
     @FXML
     private void getClassifierOnClick(ActionEvent event) {
-        svm = SVM.load("‪E:\\TA\\Bisindo.xml");
+        svm = SVM.load("E:\\TA\\999_0.xml");
 
 //        svm.load(cmbClassifier.getValue());
 //        svm.load("‪E:\\TA\\file\\Res\\33333_0.xml");
