@@ -72,7 +72,6 @@ public class DataTrainingPrep {
             if (!index.contains(i) && train) {
                 float[] trainingData = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath());
                 Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
-//                Mat dataFile = new Mat(1, 64 * 48, CvType.CV_32FC1);
                 dataFile.put(0, 0, trainingData);
 //                Mat dataFile = getImageEdgeDescriptorED(listOfFiles[i].getAbsolutePath());
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
@@ -81,7 +80,6 @@ public class DataTrainingPrep {
             } else if (index.contains(i) && !train) {
                 float[] trainingData = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath());
                 Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
-//                Mat dataFile = new Mat(1, 64 * 48, CvType.CV_32FC1);
                 dataFile.put(0, 0, trainingData);
 //                Mat dataFile = getImageEdgeDescriptorED(listOfFiles[i].getAbsolutePath());
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
