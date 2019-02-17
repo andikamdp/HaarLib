@@ -70,14 +70,19 @@ public class DataTrainingPrep {
         int row = 0;
         for (int i = 0; i < listOfFiles.length; i++) {
             if (!index.contains(i) && train) {
-                Mat dataFile = new Mat(1, 48 * 64, CvType.CV_32FC1);
-                dataFile.put(0, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
+                float[] trainingData = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath());
+                Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
+//                Mat dataFile = new Mat(1, 64 * 48, CvType.CV_32FC1);
+//                System.out.println(trainingData.length);
+                dataFile.put(0, 0, trainingData);
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
                 datas.add(dataTraining);
                 row++;
             } else if (index.contains(i) && !train) {
-                Mat dataFile = new Mat(1, 48 * 64, CvType.CV_32FC1);
-                dataFile.put(0, 0, getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath()));
+                float[] trainingData = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath());
+                Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
+//                Mat dataFile = new Mat(1, 64 * 48, CvType.CV_32FC1);
+                dataFile.put(0, 0, trainingData);
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
                 datas.add(dataTraining);
                 row++;
@@ -101,6 +106,7 @@ public class DataTrainingPrep {
     public static float[] getImageEdgeDescriptor(String lokasi) {
         Mat hand = Imgcodecs.imread(lokasi, CvType.CV_32F);
         hand = Preprocessing.getEdge(hand);
+//        System.out.println(hand.rows() + " " + hand.cols());
         float[] trainingData = new float[hand.cols()];
         for (int j = 0; j < hand.cols(); j++) {
             trainingData[j] = (float) hand.get(0, j)[0];
@@ -108,8 +114,17 @@ public class DataTrainingPrep {
         return trainingData;
     }
 
-//######################################################################
+    public static float[] getImageEdgeDescriptor(Mat hand) {
+        hand = Preprocessing.getEdge(hand);
+        float[] trainingData = new float[hand.cols()];
+        for (int j = 0; j < hand.cols(); j++) {
+            trainingData[j] = (float) hand.get(0, j)[0];
+        }
+        return trainingData;
+    }
+
     /**
+     * //######################################################################
      * method untuk memeriksa memperoleh data training berdasarkan fitur HOG
      * var:
      * File folder : lokasi direktori data gambar
@@ -122,32 +137,32 @@ public class DataTrainingPrep {
      * @param index
      * @param train
      * @return
+     *
+     * public static List<Data> getDataSVMHog(String lokasi, List<Integer> index, Boolean train) {
+     * File folder = new File(lokasi);
+     * File[] listOfFiles = folder.listFiles();
+     * List<Data> datas = new ArrayList<>();
+     * int row = 0;
+     * for (int i = 0; i < listOfFiles.length; i++) {
+     * if (!index.contains(i) && train) {
+     * Mat dataFile = new Mat(1, 192780, CvType.CV_32FC1);
+     * dataFile.put(0, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
+     * Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
+     * datas.add(dataTraining);
+     * row++;
+     * } else if (index.contains(i) && !train) {
+     * Mat dataFile = new Mat(1, 192780, CvType.CV_32FC1);
+     * dataFile.put(0, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
+     * Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
+     * datas.add(dataTraining);
+     * row++;
+     * }
+     * }
+     * return datas;
+     * }
      */
-    public static List<Data> getDataSVMHog(String lokasi, List<Integer> index, Boolean train) {
-        File folder = new File(lokasi);
-        File[] listOfFiles = folder.listFiles();
-        List<Data> datas = new ArrayList<>();
-        int row = 0;
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if (!index.contains(i) && train) {
-                Mat dataFile = new Mat(1, 192780, CvType.CV_32FC1);
-                dataFile.put(0, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
-                Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
-                datas.add(dataTraining);
-                row++;
-            } else if (index.contains(i) && !train) {
-                Mat dataFile = new Mat(1, 192780, CvType.CV_32FC1);
-                dataFile.put(0, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
-                Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
-                datas.add(dataTraining);
-                row++;
-            }
-        }
-        return datas;
-    }
-
-//######################################################################
     /**
+     * //######################################################################
      * method untuk memperoleh data training berdasarkan fitur HOG
      * param:
      * String lokasi : lokasi data training
@@ -159,20 +174,20 @@ public class DataTrainingPrep {
      *
      * @param lokasi
      * @return
+     *
+     * public static float[] getImageHogDescriptor(String lokasi) {
+     * HOGDescriptor gDescriptor = new HOGDescriptor();
+     * Mat hand = Imgcodecs.imread(lokasi, CvType.CV_32F);
+     * // Imgproc.resize(hand, hand, new Size(192, 144));
+     * MatOfFloat descriptors = new MatOfFloat();
+     * gDescriptor.compute(hand, descriptors);
+     * float[] trainingData = descriptors.toArray();
+     * // for (int j = 0; j < trainingData.length; j++) {
+     * // trainingData[j] = Math.round(trainingData[j] * 100000) / 100;
+     * // }
+     * return trainingData;
+     * }
      */
-    public static float[] getImageHogDescriptor(String lokasi) {
-        HOGDescriptor gDescriptor = new HOGDescriptor();
-        Mat hand = Imgcodecs.imread(lokasi, CvType.CV_32F);
-        Imgproc.resize(hand, hand, new Size(192, 144));
-        MatOfFloat descriptors = new MatOfFloat();
-        gDescriptor.compute(hand, descriptors);
-        float[] trainingData = descriptors.toArray();
-        for (int j = 0; j < trainingData.length; j++) {
-            trainingData[j] = Math.round(trainingData[j] * 100000) / 100;
-        }
-        return trainingData;
-    }
-
     //######################################################################
     /**
      *

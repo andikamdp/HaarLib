@@ -26,6 +26,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.DirectoryChooser;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -39,6 +41,8 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.SVM;
 import org.opencv.objdetect.HOGDescriptor;
 import org.opencv.videoio.VideoCapture;
+import src.utils.DataTrainingPrep;
+import static src.utils.DataTrainingPrep.getImageEdgeDescriptor;
 import src.utils.Preprocessing;
 
 /**
@@ -73,14 +77,13 @@ public class HandViewController implements Initializable {
     @FXML
     private ComboBox<String> cmbClassifier;
     @FXML
-    private ComboBox<String> cmbTresholdType;
+    private AnchorPane apHandViewWindow;
 //
     private MainAppController mainAppController;
     private ScheduledExecutorService timer;
     private VideoCapture capture;
     private boolean cameraActive;
-    private int i;
-    private SVM svmJariTerangkatHOG, svmBisindoEdge;
+    private SVM svm;
 
     /**
      * Initializes the controller class.
@@ -90,17 +93,7 @@ public class HandViewController implements Initializable {
         // TODO
         capture = new VideoCapture();
         cameraActive = false;
-        i = 0;
-        svmBisindoEdge = SVM.load("E:\\TA\\Bisindo.xml");
-        svmJariTerangkatHOG = SVM.load("E:\\TA\\hCoba.xml");
-        ObservableList<String> typeTreshold = FXCollections.observableArrayList();
-        typeTreshold.add("Bynary");
-        typeTreshold.add("Bynary Inverse");
-        ObservableList<String> typeClassifier = FXCollections.observableArrayList();
-        typeClassifier.add("Bisindo Edge");
-        typeClassifier.add("Jari Hog");
-        cmbTresholdType.setItems(typeTreshold);
-        cmbClassifier.setItems(typeClassifier);
+
     }
 
     public void setMainController(MainAppController aThis) {
@@ -173,22 +166,13 @@ public class HandViewController implements Initializable {
         Preprocessing.drawRect(frame);
         updateImageView(layarMain, frame);
         Mat hand = Preprocessing.getBox(frame.clone());
+        updateImageView(layarBW, hand);
         //
-        Mat tresholded;
-        if (cmbTresholdType.getValue().equals("Bynary")) {
-            tresholded = Preprocessing.segment(hand.clone(), Double.valueOf(txtValue.getText()));
-        } else {
-            tresholded = Preprocessing.segmentInvers(hand.clone(), Double.valueOf(txtValue.getText()));
-        }
-        Point[] extremePoint = getExtremePoint(tresholded);
         Mat handView = Preprocessing.getEdge_2(hand.clone());
         updateImageView(layarEdge, handView);
         //
-        Mat handPredict = Preprocessing.getBox(hand.clone(), extremePoint[0], extremePoint[1]);
-
-//
-        hand = Preprocessing.drawRect(hand, extremePoint[0], extremePoint[1]);
-        updateImageView(layarBW, hand);
+        Mat handPredict = hand.clone();
+        getPredictedResult(handPredict);
     }
 
     /**
@@ -226,77 +210,17 @@ public class HandViewController implements Initializable {
      *
      */
     public void getPredictedResult(Mat hand) {
-        if (cmbClassifier.getValue().equals("Bisindo Edge")) {
-            hand = getDataSVMEdgeDELETE(hand);
-            txtPredictedResult.setText(String.valueOf(svmBisindoEdge.predict(hand)));
-        } else if (cmbClassifier.getValue().equals("Jari Hog")) {
-            hand = getDataSVMHogDELETE(hand);
-            txtPredictedResult.setText(String.valueOf(svmJariTerangkatHOG.predict(hand)));
+        float[] trainingData = DataTrainingPrep.getImageEdgeDescriptor(hand.clone());
+        Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
+        dataFile.put(0, 0, trainingData);
+        try {
+            float label = svm.predict(dataFile);
+//            txtPredictedResult.setText(String.valueOf(svm.predict(Preprocessing.getEdge(dataFile))));
+        } catch (Exception e) {
+            System.out.println("getPredictedResult " + e);
         }
-    }
-
-    /**
-     * ######################################################################
-     * method untuk memeriksa memperoleh data training berdasarkan fitur HOG
-     * var:
-     * File folder : lokasi direktori data gambar
-     * File[] listOfFiles :
-     * Mat trainingDataMat :
-     * Mat hand :
-     * float[] trainingData:
-     */
-    public Mat getDataSVMHogDELETE(Mat predict) {
-        Mat trainingDataMat;
-        trainingDataMat = new Mat(1, 192780, CvType.CV_32FC1);
-        HOGDescriptor gDescriptor = new HOGDescriptor();
-        Imgproc.resize(predict, predict, new Size(192, 144));
-        MatOfFloat descriptors = new MatOfFloat();
-        gDescriptor.compute(predict, descriptors);
-        float[] trainingData = descriptors.toArray();
-        for (int j = 0; j < trainingData.length; j++) {
-            trainingData[j] = Math.round(trainingData[j] * 100000) / 100;
-        }
-        trainingDataMat.put(0, 0, trainingData);
-
-        return trainingDataMat;
-    }
-
-    /**
-     * ######################################################################
-     * method untuk memeriksa memperoleh data training berdasarkan fitur garis tepi
-     * var:
-     * File folder : lokasi direktori data gambar
-     * File[] listOfFiles :
-     * Mat trainingDataMat :
-     * Mat hand :
-     * float[] trainingData:
-     */
-    public Mat getDataSVMEdgeDELETE(Mat predict) {
-
-        Mat trainingDataMat;
-        trainingDataMat = new Mat(1, 48 * 64, CvType.CV_32FC1);
-
-        predict = Preprocessing.getEdge(predict);
-
-        float[] trainingData = new float[predict.cols()];
-        for (int j = 0; j < predict.cols(); j++) {
-            trainingData[j] = (float) predict.get(0, j)[0];
-        }
-        trainingDataMat.put(0, 0, trainingData);
-
-        return trainingDataMat;
-    }
-
-    /**
-     * ######################################################################
-     * method button btnUpdateCamera OnClick
-     * var:
-     * int i : reset nomor urut gambar yang di simpan
-     */
-    @FXML
-    private void updateCameraOnClick(ActionEvent event
-    ) {
-        i = 0;
+        System.out.println(dataFile.rows() + " " + dataFile.cols());
+        System.out.println(hand.rows() + " " + hand.cols());
     }
 
     /**
@@ -414,111 +338,6 @@ public class HandViewController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * method menggambil gambar(image capture)melalui button
-     * var:
-     * Point titikA : titik saat ini
-     * Point titikB : titik sebelumnya
-     *
-     */
-    @FXML
-    private void capturePictureOnSction(ActionEvent event) {
-
-    }
-
-    /**
-     * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
-     * Point titikA : titik saat ini
-     * Point titikB : titik sebelumnya
-     *
-     */
-    private List<Integer> hapusTitik(List<MatOfPoint> contours, Mat hand, ArrayList<MatOfPoint> contour) {
-        List<Integer> puncak = new ArrayList<>();
-        try {
-
-            Point[] point = contour.get(0).toArray();
-//            puncak.addAll(devContourIdxList);
-//            lembah.addAll(devContourIdxList);
-            //jika posisi false berarti cari lembah
-            //jika posisi true berarti cari puncak
-            Boolean isPuncak = true;
-            for (int j = 0; j < puncak.size(); j++) {
-                int index = puncak.get(j);
-                int indexP = 0;
-                if (j + 1 < puncak.size()) {
-                    indexP = puncak.get(j + 1);
-                }
-
-                if (index < point.length && indexP < point.length
-                        && point[index].y
-                        < hand.rows() - 1
-                        && point[indexP].y < hand.rows() - 1) {
-                    if (isPuncak) {
-                        //jika menemukan puncak index dicaatat
-                        if (Preprocessing.arahTitikY(point[index], point[indexP])) {
-                            isPuncak = false;
-//                            lembah.set(j, -1);
-                        } //jika titik lebih tinggi index sebelumnya dihapus
-                        else {
-//                            lembah.set(j, -1);
-                            puncak.set(j, -1);
-//                            devContourIdxList.set(j, -1);
-                        }
-                    } else {
-                        //jika menemukan lembah index dicaatat
-                        if (Preprocessing.arahTitikY(point[indexP], point[index])) {
-                            puncak.set(j, -1);
-                            isPuncak = true;
-                        } //jika titik lebih tinggi index sebelumnya dihapus
-                        else {
-//                            lembah.set(j, -1);
-                            puncak.set(j, -1);
-//                            devContourIdxList.set(j, -1);
-                        }
-                    }
-                } else {
-                    puncak.set(j, -1);
-//                    lembah.set(j, -1);
-//                    devContourIdxList.set(j, -1);
-                }
-            }
-            Integer rem = -1;
-//            puncak.addAll(lembah);
-            Collections.sort(puncak);
-
-            for (Integer integer : puncak) {
-                System.out.println(integer);
-            }
-            System.out.println("");
-            System.out.println("contous " + contour.get(0).toArray().length);
-            while (puncak.contains(rem)) {
-                puncak.remove(rem);
-            }
-            System.out.println("");
-            for (Integer integer : puncak) {
-                System.out.println(integer);
-            }
-            Mat hand2 = hand.clone();
-            Preprocessing.drawPointColor(contour, hand2, puncak);
-            Preprocessing.drawJumlahJari(hand, puncak.size());
-//            layarBW.setImage(Utils.mat2Image(hand2));
-//            drawPointColor(contous, hand, devContourIdxList);
-            layarEdge.setImage(Utils.mat2Image(hand2));
-
-        } catch (Exception e) {
-            System.out.
-                    println("hapusTitik(List<MatOfPoint> contours, Mat hand)");
-            System.out.println(e);
-            System.out.println("");
-        }
-        return puncak;
-    }
-
-    /**
-     * ######################################################################
      * method layarMain OnClick
      * memperoleh nilai koordinat layarMain
      * var:
@@ -529,6 +348,37 @@ public class HandViewController implements Initializable {
     @FXML
     private void getPoint(MouseEvent event) {
         txtMainFramePoint.setText("(" + String.valueOf(event.getX()) + ", " + String.valueOf(event.getY()) + ")");
+    }
+
+    /**
+     * ######################################################################
+     * method browse classifier OnClick
+     * memperoleh nilai koordinat layarMain
+     * var:
+     * TextField txtV : text field menyimpan koordinat X
+     * TextField txtS : text field menyimpan koordinat Y
+     *
+     */
+    @FXML
+    private void browseClassifierOnClick(ActionEvent event) {
+        DirectoryChooser brows = new DirectoryChooser();
+        brows.setTitle("Buka Folder Classification Save Lokasi");
+        File Path = brows.showDialog(apHandViewWindow.getScene().getWindow());
+
+        File[] files = Path.listFiles();
+        ObservableList<String> typeClassifier = FXCollections.observableArrayList();
+        for (File file : files) {
+            typeClassifier.add(file.getAbsolutePath());
+        }
+        cmbClassifier.setItems(typeClassifier);
+    }
+
+    @FXML
+    private void getClassifierOnClick(ActionEvent event) {
+        svm = SVM.create();
+
+        svm.load(cmbClassifier.getValue());
+
     }
 
 }

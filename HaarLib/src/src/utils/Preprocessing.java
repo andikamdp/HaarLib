@@ -161,7 +161,7 @@ public final class Preprocessing {
      */
     public static Mat getEdge_2(Mat frame) {
         frame = segment(frame, 0);
-        Imgproc.Canny(frame, frame, 0.2, 0.2);
+        Imgproc.Canny(frame, frame, 0, 0);
         return frame;
     }
 
@@ -176,8 +176,9 @@ public final class Preprocessing {
      */
     public static Mat getEdge(Mat frame) {
         frame = segment(frame, 0);
-        Imgproc.resize(frame, frame, new Size(64, 48));
-        Imgproc.Canny(frame, frame, 0.2, 0.2);
+//        Imgproc.resize(frame, frame, new Size(64, 48));
+        Imgproc.resize(frame, frame, new Size(frame.width() * 0.8, frame.height() * 0.8));
+        Imgproc.Canny(frame, frame, 0, 0);
         frame = frame.reshape(1, 1);
         return frame;
     }
@@ -198,11 +199,11 @@ public final class Preprocessing {
 //            Scalar lowerb = new Scalar(0, 0, 0);
 //            Core.inRange(frameAsli, lowerb, upperb, frameAsli););
             Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
-            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
+//            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
 //        Imgproc.accumulateWeighted(frame, frame, 0.5);
-            Mat dist = new Mat();
-            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
-            cleaning(frameAsli);
+
+//            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
+//            cleaning(frameAsli);
         } catch (Exception e) {
             System.out.println("segment(Mat frameAsli)");
             System.out.println(e);
@@ -229,8 +230,7 @@ public final class Preprocessing {
             Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
 //            Imgproc.accumulateWeighted(frameAsli, frameAsli, 10000);
             Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
-            Imgproc.threshold(frameAsli, frameAsli, tres, 255,
-                    Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+//            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
             cleaning(frameAsli);
         } catch (Exception e) {
             System.out.println("segment(Mat frameAsli)");
