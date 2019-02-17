@@ -102,7 +102,6 @@ public class DataTrainingPrep {
         hand = Preprocessing.getEdge(hand);
         float[] trainingData = new float[hand.cols()];
         trainingDataMat = new Mat(1, hand.cols(), CvType.CV_32F);
-        System.out.println(hand.cols());
         for (int j = 0; j < hand.cols(); j++) {
             trainingData[j] = (float) hand.get(0, j)[0];
         }
@@ -115,7 +114,6 @@ public class DataTrainingPrep {
         hand = Preprocessing.getEdge(hand);
         float[] trainingData = new float[hand.cols()];
         trainingDataMat = new Mat(1, hand.cols(), CvType.CV_32F);
-        System.out.println(hand.cols());
         for (int j = 0; j < hand.cols(); j++) {
             trainingData[j] = (float) hand.get(0, j)[0];
         }
