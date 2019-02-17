@@ -187,8 +187,6 @@ public class SVMTrainController implements Initializable {
             files = listFiles[i];
             trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true));
             sampleDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false));
-            System.out.println(trainingDataMat.get(0).getDataMat().rows() + " " + trainingDataMat.get(0).getDataMat().cols());
-            System.out.println(trainingDataMat.get(0).getDataMat().get(0, 0).length);
             if (i == 0) {
                 rows = trainingDataMat.size();
             }
