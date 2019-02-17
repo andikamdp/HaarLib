@@ -164,15 +164,16 @@ public class HandViewController implements Initializable {
     private void start(Mat frame) {
         Core.flip(frame, frame, 1);
         Preprocessing.drawRect(frame);
-        updateImageView(layarMain, frame);
         Mat hand = Preprocessing.getBox(frame.clone());
-        updateImageView(layarBW, hand);
         //
         Mat handView = Preprocessing.getEdge_2(hand.clone());
-        updateImageView(layarEdge, handView);
         //
         Mat handPredict = hand.clone();
         getPredictedResult(handPredict);
+        //
+        updateImageView(layarMain, frame);
+        updateImageView(layarBW, hand);
+        updateImageView(layarEdge, handView);
     }
 
     /**
@@ -217,7 +218,6 @@ public class HandViewController implements Initializable {
             Mat dataFile = Preprocessing.getEdge(hand);
             float label = svm.predict(dataFile);
             txtPredictedResult.setText(String.valueOf(svm.predict(Preprocessing.getEdge(dataFile))));
-
             System.out.println(dataFile.rows() + " " + dataFile.cols());
             System.out.println(hand.rows() + " " + hand.cols());
         } catch (Exception e) {
