@@ -124,7 +124,7 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1; i++) {
                 initSvm();
                 txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
                 seed = i;
@@ -188,6 +188,7 @@ public class SVMTrainController implements Initializable {
             trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true));
             sampleDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false));
             System.out.println(trainingDataMat.get(0).getDataMat().rows() + " " + trainingDataMat.get(0).getDataMat().cols());
+            System.out.println(trainingDataMat.get(0).getDataMat().get(0, 0).length);
             if (i == 0) {
                 rows = trainingDataMat.size();
             }
