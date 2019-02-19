@@ -151,9 +151,9 @@ public final class Preprocessing {
                 + Math.pow(titikA.y - titikB.y, 2));
         return jarak;
     }
-//######################################################################
 
     /**
+     * //######################################################################
      * method memperoleh garis tepi pada gambar
      * method akan mengembalikan gambar berisi garis tapi
      * var:
@@ -162,8 +162,10 @@ public final class Preprocessing {
     public static Mat getEdge_2(Mat frame) {
         frame = segment(frame, 0);
         Imgproc.resize(frame, frame, new Size(64, 48));
-//        Imgproc.resize(frame, frame, new Size(frame.width() * 0.8, frame.height() * 0.8));
+//        Imgproc.resize(frame, frame, new Size(frame.width() * 0.4, frame.height() * 0.4));
         Imgproc.Canny(frame, frame, 0, 255);
+//        Imgproc.Canny(frame, frame, 100, 300, 3, false);
+
         return frame;
     }
 
@@ -180,12 +182,10 @@ public final class Preprocessing {
 
         frame = segment(frame, 0);
         Imgproc.resize(frame, frame, new Size(64, 48));
-//        Imgproc.resize(frame, frame, new Size(frame.width() * 0.8, frame.height() * 0.8));
-        try {
-            Imgproc.Canny(frame, frame, 0, 255);
-        } catch (Exception e) {
-            System.out.println("getEdge(Mat frame)" + e);
-        }
+//        Imgproc.resize(frame, frame, new Size(frame.width() * 0.4, frame.height() * 0.4));
+
+        Imgproc.Canny(frame, frame, 0, 255);
+//        Imgproc.Canny(frame, frame, 100, 300, 3, false);
         frame = frame.reshape(1, 1);
         return frame;
     }
@@ -198,30 +198,30 @@ public final class Preprocessing {
      * var:
      * Mat frameAsli : berisi gambar dengan warna utuh
      * 12/6/18 6:59 AM
+     *
+     * public static Mat segmentInvers(Mat frameAsli, double tres) {
+     * try {
+     *
+     * // Scalar upperb = new Scalar(64, 223, 255);
+     * // Scalar lowerb = new Scalar(0, 0, 0);
+     * // Core.inRange(frameAsli, lowerb, upperb, frameAsli););
+     * Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
+     * // Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
+     * // Imgproc.accumulateWeighted(frame, frame, 0.5);
+     *
+     * // Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
+     * // cleaning(frameAsli);
+     * } catch (Exception e) {
+     * System.out.println("segment(Mat frameAsli)");
+     * System.out.println(e);
+     * System.out.println("");
+     * }
+     *
+     * return frameAsli;
+     * }
      */
-    public static Mat segmentInvers(Mat frameAsli, double tres) {
-        try {
-
-//            Scalar upperb = new Scalar(64, 223, 255);
-//            Scalar lowerb = new Scalar(0, 0, 0);
-//            Core.inRange(frameAsli, lowerb, upperb, frameAsli););
-            Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
-//            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
-//        Imgproc.accumulateWeighted(frame, frame, 0.5);
-
-//            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
-//            cleaning(frameAsli);
-        } catch (Exception e) {
-            System.out.println("segment(Mat frameAsli)");
-            System.out.println(e);
-            System.out.println("");
-        }
-
-        return frameAsli;
-    }
-
-    //######################################################################
     /**
+     * //######################################################################
      * method memisahkan objek dari latar
      * gambar yang diterima akan diubah menjadi BW dengan treshold binary dan otsu
      * gambar dilakukan bluring dan cleaning
@@ -237,7 +237,7 @@ public final class Preprocessing {
             Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
 //            Imgproc.accumulateWeighted(frameAsli, frameAsli, 10000);
             Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
-//            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
             cleaning(frameAsli);
         } catch (Exception e) {
             System.out.println("segment(Mat frameAsli)");

@@ -78,6 +78,8 @@ public class SVMTrainController implements Initializable {
     private List<Double> akurasiSeedTrainAll;
     private List<SVM> svmList;
 //
+    @FXML
+    private TextField txtBoxSeed;
 
     /**
      * Initializes the controller class.
@@ -124,8 +126,9 @@ public class SVMTrainController implements Initializable {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
             txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-            System.out.println(LocalTime.now());
-            for (int i = 0; i < 10; i++) {
+            int seedC = Integer.valueOf(txtBoxSeed.getText());
+            for (int i = 0; i < seedC; i++) {
+                System.out.println(LocalTime.now());
                 initSvm();
                 txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
                 seed = i;
@@ -137,14 +140,15 @@ public class SVMTrainController implements Initializable {
 //        else if (cmbType.getValue().equals("Hog")) {
 //            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
 //            txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-//            for (int i = 0; i < 1; i++) {
+//            int seedC = Integer.valueOf(txtBoxSeed.getText());
+//            for (int i = 0; i < seedC; i++) {
+//                System.out.println(LocalTime.now());
 //                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi" + (i + 1) + " \n");
 //                seed = i;
 //                svmHogRandom();
 //            }
 //            rataRataAkurasiSeed();
 //        }
-
     }
 
     /**
@@ -152,7 +156,8 @@ public class SVMTrainController implements Initializable {
      * method set Main Controller
      *
      */
-    void setMainController(MainAppController aThis) {
+    void setMainController(MainAppController aThis
+    ) {
         mainAppController = aThis;
     }
 
