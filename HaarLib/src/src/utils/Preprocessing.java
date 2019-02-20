@@ -160,12 +160,10 @@ public final class Preprocessing {
      * Mat frame : berisi gambar awal
      */
     public static Mat getEdge_2(Mat frame) {
-        frame = segment(frame, 0);
-        Imgproc.resize(frame, frame, new Size(64, 48));
-//        Imgproc.resize(frame, frame, new Size(frame.width() * 0.4, frame.height() * 0.4));
-        Imgproc.Canny(frame, frame, 0, 255);
-//        Imgproc.Canny(frame, frame, 100, 300, 3, false);
+        frame = segment(frame, 0.0D);
+        Imgproc.resize(frame, frame, new Size(64.0D, 48.0D));
 
+        Imgproc.Canny(frame, frame, 0.0D, 255.0D);
         return frame;
     }
 
@@ -179,13 +177,13 @@ public final class Preprocessing {
      *
      */
     public static Mat getEdge(Mat frame) {
-
-        frame = segment(frame, 0);
-        Imgproc.resize(frame, frame, new Size(64, 48));
-//        Imgproc.resize(frame, frame, new Size(frame.width() * 0.4, frame.height() * 0.4));
-
-        Imgproc.Canny(frame, frame, 0, 255);
-//        Imgproc.Canny(frame, frame, 100, 300, 3, false);
+        frame = segment(frame, 0.0D);
+        Imgproc.resize(frame, frame, new Size(64.0D, 48.0D));
+        try {
+            Imgproc.Canny(frame, frame, 0.0D, 255.0D);
+        } catch (Exception e) {
+            System.out.println("getEdge(Mat frame)" + e);
+        }
         frame = frame.reshape(1, 1);
         return frame;
     }
@@ -230,21 +228,23 @@ public final class Preprocessing {
      * 12/6/18 6:59 AM
      */
     public static Mat segment(Mat frameAsli, double tres) {
-        try {
 //            Scalar upperb = new Scalar(64, 223, 255);
 //            Scalar lowerb = new Scalar(0, 0, 0);
 //            Core.inRange(frameAsli, lowerb, upperb, frameAsli);
-            Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
 //            Imgproc.accumulateWeighted(frameAsli, frameAsli, 10000);
-            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
-            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+//            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
+//            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
+        try {
+            Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
+
+            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7.0, 7.0), 0.0);
+
             cleaning(frameAsli);
         } catch (Exception e) {
             System.out.println("segment(Mat frameAsli)");
             System.out.println(e);
             System.out.println("");
         }
-
         return frameAsli;
     }
 //######################################################################
