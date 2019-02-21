@@ -105,14 +105,14 @@ public class SVMTrainController implements Initializable {
             svmTryBisindo();
         } else if (cmbType.getValue().equals("SVM Sampel Acak")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1; i++) {
                 seed = i;
                 svmRandom();
             }
             rataRataAkurasiSeed();
         } else if (cmbType.getValue().equals("SVM Bisindo Sampel Acak")) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM BISINDO Sampel Acak \n");
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 1; i++) {
                 seed = i;
                 svmBisindoRandom();
             }
@@ -283,7 +283,7 @@ public class SVMTrainController implements Initializable {
         System.gc();
         //######################################################################
 //        svm.train(trainingDataMat, Ml.ROW_SAMPLE, labelsMat);
-        svm.save("E:\\TA\\hCoba.xml");
+        svm.save("E:\\TA\\Final.xml");
         trainingDataMat = null;
         labelsMat = null;
         System.gc();
@@ -414,7 +414,7 @@ public class SVMTrainController implements Initializable {
     public Mat getDataSVMEdgeDELETE(String lokasi, List<Integer> index, Boolean train) {
         File folder;
         if (cmbType.getValue().contains("Bisindo")) {
-            folder = new File("E:\\TA\\HandLearnSVM\\BISINDO\\" + lokasi);
+            folder = new File("E:\\TA\\HandLearnSVM\\BISINDO\\B_terang\\" + lokasi);
         } else {
             folder = new File("E:\\TA\\HandLearnSVM\\Try1\\" + lokasi);
         }
@@ -473,7 +473,7 @@ public class SVMTrainController implements Initializable {
         List<String> folderName = new ArrayList<>();
         File folder;
         if (cmbType.getValue().contains("Bisindo")) {
-            folder = new File("E:\\TA\\HandLearnSVM\\BISINDO\\" + lokasi);
+            folder = new File("E:\\TA\\HandLearnSVM\\BISINDO\\B_terang\\" + lokasi);
         } else {
             folder = new File("E:\\TA\\HandLearnSVM\\Try1\\" + lokasi);
         }
