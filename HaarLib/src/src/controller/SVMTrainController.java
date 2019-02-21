@@ -21,7 +21,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfFloat;
@@ -43,8 +46,6 @@ public class SVMTrainController implements Initializable {
     @FXML
     private Button btnTrain;
     @FXML
-    private Button btnPredict;
-    @FXML
     private TextArea txtAreaStatus;
     @FXML
     private ComboBox<String> cmbType;
@@ -57,6 +58,22 @@ public class SVMTrainController implements Initializable {
     private List<Double> akurasiSeedTrain;
     private LocalTime time;
 //
+    @FXML
+    private AnchorPane apTrainWindow;
+    @FXML
+    private TextField txtBoxSeed;
+    @FXML
+    private Button btnBrowsImage;
+    @FXML
+    private Label lblImageLocation;
+    @FXML
+    private Button btnBrowsClassification;
+    @FXML
+    private Label lblClassificationLocation;
+    @FXML
+    private Button btnSaveClasification;
+    @FXML
+    private TextField txtBoxFileName;
 
     /**
      * Initializes the controller class.
@@ -117,10 +134,6 @@ public class SVMTrainController implements Initializable {
             rataRataAkurasiSeed();
         }
 
-    }
-
-    @FXML
-    private void predictOnAction(ActionEvent event) {
     }
 
 //######################################################################
@@ -934,5 +947,17 @@ public class SVMTrainController implements Initializable {
     //######################################################################
     //######################################################################
     //######################################################################
+
+    @FXML
+    private void browsImageOnClick(ActionEvent event) {
+    }
+
+    @FXML
+    private void browsClassificationOnClick(ActionEvent event) {
+    }
+
+    @FXML
+    private void saveClasssificationOnClilck(ActionEvent event) {
+    }
 
 }

@@ -32,8 +32,6 @@ import src.MainApp;
 public class MainAppController implements Initializable {
 
     @FXML
-    private Button btnHaar;
-    @FXML
     private Button btnSvmTrain;
     @FXML
     private Button btnSvmPredict;
@@ -41,6 +39,8 @@ public class MainAppController implements Initializable {
     private AnchorPane mainAppView;
     @FXML
     private Button btnSetImage;
+    @FXML
+    private Button btnRenameData;
 
     /**
      * Initializes the controller class.
@@ -49,39 +49,15 @@ public class MainAppController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }
-    private Stage haarWindow;
 
-    /**
-     * onClick action Membuka window baru Haar testing
-     *
-     */
-    @FXML
-    private void haarOpenWindowOnClick(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/haarCoba.fxml"));
-            AnchorPane root = loader.load();
-            HaarCobaController controller = loader.getController();
-            controller.setMainController(this);
-            Scene scene = new Scene(root);
-            haarWindow = new Stage();
-            haarWindow.initOwner(mainAppView.getScene().getWindow());
-            haarWindow.initModality(Modality.WINDOW_MODAL);
-            haarWindow.setScene(scene);
-            haarWindow.show();
-        } catch (IOException iOException) {
-            Logger.getLogger(MainAppController.class.getName()).
-                    log(Level.SEVERE, null, iOException);
-        }
-
-    }
+    private Stage stage;
 
     /**
      * onClick action membuka window baru berisi gui training SVM
      *
      */
     @FXML
-    private void svmTrainWindowOnClick(ActionEvent event) {
+    private void svmTrainViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/SVMTrain.fxml"));
@@ -89,11 +65,11 @@ public class MainAppController implements Initializable {
             SVMTrainController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
-            haarWindow = new Stage();
-            haarWindow.initOwner(mainAppView.getScene().getWindow());
-            haarWindow.initModality(Modality.WINDOW_MODAL);
-            haarWindow.setScene(scene);
-            haarWindow.show();
+            stage = new Stage();
+            stage.initOwner(mainAppView.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(scene);
+            stage.show();
         } catch (IOException iOException) {
             Logger.getLogger(MainAppController.class.getName()).
                     log(Level.SEVERE, null, iOException);
@@ -105,7 +81,7 @@ public class MainAppController implements Initializable {
      *
      */
     @FXML
-    private void svmPredictOnClick(ActionEvent event) {
+    private void handViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/HandView.fxml"));
@@ -113,11 +89,11 @@ public class MainAppController implements Initializable {
             HandViewController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
-            haarWindow = new Stage();
-            haarWindow.initOwner(mainAppView.getScene().getWindow());
-            haarWindow.initModality(Modality.WINDOW_MODAL);
-            haarWindow.setScene(scene);
-            haarWindow.show();
+            stage = new Stage();
+            stage.initOwner(mainAppView.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(scene);
+            stage.show();
         } catch (IOException iOException) {
             Logger.getLogger(MainAppController.class.getName()).
                     log(Level.SEVERE, null, iOException);
@@ -128,23 +104,45 @@ public class MainAppController implements Initializable {
      * onClick action membuka window baru berisi predict pergambar
      */
     @FXML
-    private void setImageViewOnClick(ActionEvent event) {
+    private void buildImageDatasetViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/SetImage.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/BuildImageDataset.fxml"));
             AnchorPane root = loader.load();
-            SetImageController controller = loader.getController();
+            BuildImageDatasetController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
-            haarWindow = new Stage();
-            haarWindow.initOwner(mainAppView.getScene().getWindow());
-            haarWindow.initModality(Modality.WINDOW_MODAL);
-            haarWindow.setScene(scene);
-            haarWindow.show();
+            stage = new Stage();
+            stage.initOwner(mainAppView.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(scene);
+            stage.show();
         } catch (IOException iOException) {
             Logger.getLogger(MainAppController.class.getName()).
                     log(Level.SEVERE, null, iOException);
         }
     }
 
+    /**
+     * onClick action membuka window baru untuk melakukan rename file
+     */
+    @FXML
+    private void renameFileViewOnClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/RenameData.fxml"));
+            AnchorPane root = loader.load();
+            RenameDataController controller = loader.getController();
+            controller.setMainController(this);
+            Scene scene = new Scene(root);
+            stage = new Stage();
+            stage.initOwner(mainAppView.getScene().getWindow());
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException iOException) {
+            Logger.getLogger(MainAppController.class.getName()).
+                    log(Level.SEVERE, null, iOException);
+        }
+    }
 }

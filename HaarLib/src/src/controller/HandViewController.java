@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -71,7 +72,6 @@ public class HandViewController implements Initializable {
     private TextField txtPredictedResult;
     @FXML
     private ComboBox<String> cmbClassifier;
-    @FXML
     private ComboBox<String> cmbTresholdType;
 //
     private MainAppController mainAppController;
@@ -80,6 +80,8 @@ public class HandViewController implements Initializable {
     private boolean cameraActive;
     private int i;
     private SVM svmBisindoEdge;
+    @FXML
+    private AnchorPane apHandViewWindow;
 
     /**
      * Initializes the controller class.
@@ -261,7 +263,6 @@ public class HandViewController implements Initializable {
      * var:
      * int i : reset nomor urut gambar yang di simpan
      */
-    @FXML
     private void updateCameraOnClick(ActionEvent event
     ) {
         i = 0;
@@ -410,22 +411,6 @@ public class HandViewController implements Initializable {
         layarMain.setImage(Mn);
     }
 
-    /*
-    method untuk mencoba pada gambar
-     */
-//######################################################################
-    /**
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * method menggambil gambar(image capture)melalui button
-     * var:
-     * Point titikA : titik saat ini
-     * Point titikB : titik sebelumnya
-     *
-     */
-    @FXML
-    private void capturePictureOnSction(ActionEvent event) {
-
-    }
 
 //######################################################################
     /**
@@ -530,6 +515,14 @@ public class HandViewController implements Initializable {
     @FXML
     private void getPoint(MouseEvent event) {
         txtMainFramePoint.setText("(" + String.valueOf(event.getX()) + ", " + String.valueOf(event.getY()) + ")");
+    }
+
+    @FXML
+    private void getClassifierOnClick(ActionEvent event) {
+    }
+
+    @FXML
+    private void browseClassifierOnClick(ActionEvent event) {
     }
 
 }

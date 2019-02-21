@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" prefHeight="602.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.HandViewController">
+<AnchorPane id="AnchorPane" fx:id="apHandViewWindow" prefHeight="602.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.HandViewController">
     <children>
         <BorderPane layoutX="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <center>
@@ -23,10 +23,9 @@
                         <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#bwToMn" pickOnBounds="true" preserveRatio="true" />
                         <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#edgeToMn" pickOnBounds="true" preserveRatio="true" />
                   <ComboBox fx:id="cmbClassifier" prefWidth="150.0" promptText="Classifier" />
-                  <ComboBox fx:id="cmbTresholdType" prefWidth="150.0" promptText="Treshold Type" />
                         <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" />
-                        <Button fx:id="btnUpdateCamera" mnemonicParsing="false" onAction="#updateCameraOnClick" text="Update Camera" />
-                        <Button mnemonicParsing="false" onAction="#capturePictureOnSction" text="Button" />
+                        <Button fx:id="btnUpdateCamera" mnemonicParsing="false" onAction="#getClassifierOnClick" text="Get Classifier" />
+                        <Button mnemonicParsing="false" onAction="#browseClassifierOnClick" text="Browse" />
                         <TextField fx:id="txtMainFramePoint" promptText="Main Frame Point" />
                         <TextField fx:id="txtFileLocation" promptText="File Location" />
                         <TextField fx:id="txtFileName" promptText="File Name" />
