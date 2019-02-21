@@ -37,7 +37,6 @@ import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.SVM;
-import org.opencv.objdetect.HOGDescriptor;
 import org.opencv.videoio.VideoCapture;
 import src.utils.Preprocessing;
 
@@ -80,7 +79,7 @@ public class HandViewController implements Initializable {
     private VideoCapture capture;
     private boolean cameraActive;
     private int i;
-    private SVM svmJariTerangkatHOG, svmBisindoEdge;
+    private SVM svmBisindoEdge;
 
     /**
      * Initializes the controller class.
@@ -92,13 +91,11 @@ public class HandViewController implements Initializable {
         cameraActive = false;
         i = 0;
         svmBisindoEdge = SVM.load("E:\\TA\\Bisindo.xml");
-        svmJariTerangkatHOG = SVM.load("E:\\TA\\hCoba.xml");
         ObservableList<String> typeTreshold = FXCollections.observableArrayList();
         typeTreshold.add("Bynary");
         typeTreshold.add("Bynary Inverse");
         ObservableList<String> typeClassifier = FXCollections.observableArrayList();
         typeClassifier.add("Bisindo Edge");
-        typeClassifier.add("Jari Hog");
         cmbTresholdType.setItems(typeTreshold);
         cmbClassifier.setItems(typeClassifier);
     }
@@ -229,39 +226,10 @@ public class HandViewController implements Initializable {
         if (cmbClassifier.getValue().equals("Bisindo Edge")) {
             hand = getDataSVMEdgeDELETE(hand);
             txtPredictedResult.setText(String.valueOf(svmBisindoEdge.predict(hand)));
-        } else if (cmbClassifier.getValue().equals("Jari Hog")) {
-            hand = getDataSVMHogDELETE(hand);
-            txtPredictedResult.setText(String.valueOf(svmJariTerangkatHOG.predict(hand)));
         }
     }
 
-    //######################################################################
-    /**
-     * method untuk memeriksa memperoleh data training berdasarkan fitur HOG
-     * var:
-     * File folder : lokasi direktori data gambar
-     * File[] listOfFiles :
-     * Mat trainingDataMat :
-     * Mat hand :
-     * float[] trainingData:
-     */
-    public Mat getDataSVMHogDELETE(Mat predict) {
-        Mat trainingDataMat;
-        trainingDataMat = new Mat(1, 192780, CvType.CV_32FC1);
-        HOGDescriptor gDescriptor = new HOGDescriptor();
-        Imgproc.resize(predict, predict, new Size(192, 144));
-        MatOfFloat descriptors = new MatOfFloat();
-        gDescriptor.compute(predict, descriptors);
-        float[] trainingData = descriptors.toArray();
-        for (int j = 0; j < trainingData.length; j++) {
-            trainingData[j] = Math.round(trainingData[j] * 100000) / 100;
-        }
-        trainingDataMat.put(0, 0, trainingData);
-
-        return trainingDataMat;
-    }
 //######################################################################
-
     /**
      * method untuk memeriksa memperoleh data training berdasarkan fitur garis tepi
      * var:
