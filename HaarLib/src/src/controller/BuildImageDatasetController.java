@@ -66,4 +66,8 @@ public class BuildImageDatasetController implements Initializable {
     private void getFramePointOnClick(MouseEvent event) {
     }
 
+    void setMainController(MainAppController aThis) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }
