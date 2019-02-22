@@ -160,7 +160,10 @@ public final class Preprocessing {
      * Mat frame : berisi gambar awal
      */
     public static Mat getEdge_2(Mat frame, double width, double height) {
-        frame = segment(frame, 0.0);
+        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.GaussianBlur(frame, frame, new Size(7.0, 7.0), 0.0);
+        cleaning(frame);
+        //
         Imgproc.resize(frame, frame, new Size(width, height));
         Imgproc.Canny(frame, frame, 0.0, 255.0);
         return frame;
@@ -176,13 +179,12 @@ public final class Preprocessing {
      *
      */
     public static Mat getEdge(Mat frame, double width, double height) {
-        frame = segment(frame, 0.0D);
+        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.GaussianBlur(frame, frame, new Size(7.0, 7.0), 0.0);
+        cleaning(frame);
+        //
         Imgproc.resize(frame, frame, new Size(width, height));
-        try {
-            Imgproc.Canny(frame, frame, 0.0D, 255.0D);
-        } catch (Exception e) {
-            System.out.println("getEdge(Mat frame)" + e);
-        }
+        Imgproc.Canny(frame, frame, 0.0D, 255.0D);
         frame = frame.reshape(1, 1);
         return frame;
     }
@@ -196,27 +198,26 @@ public final class Preprocessing {
      * Mat frameAsli : berisi gambar dengan warna utuh
      * 12/6/18 6:59 AM
      *
-     * public static Mat segmentInvers(Mat frameAsli, double tres) {
-     * try {
-     *
-     * // Scalar upperb = new Scalar(64, 223, 255);
-     * // Scalar lowerb = new Scalar(0, 0, 0);
-     * // Core.inRange(frameAsli, lowerb, upperb, frameAsli););
-     * Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
-     * // Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
-     * // Imgproc.accumulateWeighted(frame, frame, 0.5);
-     *
-     * // Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
-     * // cleaning(frameAsli);
-     * } catch (Exception e) {
-     * System.out.println("segment(Mat frameAsli)");
-     * System.out.println(e);
-     * System.out.println("");
-     * }
-     *
-     * return frameAsli;
-     * }
      */
+    public static Mat segmentInvers(Mat frameAsli, double tres) {
+        try {
+            // Scalar upperb = new Scalar(64, 223, 255);
+            // Scalar lowerb = new Scalar(0, 0, 0);
+            // Core.inRange(frameAsli, lowerb, upperb, frameAsli););
+            Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
+            // Imgproc.accumulateWeighted(frame, frame, 0.5);
+            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY_INV + Imgproc.THRESH_OTSU);
+            cleaning(frameAsli);
+        } catch (Exception e) {
+            System.out.println("segment(Mat frameAsli)");
+            System.out.println(e);
+            System.out.println("");
+        }
+
+        return frameAsli;
+    }
+
     /**
      * //######################################################################
      * method memisahkan objek dari latar
@@ -227,17 +228,14 @@ public final class Preprocessing {
      * 12/6/18 6:59 AM
      */
     public static Mat segment(Mat frameAsli, double tres) {
+        try {
 //            Scalar upperb = new Scalar(64, 223, 255);
 //            Scalar lowerb = new Scalar(0, 0, 0);
 //            Core.inRange(frameAsli, lowerb, upperb, frameAsli);
-//            Imgproc.accumulateWeighted(frameAsli, frameAsli, 10000);
-//            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
-//            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
-        try {
             Imgproc.cvtColor(frameAsli, frameAsli, Imgproc.COLOR_BGR2GRAY);
-
-            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7.0, 7.0), 0.0);
-
+//            Imgproc.accumulateWeighted(frameAsli, frameAsli, 10000);
+            Imgproc.GaussianBlur(frameAsli, frameAsli, new Size(7, 7), 0);
+            Imgproc.threshold(frameAsli, frameAsli, tres, 255, Imgproc.THRESH_BINARY + Imgproc.THRESH_OTSU);
             cleaning(frameAsli);
         } catch (Exception e) {
             System.out.println("segment(Mat frameAsli)");
@@ -660,5 +658,32 @@ public final class Preprocessing {
             }
         });
         return listPoint;
+    }
+
+    /**
+     * ######################################################################
+     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
+     * semakin kecil nilai titik pada frame semakin tinggi
+     * var:
+     *
+     */
+    public static Point[] getExtremePoint(Mat tresholded) {
+        List<MatOfPoint> contour = Preprocessing.getContour(tresholded);
+        List<MatOfInt4> devOfInt4s = Preprocessing.getDevectIndexPoint(contour);
+        List<Point> pointContourSorted = Preprocessing.toListContour(contour.get(0));
+        Point[] extremePoint = new Point[2];
+        //ambil titik ekstreme
+        double x, x_, y, y_;
+        pointContourSorted = Preprocessing.sortPointByX(pointContourSorted);
+        x = pointContourSorted.get(0).x;
+        x_ = pointContourSorted.get(pointContourSorted.size() - 1).x;
+        pointContourSorted = Preprocessing.sortPointByY(pointContourSorted);
+        y = pointContourSorted.get(0).y;
+        y_ = pointContourSorted.get(pointContourSorted.size() - 1).y;
+        Point p = new Point(x - 10, y - 10);
+        Point p_ = new Point(x_ + 10, y_);
+        extremePoint[0] = p;
+        extremePoint[1] = p_;
+        return extremePoint;
     }
 }

@@ -184,33 +184,6 @@ public class HandViewController implements Initializable {
      * var:
      *
      */
-    public Point[] getExtremePoint(Mat tresholded) {
-        List<MatOfPoint> contour = Preprocessing.getContour(tresholded);
-        List<MatOfInt4> devOfInt4s = Preprocessing.getDevectIndexPoint(contour);
-        List<Point> pointContourSorted = Preprocessing.toListContour(contour.get(0));
-        Point[] extremePoint = new Point[2];
-        //ambil titik ekstreme
-        double x, x_, y, y_;
-        pointContourSorted = Preprocessing.sortPointByX(pointContourSorted);
-        x = pointContourSorted.get(0).x;
-        x_ = pointContourSorted.get(pointContourSorted.size() - 1).x;
-        pointContourSorted = Preprocessing.sortPointByY(pointContourSorted);
-        y = pointContourSorted.get(0).y;
-        y_ = pointContourSorted.get(pointContourSorted.size() - 1).y;
-        Point p = new Point(x - 10, y - 10);
-        Point p_ = new Point(x_ + 10, y_);
-        extremePoint[0] = p;
-        extremePoint[1] = p_;
-        return extremePoint;
-    }
-
-    /**
-     * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
-     *
-     */
     public void getPredictedResult(Mat hand, double width) {
         try {
             Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone(), width);

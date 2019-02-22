@@ -66,6 +66,10 @@ public class BuildImageDatasetController implements Initializable {
     private MainAppController mainAppController;
     private File imgDir, imgLblDir;
     private Alert alert;
+    @FXML
+    private ImageView layarEdge;
+    @FXML
+    private ImageView layarBW;
 
     /**
      * Initializes the controller class.
@@ -83,6 +87,7 @@ public class BuildImageDatasetController implements Initializable {
         imgDir = null;
         imgLblDir = null;
         alert = new Alert(Alert.AlertType.ERROR);
+
     }
 
     /**
@@ -275,8 +280,7 @@ public class BuildImageDatasetController implements Initializable {
         //
         if (imgDir.exists() && imgLblDir.exists()) {
             if (i < j) {
-                Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", hand
-                );
+                Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", hand);
                 i++;
                 txtIndex.setText(String.valueOf(i) + "/" + String.valueOf(j));
             }
@@ -287,7 +291,41 @@ public class BuildImageDatasetController implements Initializable {
 
     }
 
+    private void startExtreme(Mat frame) {
+        Core.flip(frame, frame, 1);
+        Preprocessing.drawRect(frame);
+        updateImageView(layarMain, frame);
+        Mat hand = Preprocessing.getBox(frame.clone());
+        //
+        Mat tresholded;
+        if (true) {
+            tresholded = Preprocessing.segment(hand.clone(), 0);
+        } else {
+            tresholded = Preprocessing.segmentInvers(hand.clone(), 0);
+        }
+        Point[] extremePoint = Preprocessing.getExtremePoint(tresholded);
+        Mat handView = Preprocessing.getEdge_2(hand.clone(), frame.width(), frame.height());
+        updateImageView(layarEdge, handView);
+        //
+        Mat handPredict = Preprocessing.getBox(hand.clone(), extremePoint[0], extremePoint[1]);
+        if (i < j) {
+            Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", handPredict);
+            i++;
+            txtIndex.setText(String.valueOf(i) + "/" + String.valueOf(j));
+        }
+        hand = Preprocessing.drawRect(hand, extremePoint[0], extremePoint[1]);
+        updateImageView(layarBW, hand);
+    }
+
     void setMainController(MainAppController aThis) {
         this.mainAppController = aThis;
+    }
+
+    @FXML
+    private void edgeToMn(MouseEvent event) {
+    }
+
+    @FXML
+    private void bwToMn(MouseEvent event) {
     }
 }

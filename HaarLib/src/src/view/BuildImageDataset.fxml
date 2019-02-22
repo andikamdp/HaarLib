@@ -12,16 +12,18 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="apGetImage" prefHeight="602.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.BuildImageDatasetController">
+<AnchorPane id="AnchorPane" fx:id="apGetImage" prefHeight="630.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.BuildImageDatasetController">
    <children>
       <BorderPane layoutX="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
             <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getFramePointOnClick" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </center>
          <left>
-            <VBox prefHeight="602.0" prefWidth="145.0" spacing="10.0" BorderPane.alignment="CENTER">
+            <VBox prefHeight="602.0" prefWidth="180.0" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                  <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#edgeToMn" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#bwToMn" pickOnBounds="true" preserveRatio="true" />
+                  <VBox alignment="CENTER_LEFT" prefHeight="115.0" prefWidth="200.0" spacing="10.0">
                      <children>
                         <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" />
                         <Button fx:id="btnBrowsSaveFile" mnemonicParsing="false" onAction="#browsSaveFileOnClick" text="Browse" />

@@ -126,15 +126,9 @@ public class DataTrainingPrep {
         trainingDataMat.put(0, 0, trainingData);
         return trainingDataMat;
     }
-//
-//    public static Mat getImageEdgeDescriptorED(String lokasi) {
-//        Mat hand = Imgcodecs.imread(lokasi, CvType.CV_32F);
-//        hand = Preprocessing.getEdge(hand);
-//        return hand;
-//    }
 
     /**
-     * //######################################################################
+     * ######################################################################
      * method untuk memeriksa memperoleh data training berdasarkan fitur HOG
      * var:
      * File folder : lokasi direktori data gambar
@@ -198,9 +192,11 @@ public class DataTrainingPrep {
      * return trainingData;
      * }
      */
-    //######################################################################
     /**
+     * ######################################################################
      *
+     * @param data
+     * @return
      */
     public static Mat getDataMat(List<Data> data) {
         Mat dataMat = new Mat();
