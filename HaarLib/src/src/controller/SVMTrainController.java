@@ -80,6 +80,8 @@ public class SVMTrainController implements Initializable {
 //
     @FXML
     private TextField txtBoxSeed;
+    @FXML
+    private TextField txtBoxWidthImage;
 
     /**
      * Initializes the controller class.
@@ -188,11 +190,12 @@ public class SVMTrainController implements Initializable {
         List<Data> trainingDataMat = new ArrayList<>();
         List<Data> sampleDataMat = new ArrayList<>();
         Mat labelsMat = new Mat();
-        //
+        double width = Double.valueOf(txtBoxWidthImage.getText());
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
-            trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true));
-            sampleDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false));
+
+            trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true, width));
+            sampleDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false, width));
             if (i == 0) {
                 rows = trainingDataMat.size();
             }
@@ -372,7 +375,6 @@ public class SVMTrainController implements Initializable {
     public ObservableList<String> getCmbType() {
         ObservableList<String> type = FXCollections.observableArrayList();
         type.add("Edge");
-        type.add("Hog");
         return type;
     }
 
@@ -478,7 +480,7 @@ public class SVMTrainController implements Initializable {
     private void saveClasssificationOnClilck(ActionEvent event) {
         try {
             String string = txtAreaStatus.getText();
-            File file = new File(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + ".txt");
+            File file = new File(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + txtBoxWidthImage.getText() + ".txt");
             try (
                     BufferedReader reader = new BufferedReader(new StringReader(string));
                     PrintWriter writer = new PrintWriter(new FileWriter(file));) {
@@ -493,7 +495,7 @@ public class SVMTrainController implements Initializable {
             Logger.getLogger(SVMTrainController.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (int i = 0; i < svmList.size(); i++) {
-            svmList.get(i).save(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + i + ".xml");
+            svmList.get(i).save(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + i + "_" + txtBoxWidthImage.getText() + ".xml");
         }
         svmList = new ArrayList<>();
     }

@@ -159,16 +159,15 @@ public final class Preprocessing {
      * var:
      * Mat frame : berisi gambar awal
      */
-    public static Mat getEdge_2(Mat frame) {
-        frame = segment(frame, 0.0D);
-        Imgproc.resize(frame, frame, new Size(64.0D, 48.0D));
-
-        Imgproc.Canny(frame, frame, 0.0D, 255.0D);
+    public static Mat getEdge_2(Mat frame, double width, double height) {
+        frame = segment(frame, 0.0);
+        Imgproc.resize(frame, frame, new Size(width, height));
+        Imgproc.Canny(frame, frame, 0.0, 255.0);
         return frame;
     }
 
-//######################################################################
     /**
+     * //######################################################################
      * method memperoleh garis tepi pada gambar
      * gambar yang diperoleh akan dilakukan resaping agar diperoleh fitur
      * method akan mengembalikan nilai fitur hasil reshaping
@@ -176,9 +175,9 @@ public final class Preprocessing {
      * Mat frame : berisi gambar awal
      *
      */
-    public static Mat getEdge(Mat frame) {
+    public static Mat getEdge(Mat frame, double width, double height) {
         frame = segment(frame, 0.0D);
-        Imgproc.resize(frame, frame, new Size(64.0D, 48.0D));
+        Imgproc.resize(frame, frame, new Size(width, height));
         try {
             Imgproc.Canny(frame, frame, 0.0D, 255.0D);
         } catch (Exception e) {
@@ -187,9 +186,9 @@ public final class Preprocessing {
         frame = frame.reshape(1, 1);
         return frame;
     }
-//######################################################################
 
     /**
+     * //######################################################################
      * method memisahkan objek dari latar
      * gambar yang diterima akan diubah menjadi BW dengan treshold binaryInverse dan otsu
      * gambar dilakukan bluring dan cleaning

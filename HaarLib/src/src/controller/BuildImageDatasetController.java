@@ -62,7 +62,7 @@ public class BuildImageDatasetController implements Initializable {
     private ScheduledExecutorService timer;
     private VideoCapture capture;
     private boolean cameraActive;
-    private int i;
+    private int i, j;
     private MainAppController mainAppController;
     private File imgDir, imgLblDir;
     private Alert alert;
@@ -99,6 +99,7 @@ public class BuildImageDatasetController implements Initializable {
     @FXML
     private void startCameraOnClick(ActionEvent event) {
         i = 0;
+        j = Integer.valueOf(txtIndex.getText());
         if (!txtFolderName.getText().equals("") && !txtSaveFileLocation.getText().equals("") && imgDir.exists() && imgLblDir.exists()) {
             if (!cameraActive) {
                 capture.open(0);
@@ -273,11 +274,11 @@ public class BuildImageDatasetController implements Initializable {
         Mat hand = Preprocessing.getBox(frame.clone());
         //
         if (imgDir.exists() && imgLblDir.exists()) {
-            if (i < 1810) {
+            if (i < j) {
                 Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", hand
                 );
                 i++;
-                txtIndex.setText(String.valueOf(i));
+                txtIndex.setText(String.valueOf(i) + "/" + String.valueOf(j));
             }
         } else {
             alert.setContentText("Directory Not Exist");

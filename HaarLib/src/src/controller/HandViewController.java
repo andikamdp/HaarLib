@@ -63,14 +63,6 @@ public class HandViewController implements Initializable {
     @FXML
     private Button btnUpdateCamera;
     @FXML
-    private TextField txtFileLocation;
-    @FXML
-    private TextField txtFileName;
-    @FXML
-    private TextField txtS;
-    @FXML
-    private TextField txtValue;
-    @FXML
     private TextField txtMainFramePoint;
     @FXML
     private TextField txtPredictedResult;
@@ -84,6 +76,12 @@ public class HandViewController implements Initializable {
     private VideoCapture capture;
     private boolean cameraActive;
     private SVM svm;
+    @FXML
+    private ImageView layarHand;
+    @FXML
+    private ComboBox<?> cmbDescriptor;
+    @FXML
+    private TextField txtBoxWidth;
 
     /**
      * Initializes the controller class.
@@ -166,10 +164,13 @@ public class HandViewController implements Initializable {
         Preprocessing.drawRect(frame);
         Mat hand = Preprocessing.getBox(frame.clone());
         //
-        Mat handView = Preprocessing.getEdge_2(hand.clone());
+        double width_2, height_2, width = Double.valueOf(txtBoxWidth.getText());
+        width_2 = hand.width() * (width / hand.width());
+        height_2 = hand.height() * (width / hand.width());
+        Mat handView = Preprocessing.getEdge_2(hand.clone(), width_2, height_2);
         //
         Mat handPredict = hand.clone();
-        getPredictedResult(handPredict);
+        getPredictedResult(handPredict, width_2);
         //
         updateImageView(layarMain, frame);
         updateImageView(layarBW, hand);
@@ -210,14 +211,11 @@ public class HandViewController implements Initializable {
      * var:
      *
      */
-    public void getPredictedResult(Mat hand) {
+    public void getPredictedResult(Mat hand, double width) {
         try {
-//            float[] trainingData = DataTrainingPrep.getImageEdgeDescriptor(hand.clone());
-//            Mat dataFile = new Mat(1, trainingData.length, CvType.CV_32FC1);
-//            dataFile.put(0, 0, trainingData);
-            Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone());
+            Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone(), width);
             float label = svm.predict(dataFile);
-            txtPredictedResult.setText(String.valueOf(svm.predict(Preprocessing.getEdge(dataFile))));
+            txtPredictedResult.setText(String.valueOf(label));
             System.out.println(dataFile.rows() + " " + dataFile.cols());
             System.out.println(hand.rows() + " " + hand.cols());
         } catch (Exception e) {
