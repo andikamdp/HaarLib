@@ -277,16 +277,21 @@ public class BuildImageDatasetController implements Initializable {
         Preprocessing.drawRect(frame);
         updateImageView(layarMain, frame);
         Mat hand = Preprocessing.getBox(frame.clone());
+        updateImageView(layarEdge, hand);
         //
-        if (imgDir.exists() && imgLblDir.exists()) {
-            if (i < j) {
-                Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", hand);
-                i++;
-                txtIndex.setText(String.valueOf(i) + "/" + String.valueOf(j));
+        try {
+            if (imgDir.exists() && imgLblDir.exists()) {
+                if (i < j) {
+                    Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + i + ".jpg", hand);
+                    i++;
+                    txtIndex.setText(String.valueOf(i));
+                }
+            } else {
+                alert.setContentText("Directory Not Exist");
+                alert.show();
             }
-        } else {
-            alert.setContentText("Directory Not Exist");
-            alert.show();
+        } catch (Exception e) {
+            System.out.println("start(Mat frame) " + e);
         }
 
     }
@@ -309,7 +314,7 @@ public class BuildImageDatasetController implements Initializable {
         //
         Mat handPredict = Preprocessing.getBox(hand.clone(), extremePoint[0], extremePoint[1]);
         if (i < j) {
-            Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + txtIndex.getText() + ".jpg", handPredict);
+            Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + i + ".jpg", handPredict);
             i++;
             txtIndex.setText(String.valueOf(i) + "/" + String.valueOf(j));
         }
