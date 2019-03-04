@@ -160,12 +160,13 @@ public final class Preprocessing {
      * Mat frame : berisi gambar awal
      */
     public static Mat getEdge_2(Mat frame, double width, double height) {
+
+        Imgproc.resize(frame, frame, new Size(width, height));
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
         Imgproc.GaussianBlur(frame, frame, new Size(7.0, 7.0), 0.0);
-        cleaning(frame);
+//        cleaning(frame);
         //
-        Imgproc.resize(frame, frame, new Size(width, height));
-        Imgproc.Canny(frame, frame, 0.0, 255.0);
+        Imgproc.Canny(frame, frame, 40, 120);
         return frame;
     }
 
@@ -179,12 +180,12 @@ public final class Preprocessing {
      *
      */
     public static Mat getEdge(Mat frame, double width, double height) {
+        Imgproc.resize(frame, frame, new Size(width, height));
         Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
         Imgproc.GaussianBlur(frame, frame, new Size(7.0, 7.0), 0.0);
-        cleaning(frame);
+//        cleaning(frame);
         //
-        Imgproc.resize(frame, frame, new Size(width, height));
-        Imgproc.Canny(frame, frame, 0.0D, 255.0D);
+        Imgproc.Canny(frame, frame, 40, 120);
         frame = frame.reshape(1, 1);
         return frame;
     }

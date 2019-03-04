@@ -39,6 +39,8 @@ public class RenameDataController implements Initializable {
     //
     private File path;
     private MainAppController mainAppController;
+    @FXML
+    private TextField txtBoxSelisih;
 
     /**
      * Initializes the controller class.
@@ -63,9 +65,18 @@ public class RenameDataController implements Initializable {
     private void renameFileOnClick(ActionEvent event) {
         File[] paths = path.listFiles();
         int i = 0;
+        String s;
         for (File file : paths) {
-            boolean p = file.renameTo(new File(file.getParent() + "\\" + txtBoxFileName.getText() + "_" + i + ".jpg"));
-            i++;
+            s = file.getName().substring(2, file.getName().length() - 4);
+            i = Integer.valueOf(s) - Integer.valueOf(txtBoxSelisih.getText());
+            boolean p = file.renameTo(new File(file.getParent() + "\\" + i + ".jpg"));
+
+        }
+        path = new File(path.getAbsolutePath());
+        paths = path.listFiles();
+        for (File file : paths) {
+            boolean p = file.renameTo(new File(file.getParent() + "\\" + txtBoxFileName.getText() + "_" + file.getName()));
+
         }
     }
 

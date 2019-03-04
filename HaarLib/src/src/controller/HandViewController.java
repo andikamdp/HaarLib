@@ -77,10 +77,6 @@ public class HandViewController implements Initializable {
     private boolean cameraActive;
     private SVM svm;
     @FXML
-    private ImageView layarHand;
-    @FXML
-    private ComboBox<?> cmbDescriptor;
-    @FXML
     private TextField txtBoxWidth;
 
     /**
@@ -188,7 +184,21 @@ public class HandViewController implements Initializable {
         try {
             Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone(), width);
             float label = svm.predict(dataFile);
-            txtPredictedResult.setText(String.valueOf(label));
+            String result = "";
+            if (label == 0) {
+                result = "C";
+            } else if (label == 1) {
+                result = "I";
+            } else if (label == 2) {
+                result = "L";
+            } else if (label == 3) {
+                result = "O";
+            } else if (label == 4) {
+                result = "U";
+            } else if (label == 5) {
+                result = "V";
+            }
+            txtPredictedResult.setText(result);
             System.out.println(dataFile.rows() + " " + dataFile.cols());
             System.out.println(hand.rows() + " " + hand.cols());
         } catch (Exception e) {

@@ -52,8 +52,6 @@ public class SVMTrainController implements Initializable {
     @FXML
     private TextArea txtAreaStatus;
     @FXML
-    private ComboBox<String> cmbType;
-    @FXML
     private Button btnBrowsImage;
     @FXML
     private Label lblImageLocation;
@@ -93,12 +91,10 @@ public class SVMTrainController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         ratio = 30;
-        cmbType.setItems(getCmbType());
         akurasiSeedTrainAvg = new ArrayList<>();
         akurasiSeedSampleAvg = new ArrayList<>();
         akurasiSeedSampleAll = new ArrayList<>();
         akurasiSeedTrainAll = new ArrayList<>();
-        svmList = new ArrayList<>();
 
     }
 
@@ -124,21 +120,21 @@ public class SVMTrainController implements Initializable {
         akurasiSeedSampleAll.clear();
         akurasiSeedTrainAll.clear();
         txtAreaStatus.setText("");
-        if (cmbType.getValue().equals("Edge")) {
-            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
-            txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
-            txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-            int seedC = Integer.valueOf(txtBoxSeed.getText());
-            for (int i = 0; i < seedC; i++) {
-                System.out.println(LocalTime.now());
-                initSvm();
-                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
-                seed = i;
-                svmEdgeRandom();
-                svmList.add(svm);
-            }
-            rataRataAkurasiSeed();
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
+        svmList = new ArrayList<>();
+        int seedC = Integer.valueOf(txtBoxSeed.getText());
+        for (int i = 0; i < seedC; i++) {
+            System.out.println(LocalTime.now());
+            initSvm();
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
+            seed = i;
+            svmEdgeRandom();
+            svmList.add(svm);
         }
+        rataRataAkurasiSeed();
+
 //        else if (cmbType.getValue().equals("Hog")) {
 //            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
 //            txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");

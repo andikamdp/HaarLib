@@ -14,6 +14,7 @@
             <Button fx:id="btnBrowseFile" mnemonicParsing="false" onAction="#browseFileOnClick" text="Browse" />
             <TextField fx:id="txtBoxFileLocation" promptText="File Location" />
             <Label fx:id="lblFileLength" text="File Length" />
+            <TextField fx:id="txtBoxSelisih" />
             <TextField fx:id="txtBoxFileName" promptText="File Name" />
             <Button fx:id="btnRenameFile" mnemonicParsing="false" onAction="#renameFileOnClick" text="Rename" />
          </children>
