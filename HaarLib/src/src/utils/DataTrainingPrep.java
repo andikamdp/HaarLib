@@ -63,19 +63,19 @@ public class DataTrainingPrep {
      * @param train
      * @return
      */
-    public static List<Data> getDataSVMEdge(String lokasi, List<Integer> index, Boolean train, double width) {
+    public static List<Data> getDataSVMEdge(String lokasi, List<Integer> index, Boolean train, double width, double treshold) {
         File folder = new File(lokasi);
         File[] listOfFiles = folder.listFiles();
         List<Data> datas = new ArrayList<>();
         int row = 0;
         for (int i = 0; i < listOfFiles.length; i++) {
             if (!index.contains(i) && train) {
-                Mat dataFile = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath(), width);
+                Mat dataFile = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath(), width, treshold);
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
                 datas.add(dataTraining);
                 row++;
             } else if (index.contains(i) && !train) {
-                Mat dataFile = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath(), width);
+                Mat dataFile = getImageEdgeDescriptor(listOfFiles[i].getAbsolutePath(), width, treshold);
                 Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
                 datas.add(dataTraining);
                 row++;
@@ -96,13 +96,13 @@ public class DataTrainingPrep {
      * @param lokasi
      * @return
      */
-    public static Mat getImageEdgeDescriptor(String lokasi, double width) {
+    public static Mat getImageEdgeDescriptor(String lokasi, double width, double treshold) {
         Mat hand = Imgcodecs.imread(lokasi, CvType.CV_32FC1);
         Mat trainingDataMat;
         double width_2, height_2;
         width_2 = hand.width() * (width / hand.width());
         height_2 = hand.height() * (width / hand.width());
-        hand = Preprocessing.getEdge(hand, width_2, height_2);
+        hand = Preprocessing.getEdge(hand, width_2, height_2, treshold);
         float[] trainingData = new float[hand.cols()];
         trainingDataMat = new Mat(1, hand.cols(), CvType.CV_32F);
         for (int j = 0; j < hand.cols(); j++) {
@@ -112,12 +112,12 @@ public class DataTrainingPrep {
         return trainingDataMat;
     }
 
-    public static Mat getImageEdgeDescriptor(Mat hand, double width) {
+    public static Mat getImageEdgeDescriptor(Mat hand, double width, double treshold) {
         Mat trainingDataMat;
         double width_2, height_2;
         width_2 = hand.width() * (width / hand.width());
         height_2 = hand.height() * (width / hand.width());
-        hand = Preprocessing.getEdge(hand, width_2, height_2);
+        hand = Preprocessing.getEdge(hand, width_2, height_2, treshold);
         float[] trainingData = new float[hand.cols()];
         trainingDataMat = new Mat(1, hand.cols(), CvType.CV_32F);
         for (int j = 0; j < hand.cols(); j++) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
@@ -18,7 +19,7 @@
                 <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getPoint" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
             </center>
             <left>
-                <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+                <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
                     <children>
                         <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#bwToMn" pickOnBounds="true" preserveRatio="true" />
                         <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#edgeToMn" pickOnBounds="true" preserveRatio="true" />
@@ -28,6 +29,7 @@
                   <ComboBox fx:id="cmbClassifier" prefWidth="150.0" promptText="Classifier" />
                         <Button fx:id="btnUpdateCamera" mnemonicParsing="false" onAction="#getClassifierOnClick" text="Get Classifier" />
                         <TextField fx:id="txtBoxWidth" promptText="width" />
+                  <TextField fx:id="txtBoxLowerTreshold" promptText="Lower Treshold" />
                   <TextField fx:id="txtPredictedResult" promptText="Predicted Result" />
                     </children>
                 </VBox>

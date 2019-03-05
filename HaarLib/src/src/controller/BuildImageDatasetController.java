@@ -309,7 +309,7 @@ public class BuildImageDatasetController implements Initializable {
             tresholded = Preprocessing.segmentInvers(hand.clone(), 0);
         }
         Point[] extremePoint = Preprocessing.getExtremePoint(tresholded);
-        Mat handView = Preprocessing.getEdge_2(hand.clone(), frame.width(), frame.height());
+        Mat handView = Preprocessing.getEdgeView(hand.clone(), frame.width(), frame.height(), 40);
         updateImageView(layarEdge, handView);
         //
         Mat handPredict = Preprocessing.getBox(hand.clone(), extremePoint[0], extremePoint[1]);

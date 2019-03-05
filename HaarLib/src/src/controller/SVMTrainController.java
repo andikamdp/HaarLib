@@ -65,6 +65,12 @@ public class SVMTrainController implements Initializable {
     private Button btnSaveClasification;
     @FXML
     private TextField txtBoxFileName;
+    @FXML
+    private TextField txtBoxSeed;
+    @FXML
+    private TextField txtBoxWidthImage;
+    @FXML
+    private TextField txtBoxLowerTreshold;
 //
     private int ratio;
     private MainAppController mainAppController;
@@ -75,11 +81,8 @@ public class SVMTrainController implements Initializable {
     private List<Double> akurasiSeedSampleAll;
     private List<Double> akurasiSeedTrainAll;
     private List<SVM> svmList;
+    private double treshold;
 //
-    @FXML
-    private TextField txtBoxSeed;
-    @FXML
-    private TextField txtBoxWidthImage;
 
     /**
      * Initializes the controller class.
@@ -115,14 +118,15 @@ public class SVMTrainController implements Initializable {
      */
     @FXML
     private void trainOnClick(ActionEvent event) {
+        treshold = Double.valueOf(txtBoxLowerTreshold.getText());
         akurasiSeedTrainAvg.clear();
         akurasiSeedSampleAvg.clear();
         akurasiSeedSampleAll.clear();
         akurasiSeedTrainAll.clear();
         txtAreaStatus.setText("");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Sampel Acak \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + lblImageLocation.getText() + " \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Mulai Train SVM\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Lokasi Data Train : " + lblImageLocation.getText() + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n\n");
         svmList = new ArrayList<>();
         int seedC = Integer.valueOf(txtBoxSeed.getText());
         for (int i = 0; i < seedC; i++) {
@@ -190,8 +194,8 @@ public class SVMTrainController implements Initializable {
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
 
-            trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true, width));
-            sampleDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false, width));
+            trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true, width, treshold));
+            sampleDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false, width, treshold));
             if (i == 0) {
                 rows = trainingDataMat.size();
             }
@@ -206,11 +210,11 @@ public class SVMTrainController implements Initializable {
         //######################################################################
         int[][] confusionMatrix = predictClassifier(labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n\n\n");
         //######################################################################
         confusionMatrix = predictClassifier(labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n\n\n");
         System.gc();
     }
 
@@ -322,6 +326,18 @@ public class SVMTrainController implements Initializable {
         }
         overAllAccuracy /= jumlahData;
         avgAccuracy /= predict.length;
+        if (train) {
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Evaluasi dengan data training \n\n");
+        } else {
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Evaluasi dengan data testing \n\n");
+        }
+        for (int i = 0; i < 6; i++) {
+            for (int k = 0; k < 6; k++) {
+                txtAreaStatus.setText(txtAreaStatus.getText() + predict[i][k] + " ");
+            }
+            txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
+        }
+        txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
         txtAreaStatus.setText(txtAreaStatus.getText() + "TP: " + Arrays.toString(TP) + " \n");
         txtAreaStatus.setText(txtAreaStatus.getText() + "TN: " + Arrays.toString(TN) + " \n");
         txtAreaStatus.setText(txtAreaStatus.getText() + "FP: " + Arrays.toString(FP) + " \n");
@@ -452,13 +468,7 @@ public class SVMTrainController implements Initializable {
             confusionMatrix[m][l] += 1;
             // txtAreaStatus.setText(txtAreaStatus.getText() + fileName.get(j) + " : " + label + " \n");
         }
-        for (int i = 0; i < 6; i++) {
-            for (int k = 0; k < 6; k++) {
-                txtAreaStatus.setText(txtAreaStatus.getText() + confusionMatrix[i][k] + " ");
-            }
-            txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
-        }
-        txtAreaStatus.setText(txtAreaStatus.getText() + " \n");
+
         return confusionMatrix;
     }
 

@@ -76,8 +76,11 @@ public class HandViewController implements Initializable {
     private VideoCapture capture;
     private boolean cameraActive;
     private SVM svm;
+    private double treshold;
     @FXML
     private TextField txtBoxWidth;
+    @FXML
+    private TextField txtBoxLowerTreshold;
 
     /**
      * Initializes the controller class.
@@ -107,6 +110,7 @@ public class HandViewController implements Initializable {
      */
     @FXML
     private void startCameraOnClick(ActionEvent event) {
+        treshold = Double.valueOf(txtBoxLowerTreshold.getText());
         if (!cameraActive) {
             capture.open(0);
             if (this.capture.isOpened()) {
@@ -163,7 +167,7 @@ public class HandViewController implements Initializable {
         double width_2, height_2, width = Double.valueOf(txtBoxWidth.getText());
         width_2 = hand.width() * (width / hand.width());
         height_2 = hand.height() * (width / hand.width());
-        Mat handView = Preprocessing.getEdge_2(hand.clone(), width_2, height_2);
+        Mat handView = Preprocessing.getEdgeView(hand.clone(), width_2, height_2, treshold);
         //
         Mat handPredict = hand.clone();
         getPredictedResult(handPredict, width_2);
@@ -182,7 +186,7 @@ public class HandViewController implements Initializable {
      */
     public void getPredictedResult(Mat hand, double width) {
         try {
-            Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone(), width);
+            Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone(), width, treshold);
             float label = svm.predict(dataFile);
             String result = "";
             if (label == 0) {
