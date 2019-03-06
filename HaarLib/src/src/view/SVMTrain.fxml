@@ -29,7 +29,7 @@
                   </VBox>
                   <VBox prefHeight="120.0" prefWidth="199.0" spacing="10.0">
                      <children>
-                        <Button fx:id="btnBrowsClassification" mnemonicParsing="false" onAction="#browsClassificationOnClick" text="Browse Save Classification" />
+                        <Button fx:id="btnBrowsClassification" mnemonicParsing="false" onAction="#browsClassificationOnClick" text="Browse Save Location" />
                         <Label fx:id="lblClassificationLocation" text="Classification Folder" />
                         <Button fx:id="btnSaveClasification" mnemonicParsing="false" onAction="#saveClasssificationOnClilck" text="Save" />
                         <TextField fx:id="txtBoxFileName" promptText="File Name" />

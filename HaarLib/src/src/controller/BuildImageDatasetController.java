@@ -43,21 +43,21 @@ public class BuildImageDatasetController implements Initializable {
     @FXML
     private Button btnStartCamera;
     @FXML
-    private Button btnBrowsSaveFile;
-    @FXML
     private TextField txtSaveFileLocation;
     @FXML
     private Button btnCreateFolder;
     @FXML
-    private TextField txtFolderName;
-    @FXML
-    private TextField txtIndex;
-    @FXML
-    private TextField txtIndexLabel;
-    @FXML
-    private ImageView layarMain;
-    @FXML
     private AnchorPane apGetImage;
+    @FXML
+    private TextField txtBoxClassName;
+    @FXML
+    private TextField txtBoxImageCount;
+    @FXML
+    private TextField txtBoxClassCount;
+    @FXML
+    private ImageView MainFrame;
+    @FXML
+    private Button btnBrowseSaveFile;
 //
     private ScheduledExecutorService timer;
     private VideoCapture capture;
@@ -66,9 +66,7 @@ public class BuildImageDatasetController implements Initializable {
     private MainAppController mainAppController;
     private File imgDir, imgLblDir;
     private Alert alert;
-    @FXML
     private ImageView layarEdge;
-    @FXML
     private ImageView layarBW;
 
     /**
@@ -83,7 +81,7 @@ public class BuildImageDatasetController implements Initializable {
         capture = new VideoCapture();
         cameraActive = false;
         i = 0;
-        txtIndex.setText(String.valueOf(i));
+        txtBoxImageCount.setText(String.valueOf(i));
         imgDir = null;
         imgLblDir = null;
         alert = new Alert(Alert.AlertType.ERROR);
@@ -104,8 +102,8 @@ public class BuildImageDatasetController implements Initializable {
     @FXML
     private void startCameraOnClick(ActionEvent event) {
         i = 0;
-        j = Integer.valueOf(txtIndex.getText());
-        if (!txtFolderName.getText().equals("") && !txtSaveFileLocation.getText().equals("") && imgDir.exists() && imgLblDir.exists()) {
+        j = Integer.valueOf(txtBoxImageCount.getText());
+        if (!txtBoxClassName.getText().equals("") && !txtSaveFileLocation.getText().equals("") && imgDir.exists() && imgLblDir.exists()) {
             if (!cameraActive) {
                 capture.open(0);
                 if (this.capture.isOpened()) {
@@ -173,9 +171,9 @@ public class BuildImageDatasetController implements Initializable {
     @FXML
     private void createFolderOnClick(ActionEvent event
     ) {
-        File file = new File(imgDir + "\\" + txtFolderName.getText());
+        File file = new File(imgDir + "\\" + txtBoxClassName.getText());
 
-        if (!file.exists() && !txtFolderName.getText().equals("")) {
+        if (!file.exists() && !txtBoxClassName.getText().equals("")) {
             file.mkdir();
         } else {
             alert = new Alert(Alert.AlertType.ERROR);
@@ -183,7 +181,7 @@ public class BuildImageDatasetController implements Initializable {
             alert.show();
         }
         imgDir = new File(imgDir.getAbsolutePath());
-        txtIndexLabel.setText(String.valueOf(imgDir.list().length));
+        txtBoxClassCount.setText(String.valueOf(imgDir.list().length));
         imgLblDir = file;
     }
 
@@ -275,16 +273,16 @@ public class BuildImageDatasetController implements Initializable {
     private void start(Mat frame) {
         Core.flip(frame, frame, 1);
         Preprocessing.drawRect(frame);
-        updateImageView(layarMain, frame);
+        updateImageView(MainFrame, frame);
         Mat hand = Preprocessing.getBox(frame.clone());
         updateImageView(layarEdge, hand);
         //
         try {
             if (imgDir.exists() && imgLblDir.exists()) {
                 if (i < j) {
-                    Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + i + ".jpg", hand);
+                    Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtBoxClassName.getText() + "_" + i + ".jpg", hand);
                     i++;
-                    txtIndex.setText(String.valueOf(i));
+                    txtBoxImageCount.setText(String.valueOf(j - i));
                 }
             } else {
                 alert.setContentText("Directory Not Exist");
@@ -299,7 +297,7 @@ public class BuildImageDatasetController implements Initializable {
     private void startExtreme(Mat frame) {
         Core.flip(frame, frame, 1);
         Preprocessing.drawRect(frame);
-        updateImageView(layarMain, frame);
+        updateImageView(MainFrame, frame);
         Mat hand = Preprocessing.getBox(frame.clone());
         //
         Mat tresholded;
@@ -314,9 +312,9 @@ public class BuildImageDatasetController implements Initializable {
         //
         Mat handPredict = Preprocessing.getBox(hand.clone(), extremePoint[0], extremePoint[1]);
         if (i < j) {
-            Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtFolderName.getText() + "_" + i + ".jpg", handPredict);
+            Imgcodecs.imwrite(imgLblDir.getAbsolutePath() + "\\" + txtBoxClassName.getText() + "_" + i + ".jpg", handPredict);
             i++;
-            txtIndex.setText(String.valueOf(i) + "/" + String.valueOf(j));
+            txtBoxImageCount.setText(String.valueOf(i) + "/" + String.valueOf(j));
         }
         hand = Preprocessing.drawRect(hand, extremePoint[0], extremePoint[1]);
         updateImageView(layarBW, hand);
@@ -326,11 +324,4 @@ public class BuildImageDatasetController implements Initializable {
         this.mainAppController = aThis;
     }
 
-    @FXML
-    private void edgeToMn(MouseEvent event) {
-    }
-
-    @FXML
-    private void bwToMn(MouseEvent event) {
-    }
 }

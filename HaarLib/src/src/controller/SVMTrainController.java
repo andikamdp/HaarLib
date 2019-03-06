@@ -76,8 +76,12 @@ public class SVMTrainController implements Initializable {
     private MainAppController mainAppController;
     private SVM svm;
     private int seed;
-    private List<Double> akurasiSeedSampleAvg;
-    private List<Double> akurasiSeedTrainAvg;
+    private List<Double> accuracySeedSampleAvg;
+    private List<Double> accuracySeedTrainAvg;
+    private List<Double> precisionSeedSampleAvg;
+    private List<Double> precisionSeedTrainAvg;
+    private List<Double> recallSeedSampleAvg;
+    private List<Double> recallSeedTrainAvg;
     private List<Double> akurasiSeedSampleAll;
     private List<Double> akurasiSeedTrainAll;
     private List<SVM> svmList;
@@ -94,8 +98,15 @@ public class SVMTrainController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         ratio = 30;
-        akurasiSeedTrainAvg = new ArrayList<>();
-        akurasiSeedSampleAvg = new ArrayList<>();
+        accuracySeedTrainAvg = new ArrayList<>();
+        accuracySeedSampleAvg = new ArrayList<>();
+        //
+        precisionSeedTrainAvg = new ArrayList<>();
+        precisionSeedSampleAvg = new ArrayList<>();
+        //
+        recallSeedTrainAvg = new ArrayList<>();
+        recallSeedSampleAvg = new ArrayList<>();
+        //
         akurasiSeedSampleAll = new ArrayList<>();
         akurasiSeedTrainAll = new ArrayList<>();
 
@@ -119,38 +130,36 @@ public class SVMTrainController implements Initializable {
     @FXML
     private void trainOnClick(ActionEvent event) {
         treshold = Double.valueOf(txtBoxLowerTreshold.getText());
-        akurasiSeedTrainAvg.clear();
-        akurasiSeedSampleAvg.clear();
-        akurasiSeedSampleAll.clear();
+        //
+        accuracySeedTrainAvg.clear();
+        accuracySeedSampleAvg.clear();
+        //
+        precisionSeedTrainAvg.clear();
+        precisionSeedSampleAvg.clear();
+        //
+        recallSeedTrainAvg.clear();
+        recallSeedSampleAvg.clear();
+        //
         akurasiSeedTrainAll.clear();
+        akurasiSeedSampleAll.clear();
+        //
         txtAreaStatus.setText("");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Mulai Train SVM\n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Lokasi Data Train : " + lblImageLocation.getText() + " \n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Lokasi Data : " + lblImageLocation.getText() + " \n");
         svmList = new ArrayList<>();
         int seedC = Integer.valueOf(txtBoxSeed.getText());
         for (int i = 0; i < seedC; i++) {
-            System.out.println(LocalTime.now());
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai seed " + LocalTime.now() + " \n\n");
+            System.out.println(i + " " + LocalTime.now());
             initSvm();
             txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi " + (i + 1) + " \n");
             seed = i;
             svmEdgeRandom();
             svmList.add(svm);
+            txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai seed " + LocalTime.now() + " \n\n");
         }
         rataRataAkurasiSeed();
+        System.out.println("");
 
-//        else if (cmbType.getValue().equals("Hog")) {
-//            txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Hog Sampel Acak \n");
-//            txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Program " + LocalTime.now() + " \n");
-//            int seedC = Integer.valueOf(txtBoxSeed.getText());
-//            for (int i = 0; i < seedC; i++) {
-//                System.out.println(LocalTime.now());
-//                txtAreaStatus.setText(txtAreaStatus.getText() + "Train SVM Iterasi" + (i + 1) + " \n");
-//                seed = i;
-//                svmHogRandom();
-//            }
-//            rataRataAkurasiSeed();
-//        }
     }
 
     /**
@@ -201,78 +210,23 @@ public class SVMTrainController implements Initializable {
             }
             labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
             labels.add(files.getName());
-            txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
         }
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
         dataTraining = DataTrainingPrep.getDataMat(trainingDataMat);
+
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Mulai Training " + LocalTime.now() + " \n");
+        System.out.println("Waktu Mulai Training " + LocalTime.now());
         svm.train(dataTraining, Ml.ROW_SAMPLE, labelsMat);
         txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n\n");
+        System.out.println("Waktu Selesai Training " + LocalTime.now());
         //######################################################################
         int[][] confusionMatrix = predictClassifier(labels, sampleDataMat);
         confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n\n\n");
         //######################################################################
         confusionMatrix = predictClassifier(labels, trainingDataMat);
         confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n\n\n");
         System.gc();
     }
 
-    /**
-     * ######################################################################
-     * method untuk train SVM dengan deskripsi gambar Hog
-     * var:
-     * SVM svm : variabel klasifikasi dengan SVM
-     * Mat trainingDataMat : variabel penampung data training
-     * Mat labelsMat : variabel penampung label data training
-     * Mat sampleDataMat : variabel penampung data testing
-     * int rows :
-     * File file : variabel penampung lokasi file data gambar
-     * File[] listOfFiles : variabe penampung isi file data gambar
-     * int[][] confusionMatrix : variabel penampung confussion matriks
-     *
-     * public void svmHogRandom() {
-     * File file = new File(lblImageLocation.getText());
-     * File[] listFiles = file.listFiles();
-     * //######################################################################
-     * List<Integer> index = getRandomIndex(listFiles[0].listFiles().length);
-     * List<String> labels = new ArrayList<>();
-     * //
-     * File files;
-     * int rows = 0;
-     * Mat dataTraining = new Mat();
-     * List<Data> trainingDataMat = new ArrayList<>();
-     * List<Data> sampleDataMat = new ArrayList<>();
-     * Mat labelsMat = new Mat();
-     * for (int i = 0; i < listFiles.length; i++) {
-     * //
-     * files = listFiles[i];
-     * trainingDataMat.addAll(DataTrainingPrep.getDataSVMHog(files.getAbsolutePath(), index, true));
-     * sampleDataMat.addAll(DataTrainingPrep.getDataSVMHog(files.getAbsolutePath(), index, false));
-     * if (i == 0) {
-     * rows = trainingDataMat.size();
-     * }
-     * labelsMat.push_back(DataTrainingPrep.getLabel(rows, i));
-     * labels.add(files.getName());
-     * txtAreaStatus.setText(txtAreaStatus.getText() + files.getName() + " \n");
-     * System.out.println(files.getName() + " " + LocalTime.now());
-     * System.gc();
-     * }
-     * txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Menyiapkan Data " + LocalTime.now() + " \n");
-     * dataTraining = DataTrainingPrep.getDataMat(trainingDataMat);
-     * svm.train(dataTraining, Ml.ROW_SAMPLE, labelsMat);
-     * txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Training " + LocalTime.now() + " \n");
-     * //######################################################################
-     * int[][] confusionMatrix = predictClassifier(labels, sampleDataMat);
-     * confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
-     * txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Testing " + LocalTime.now() + " \n");
-     * //######################################################################
-     * confusionMatrix = predictClassifier(labels, trainingDataMat);
-     * confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
-     * txtAreaStatus.setText(txtAreaStatus.getText() + "Waktu Selesai Testing Data Training " + LocalTime.now() + " \n");
-     * System.gc();
-     * }
-     */
     /**
      * ######################################################################
      * OnClick Action untuk memperoleh lokasi data gambar
@@ -316,16 +270,20 @@ public class SVMTrainController implements Initializable {
             TN[i] = jumlahData - (TP[i] + FP[i] + FN[i]);
         }
         float[] precision = new float[predict.length], recall = new float[predict.length], accuracy = new float[predict.length];
-        float avgAccuracy = 0, overAllAccuracy = 0;
+        float avgAccuracy = 0, overAllAccuracy = 0, avgRecall = 0, avgPrecision = 0;
         for (int i = 0; i < predict.length; i++) {
             precision[i] = TP[i] / (TP[i] + FP[i]);
             recall[i] = TP[i] / (TP[i] + FN[i]);
             accuracy[i] = (TP[i] + TN[i]) / jumlahData;
             avgAccuracy += accuracy[i];
+            avgRecall += recall[i];
+            avgPrecision += precision[i];
             overAllAccuracy += TP[i];
         }
         overAllAccuracy /= jumlahData;
         avgAccuracy /= predict.length;
+        avgRecall /= predict.length;
+        avgPrecision /= predict.length;
         if (train) {
             txtAreaStatus.setText(txtAreaStatus.getText() + "Evaluasi dengan data training \n\n");
         } else {
@@ -346,12 +304,18 @@ public class SVMTrainController implements Initializable {
         txtAreaStatus.setText(txtAreaStatus.getText() + "recall: " + Arrays.toString(recall) + " \n");
         txtAreaStatus.setText(txtAreaStatus.getText() + "accuracy: " + Arrays.toString(accuracy) + " \n\n");
         txtAreaStatus.setText(txtAreaStatus.getText() + "Avg accuracy: " + avgAccuracy + " \n\n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "overAllAccuracy: " + overAllAccuracy + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Avg recall: " + avgRecall + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Avg precision: " + avgPrecision + " \n\n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "overAllAccuracy: " + overAllAccuracy + " \n\n\n\n");
         if (train) {
-            akurasiSeedTrainAvg.add(Double.valueOf(avgAccuracy));
+            accuracySeedTrainAvg.add(Double.valueOf(avgAccuracy));
+            precisionSeedTrainAvg.add(Double.valueOf(avgPrecision));
+            recallSeedTrainAvg.add(Double.valueOf(avgRecall));
             akurasiSeedTrainAll.add(Double.valueOf(overAllAccuracy));
         } else {
-            akurasiSeedSampleAvg.add(Double.valueOf(avgAccuracy));
+            accuracySeedSampleAvg.add(Double.valueOf(avgAccuracy));
+            precisionSeedSampleAvg.add(Double.valueOf(avgPrecision));
+            recallSeedSampleAvg.add(Double.valueOf(avgRecall));
             akurasiSeedSampleAll.add(Double.valueOf(overAllAccuracy));
         }
     }
@@ -363,31 +327,32 @@ public class SVMTrainController implements Initializable {
      * float i : menghitung jumlah akurasi
      */
     private void rataRataAkurasiSeed() {
-        float avgT = 0, avgS = 0, allT = 0, allS = 0;
-        for (int j = 0; j < akurasiSeedTrainAvg.size(); j++) {
-            avgT += akurasiSeedTrainAvg.get(j);
-            avgS += akurasiSeedSampleAvg.get(j);
-            allT += akurasiSeedTrainAll.get(j);
-            allS += akurasiSeedSampleAll.get(j);
+        float accTrn = 0, accSmpl = 0, accTrnAll = 0, accSmpAll = 0;
+        float prcTrn = 0, prcSmpl = 0, rclTrn = 0, rclSmpl = 0;
+        for (int j = 0; j < accuracySeedTrainAvg.size(); j++) {
+            accTrn += accuracySeedTrainAvg.get(j);
+            accSmpl += accuracySeedSampleAvg.get(j);
+            //
+            accTrnAll += akurasiSeedTrainAll.get(j);
+            accSmpAll += akurasiSeedSampleAll.get(j);
+            //
+            prcTrn += precisionSeedTrainAvg.get(j);
+            prcSmpl += precisionSeedSampleAvg.get(j);
+            //
+            rclTrn += recallSeedTrainAvg.get(j);
+            rclSmpl += recallSeedSampleAvg.get(j);
         }
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Rata-rata akurasi Train: " + (avgT / akurasiSeedTrainAvg.size()) + " \n\n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Rata-rata akurasi Sample: " + (avgS / akurasiSeedSampleAvg.size()) + " \n\n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Keseluruhan akurasi Train: " + (allT / akurasiSeedTrainAll.size()) + " \n\n");
-        txtAreaStatus.setText(txtAreaStatus.getText() + "Keseluruhan akurasi Sample: " + (allS / akurasiSeedSampleAll.size()) + " \n\n");
-    }
-
-    /**
-     * ######################################################################
-     * method untuk mengisi ComboBox cmbValue
-     * var:
-     * ObservableList<String> type :
-     *
-     * @return
-     */
-    public ObservableList<String> getCmbType() {
-        ObservableList<String> type = FXCollections.observableArrayList();
-        type.add("Edge");
-        return type;
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Average accuracy Train: " + (accTrn / accuracySeedTrainAvg.size()) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Average accuracy Sample: " + (accSmpl / accuracySeedSampleAvg.size()) + " \n\n");
+        //
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Average precision Train: " + (prcTrn / precisionSeedTrainAvg.size()) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Average precision Sample: " + (prcSmpl / precisionSeedSampleAvg.size()) + " \n\n");
+        //
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Average recall Train: " + (rclTrn / recallSeedTrainAvg.size()) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Average recall Sample: " + (rclSmpl / recallSeedSampleAvg.size()) + " \n\n");
+        //
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Keseluruhan akurasi Train: " + (accTrnAll / akurasiSeedTrainAll.size()) + " \n");
+        txtAreaStatus.setText(txtAreaStatus.getText() + "Keseluruhan akurasi Sample: " + (accSmpAll / akurasiSeedSampleAll.size()) + " \n\n");
     }
 
     /**
@@ -468,7 +433,6 @@ public class SVMTrainController implements Initializable {
             confusionMatrix[m][l] += 1;
             // txtAreaStatus.setText(txtAreaStatus.getText() + fileName.get(j) + " : " + label + " \n");
         }
-
         return confusionMatrix;
     }
 
@@ -486,7 +450,7 @@ public class SVMTrainController implements Initializable {
     private void saveClasssificationOnClilck(ActionEvent event) {
         try {
             String string = txtAreaStatus.getText();
-            File file = new File(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + txtBoxWidthImage.getText() + ".txt");
+            File file = new File(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + txtBoxLowerTreshold.getText() + "_" + txtBoxWidthImage.getText() + ".txt");
             try (
                     BufferedReader reader = new BufferedReader(new StringReader(string));
                     PrintWriter writer = new PrintWriter(new FileWriter(file));) {
@@ -501,8 +465,7 @@ public class SVMTrainController implements Initializable {
             Logger.getLogger(SVMTrainController.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (int i = 0; i < svmList.size(); i++) {
-            svmList.get(i).save(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + i + "_" + txtBoxWidthImage.getText() + ".xml");
+            svmList.get(i).save(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + i + "_" + txtBoxLowerTreshold.getText() + "_" + txtBoxWidthImage.getText() + ".xml");
         }
-        svmList = new ArrayList<>();
     }
 }

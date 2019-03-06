@@ -16,24 +16,22 @@
    <children>
       <BorderPane layoutX="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <center>
-            <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getFramePointOnClick" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+            <ImageView fx:id="MainFrame" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getFramePointOnClick" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </center>
          <left>
-            <VBox prefHeight="602.0" prefWidth="180.0" spacing="10.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER" prefHeight="602.0" prefWidth="180.0" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#edgeToMn" pickOnBounds="true" preserveRatio="true" />
-                  <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#bwToMn" pickOnBounds="true" preserveRatio="true" />
                   <VBox alignment="CENTER_LEFT" prefHeight="115.0" prefWidth="200.0" spacing="10.0">
                      <children>
                         <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" />
-                        <Button fx:id="btnBrowsSaveFile" mnemonicParsing="false" onAction="#browsSaveFileOnClick" text="Browse" />
-                        <TextField fx:id="txtSaveFileLocation" promptText="Image Location" />
+                        <Button fx:id="btnBrowseSaveFile" mnemonicParsing="false" onAction="#browsSaveFileOnClick" text="Browse" />
+                        <TextField fx:id="txtSaveFileLocation" promptText="Save Location" />
                      </children>
                   </VBox>
                   <Button fx:id="btnCreateFolder" mnemonicParsing="false" onAction="#createFolderOnClick" text="Create Folder" />
-                  <TextField fx:id="txtFolderName" promptText="Folder Name" />
-                  <TextField fx:id="txtIndex" promptText="Index" />
-                  <TextField fx:id="txtIndexLabel" promptText="Index Label" />
+                  <TextField fx:id="txtBoxClassName" promptText="Class Name" />
+                  <TextField fx:id="txtBoxImageCount" promptText="Image Count" />
+                  <TextField fx:id="txtBoxClassCount" promptText="Class Count" />
                </children>
                <padding>
                   <Insets left="10.0" />
