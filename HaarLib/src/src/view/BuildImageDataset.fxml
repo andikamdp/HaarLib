@@ -19,7 +19,7 @@
             <ImageView fx:id="MainFrame" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getFramePointOnClick" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
          </center>
          <left>
-            <VBox alignment="CENTER" prefHeight="602.0" prefWidth="180.0" spacing="10.0" BorderPane.alignment="CENTER">
+            <VBox alignment="CENTER_LEFT" prefHeight="602.0" prefWidth="180.0" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
                   <VBox alignment="CENTER_LEFT" prefHeight="115.0" prefWidth="200.0" spacing="10.0">
                      <children>

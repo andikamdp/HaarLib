@@ -314,7 +314,7 @@ public class SVMTrainController implements Initializable {
         res += "Avg accuracy: " + avgAccuracy + " \n\n";
         res += "Avg recall: " + avgRecall + " \n\n";
         res += "Avg precision: " + avgPrecision + " \n\n";
-        res += "overAllAccuracy: " + overAllAccuracy + " \n\n\n\n";
+//        res += "overAllAccuracy: " + overAllAccuracy + " \n\n\n\n";
         if (train) {
             accuracySeedTrainAvg.add(Double.valueOf(avgAccuracy));
             precisionSeedTrainAvg.add(Double.valueOf(avgPrecision));
@@ -359,8 +359,8 @@ public class SVMTrainController implements Initializable {
         res += "Average recall Train: " + (rclTrn / recallSeedTrainAvg.size()) + " \n";
         res += "Average recall Sample: " + (rclSmpl / recallSeedSampleAvg.size()) + " \n\n";
         //
-        res += "Keseluruhan akurasi Train: " + (accTrnAll / akurasiSeedTrainAll.size()) + " \n";
-        res += "Keseluruhan akurasi Sample: " + (accSmpAll / akurasiSeedSampleAll.size()) + " \n\n";
+//        res += "Keseluruhan akurasi Train: " + (accTrnAll / akurasiSeedTrainAll.size()) + " \n";
+//        res += "Keseluruhan akurasi Sample: " + (accSmpAll / akurasiSeedSampleAll.size()) + " \n\n";
     }
 
     /**

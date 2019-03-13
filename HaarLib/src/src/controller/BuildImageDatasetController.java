@@ -275,7 +275,7 @@ public class BuildImageDatasetController implements Initializable {
         Preprocessing.drawRect(frame);
         updateImageView(MainFrame, frame);
         Mat hand = Preprocessing.getBox(frame.clone());
-        updateImageView(layarEdge, hand);
+//        updateImageView(layarEdge, hand);
         //
         try {
             if (imgDir.exists() && imgLblDir.exists()) {
@@ -308,7 +308,7 @@ public class BuildImageDatasetController implements Initializable {
         }
         Point[] extremePoint = Preprocessing.getExtremePoint(tresholded);
         Mat handView = Preprocessing.getEdgeView(hand.clone(), frame.width(), frame.height(), 40);
-        updateImageView(layarEdge, handView);
+//        updateImageView(layarEdge, handView);
         //
         Mat handPredict = Preprocessing.getBox(hand.clone(), extremePoint[0], extremePoint[1]);
         if (i < j) {
