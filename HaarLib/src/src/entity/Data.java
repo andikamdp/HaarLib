@@ -18,12 +18,26 @@ public class Data {
     private Mat dataMat;
     private String dataName;
     private int index;
+    private float predictResult;
+
+    public Data(String dataName, float predictResult) {
+        this.dataName = dataName;
+        this.predictResult = predictResult;
+    }
 
     public Data(File dataFile, Mat dataMat, String dataName, int index) {
         this.dataFile = dataFile;
         this.dataMat = dataMat;
         this.dataName = dataName;
         this.index = index;
+    }
+
+    public float getPredictResult() {
+        return predictResult;
+    }
+
+    public void setPredictResult(float predictResult) {
+        this.predictResult = predictResult;
     }
 
     public Data() {

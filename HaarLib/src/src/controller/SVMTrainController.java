@@ -82,11 +82,16 @@ public class SVMTrainController implements Initializable {
     private List<Double> precisionSeedTrainAvg;
     private List<Double> recallSeedSampleAvg;
     private List<Double> recallSeedTrainAvg;
-    private List<Double> akurasiSeedSampleAll;
-    private List<Double> akurasiSeedTrainAll;
+    private List<Double> falsePositiveSeedSampleAvg;
+    private List<Double> falsePositiveSeedTrainAvg;
+    private List<Double> f1ScoreSeedSampleAvg;
+    private List<Double> f1ScoreSeedTrainAvg;
     private List<SVM> svmList;
     private double treshold;
     private String res;
+
+    private List<Data> trainingResult;
+    private List<Data> sampleResult;
 //
 
     /**
@@ -108,9 +113,14 @@ public class SVMTrainController implements Initializable {
         recallSeedTrainAvg = new ArrayList<>();
         recallSeedSampleAvg = new ArrayList<>();
         //
-        akurasiSeedSampleAll = new ArrayList<>();
-        akurasiSeedTrainAll = new ArrayList<>();
-
+        falsePositiveSeedSampleAvg = new ArrayList<>();
+        falsePositiveSeedTrainAvg = new ArrayList<>();
+        //
+        f1ScoreSeedSampleAvg = new ArrayList<>();
+        f1ScoreSeedTrainAvg = new ArrayList<>();
+        //
+        trainingResult = new ArrayList<>();
+        sampleResult = new ArrayList<>();
     }
 
     public void initSvm() {
@@ -144,21 +154,25 @@ public class SVMTrainController implements Initializable {
         recallSeedTrainAvg.clear();
         recallSeedSampleAvg.clear();
         //
-        akurasiSeedTrainAll.clear();
-        akurasiSeedSampleAll.clear();
+        falsePositiveSeedSampleAvg.clear();
+        falsePositiveSeedTrainAvg.clear();
+        //
+        f1ScoreSeedSampleAvg.clear();
+        f1ScoreSeedTrainAvg.clear();
         //
         txtAreaStatus.setText("");
         res += "Lokasi Data : " + lblImageLocation.getText() + " \n";
         svmList = new ArrayList<>();
         int seedC = Integer.valueOf(txtBoxSeed.getText());
         for (int i = 0; i < seedC; i++) {
-            res += "Waktu Mulai seed " + LocalTime.now() + " \n\n";
-            System.out.println(i + " " + LocalTime.now());
             seed = i;
             initSvm();
+            trainingResult.add(new Data("SVM Training Iterasi ", (i + 1)));
+            sampleResult.add(new Data("SVM Testing Iterasi ", (i + 1)));
+            res += "Waktu Mulai seed " + LocalTime.now() + " \n\n";
+            System.out.println(i + " " + LocalTime.now());
             System.out.println(i + " " + LocalTime.now());
             res += "Train SVM Iterasi " + (i + 1) + " \n";
-            seed = i;
             svmEdgeRandom();
 
             System.out.println(i + " " + LocalTime.now());
@@ -167,6 +181,7 @@ public class SVMTrainController implements Initializable {
         }
         rataRataAkurasiSeed();
         System.out.println("");
+        printPredictedResult();
         txtAreaStatus.setText(res);
     }
 
@@ -210,7 +225,6 @@ public class SVMTrainController implements Initializable {
         double width = Double.valueOf(txtBoxWidthImage.getText());
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
-
             trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true, width, treshold));
             sampleDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, false, width, treshold));
             if (i == 0) {
@@ -227,11 +241,11 @@ public class SVMTrainController implements Initializable {
         res += "Waktu Selesai Training " + LocalTime.now() + " \n\n";
         System.out.println("Waktu Selesai Training " + LocalTime.now());
         //######################################################################
-        int[][] confusionMatrix = predictClassifier(labels, sampleDataMat);
-        confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
-        //######################################################################
-        confusionMatrix = predictClassifier(labels, trainingDataMat);
+        int[][] confusionMatrix = predictClassifier(labels, trainingDataMat, true);
         confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
+        //######################################################################
+        confusionMatrix = predictClassifier(labels, sampleDataMat, false);
+        confusionMatriks(confusionMatrix, sampleDataMat.size(), false);
         System.gc();
     }
 
@@ -265,7 +279,20 @@ public class SVMTrainController implements Initializable {
      * @param train
      */
     public void confusionMatriks(int[][] predict, int jumlahData, boolean train) {
-        float[] TP = new float[predict.length], TN = new float[predict.length], FP = new float[predict.length], FN = new float[predict.length];
+        float[] TP = new float[predict.length],
+                TN = new float[predict.length],
+                FP = new float[predict.length],
+                FN = new float[predict.length];
+        float[] precision = new float[predict.length],
+                recall = new float[predict.length],
+                accuracy = new float[predict.length],
+                falsePositiveRate = new float[predict.length],
+                f1Score = new float[predict.length];
+        float avgAccuracy = 0,
+                avgRecall = 0,
+                avgPrecision = 0,
+                avgfalsePositiveRate = 0,
+                avgf1Score = 0;
         for (int i = 0; i < predict.length; i++) {
             for (int j = 0; j < predict.length; j++) {
                 if (i == j) {
@@ -277,21 +304,23 @@ public class SVMTrainController implements Initializable {
             }
             TN[i] = jumlahData - (TP[i] + FP[i] + FN[i]);
         }
-        float[] precision = new float[predict.length], recall = new float[predict.length], accuracy = new float[predict.length];
-        float avgAccuracy = 0, overAllAccuracy = 0, avgRecall = 0, avgPrecision = 0;
         for (int i = 0; i < predict.length; i++) {
             precision[i] = TP[i] / (TP[i] + FP[i]);
             recall[i] = TP[i] / (TP[i] + FN[i]);
             accuracy[i] = (TP[i] + TN[i]) / jumlahData;
+            falsePositiveRate[i] = FP[i] / (TN[i] + FP[i]);
+            f1Score[i] = 2 * precision[i] * recall[i] / (precision[i] + recall[i]);
             avgAccuracy += accuracy[i];
             avgRecall += recall[i];
             avgPrecision += precision[i];
-            overAllAccuracy += TP[i];
+            avgfalsePositiveRate += falsePositiveRate[i];
+            avgf1Score += f1Score[i];
         }
-        overAllAccuracy /= jumlahData;
         avgAccuracy /= predict.length;
         avgRecall /= predict.length;
         avgPrecision /= predict.length;
+        avgfalsePositiveRate /= predict.length;
+        avgf1Score /= predict.length;
         if (train) {
             res += "Evaluasi dengan data training \n\n";
         } else {
@@ -310,21 +339,28 @@ public class SVMTrainController implements Initializable {
         res += "FN: " + Arrays.toString(FN) + " \n";
         res += "precision: " + Arrays.toString(precision) + " \n";
         res += "recall: " + Arrays.toString(recall) + " \n";
-        res += "accuracy: " + Arrays.toString(accuracy) + " \n\n";
+        res += "accuracy: " + Arrays.toString(accuracy) + " \n";
+        res += "falsePositiveRate: " + Arrays.toString(falsePositiveRate) + " \n";
+        res += "F1Score: " + Arrays.toString(f1Score) + " \n\n";
         res += "Avg accuracy: " + avgAccuracy + " \n\n";
         res += "Avg recall: " + avgRecall + " \n\n";
         res += "Avg precision: " + avgPrecision + " \n\n";
+        res += "avg falsePositiveRate: " + avgfalsePositiveRate + " \n\n";
+        res += "avg F1Score: " + avgf1Score + " \n\n\n";
 //        res += "overAllAccuracy: " + overAllAccuracy + " \n\n\n\n";
+
         if (train) {
             accuracySeedTrainAvg.add(Double.valueOf(avgAccuracy));
             precisionSeedTrainAvg.add(Double.valueOf(avgPrecision));
             recallSeedTrainAvg.add(Double.valueOf(avgRecall));
-            akurasiSeedTrainAll.add(Double.valueOf(overAllAccuracy));
+            falsePositiveSeedTrainAvg.add(Double.valueOf(avgfalsePositiveRate));
+            f1ScoreSeedTrainAvg.add(Double.valueOf(avgf1Score));
         } else {
             accuracySeedSampleAvg.add(Double.valueOf(avgAccuracy));
             precisionSeedSampleAvg.add(Double.valueOf(avgPrecision));
             recallSeedSampleAvg.add(Double.valueOf(avgRecall));
-            akurasiSeedSampleAll.add(Double.valueOf(overAllAccuracy));
+            falsePositiveSeedSampleAvg.add(Double.valueOf(avgfalsePositiveRate));
+            f1ScoreSeedSampleAvg.add(Double.valueOf(avgf1Score));
         }
     }
 
@@ -335,20 +371,22 @@ public class SVMTrainController implements Initializable {
      * float i : menghitung jumlah akurasi
      */
     private void rataRataAkurasiSeed() {
-        float accTrn = 0, accSmpl = 0, accTrnAll = 0, accSmpAll = 0;
-        float prcTrn = 0, prcSmpl = 0, rclTrn = 0, rclSmpl = 0;
+        float accTrn = 0, accSmpl = 0, fPTrn = 0, fPSmp = 0, f1ScoreSmpl = 0, f1ScoreTrn = 0, prcTrn = 0, prcSmpl = 0, rclTrn = 0, rclSmpl = 0;
         for (int j = 0; j < accuracySeedTrainAvg.size(); j++) {
             accTrn += accuracySeedTrainAvg.get(j);
             accSmpl += accuracySeedSampleAvg.get(j);
             //
-            accTrnAll += akurasiSeedTrainAll.get(j);
-            accSmpAll += akurasiSeedSampleAll.get(j);
+            fPTrn += falsePositiveSeedTrainAvg.get(j);
+            fPSmp += falsePositiveSeedSampleAvg.get(j);
             //
             prcTrn += precisionSeedTrainAvg.get(j);
             prcSmpl += precisionSeedSampleAvg.get(j);
             //
             rclTrn += recallSeedTrainAvg.get(j);
             rclSmpl += recallSeedSampleAvg.get(j);
+            //
+            f1ScoreTrn += f1ScoreSeedTrainAvg.get(j);
+            f1ScoreSmpl += f1ScoreSeedSampleAvg.get(j);
         }
         res += "Average accuracy Train: " + (accTrn / accuracySeedTrainAvg.size()) + " \n";
         res += "Average accuracy Sample: " + (accSmpl / accuracySeedSampleAvg.size()) + " \n\n";
@@ -359,8 +397,11 @@ public class SVMTrainController implements Initializable {
         res += "Average recall Train: " + (rclTrn / recallSeedTrainAvg.size()) + " \n";
         res += "Average recall Sample: " + (rclSmpl / recallSeedSampleAvg.size()) + " \n\n";
         //
-//        res += "Keseluruhan akurasi Train: " + (accTrnAll / akurasiSeedTrainAll.size()) + " \n";
-//        res += "Keseluruhan akurasi Sample: " + (accSmpAll / akurasiSeedSampleAll.size()) + " \n\n";
+        res += "Average FP Rate Train: " + (fPTrn / falsePositiveSeedTrainAvg.size()) + " \n";
+        res += "Average FP Rate Sample: " + (fPSmp / falsePositiveSeedSampleAvg.size()) + " \n\n";
+        //
+        res += "Average F1 Score Train: " + (f1ScoreTrn / f1ScoreSeedTrainAvg.size()) + " \n";
+        res += "Average F1 Score  Sample: " + (f1ScoreSmpl / f1ScoreSeedSampleAvg.size()) + " \n\n";
     }
 
     /**
@@ -404,26 +445,27 @@ public class SVMTrainController implements Initializable {
      *
      * @param fileName
      * @param labels
-     * @param sampleDataMat
+     * @param data
      * @return
      */
-    public int[][] predictClassifier(List<String> labels, List<Data> sampleDataMat) {
+    public int[][] predictClassifier(List<String> labels, List<Data> data, boolean train) {
         int[][] confusionMatrix = new int[6][6];
-        for (int j = 0; j < sampleDataMat.size(); j++) {
-            float label = svm.predict(sampleDataMat.get(j).getDataMat());
-            res += sampleDataMat.get(j).getDataName() + "_" + label + " \n";
+        for (int j = 0; j < data.size(); j++) {
+            float label = svm.predict(data.get(j).getDataMat());
+            data.get(j).setPredictResult(label);
+//            res += data.get(j).getDataName() + "_" + label + " \n";
             int l = 0, m = 0;
-            if (sampleDataMat.get(j).getDataName().contains(labels.get(0).substring(0, 1))) {
+            if (data.get(j).getDataName().contains(labels.get(0).substring(0, 1))) {
                 l = 0;
-            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(1).substring(0, 1))) {
+            } else if (data.get(j).getDataName().contains(labels.get(1).substring(0, 1))) {
                 l = 1;
-            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(2).substring(0, 1))) {
+            } else if (data.get(j).getDataName().contains(labels.get(2).substring(0, 1))) {
                 l = 2;
-            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(3).substring(0, 1))) {
+            } else if (data.get(j).getDataName().contains(labels.get(3).substring(0, 1))) {
                 l = 3;
-            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(4).substring(0, 1))) {
+            } else if (data.get(j).getDataName().contains(labels.get(4).substring(0, 1))) {
                 l = 4;
-            } else if (sampleDataMat.get(j).getDataName().contains(labels.get(5).substring(0, 1))) {
+            } else if (data.get(j).getDataName().contains(labels.get(5).substring(0, 1))) {
                 l = 5;
             }
             if (label == 0) {
@@ -439,8 +481,12 @@ public class SVMTrainController implements Initializable {
             } else if (label == 5) {
                 m = 5;
             }
+            if (train) {
+                trainingResult.add(new Data(data.get(j).getDataName(), label));
+            } else {
+                sampleResult.add(new Data(data.get(j).getDataName(), label));
+            }
             confusionMatrix[m][l] += 1;
-            // res+= fileName.get(j) + " : " + label + " \n";
         }
         res += " \n\n";
         return confusionMatrix;
@@ -476,6 +522,17 @@ public class SVMTrainController implements Initializable {
         }
         for (int i = 0; i < svmList.size(); i++) {
             svmList.get(i).save(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + i + "_" + txtBoxLowerTreshold.getText() + "_" + txtBoxWidthImage.getText() + ".xml");
+        }
+    }
+
+    private void printPredictedResult() {
+        res += " \n\n\n\n";
+        for (Data data : trainingResult) {
+            res += data.getDataName() + "_" + data.getPredictResult() + " \n";
+        }
+        res += " \n\n\n\n";
+        for (Data data : sampleResult) {
+            res += data.getDataName() + "_" + data.getPredictResult() + " \n";
         }
     }
 }
