@@ -39,7 +39,7 @@ public class MainAppController implements Initializable {
     @FXML
     private Button btnSetImage;
     @FXML
-    private Button btnRenameFile;
+    private Button btnRenameData;
 
     /**
      * Initializes the controller class.
@@ -47,6 +47,7 @@ public class MainAppController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        btnRenameData.setVisible(false);
     }
     private Stage stage;
 
@@ -79,12 +80,12 @@ public class MainAppController implements Initializable {
      *
      */
     @FXML
-    private void handViewOnClick(ActionEvent event) {
+    private void svmPredictViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/HandView.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/SVMPredict.fxml"));
             AnchorPane root = loader.load();
-            HandViewController controller = loader.getController();
+            SVMPredictController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
             stage = new Stage();

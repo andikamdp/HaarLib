@@ -50,7 +50,7 @@ import src.utils.Preprocessing;
  *
  * @author Andika Mulyawan
  */
-public class HandViewController implements Initializable {
+public class SVMPredictController implements Initializable {
 
     @FXML
     private ImageView layarBW;
