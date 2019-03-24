@@ -30,7 +30,7 @@ import org.opencv.core.Point;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
-import src.Utils;
+import src.utils.Utils;
 import src.utils.Preprocessing;
 
 /**

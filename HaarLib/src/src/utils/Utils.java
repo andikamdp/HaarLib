@@ -1,4 +1,4 @@
-package src;
+package src.utils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
