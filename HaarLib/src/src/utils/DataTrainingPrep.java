@@ -10,11 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.HOGDescriptor;
 import src.entity.Data;
 
 /**
@@ -23,8 +19,8 @@ import src.entity.Data;
  */
 public class DataTrainingPrep {
 
-//######################################################################
     /**
+     * ######################################################################
      * method untuk menyiapkan label data training
      * param:
      * int i : jumlah data training
@@ -46,8 +42,8 @@ public class DataTrainingPrep {
         return labelsMat;
     }
 
-    //######################################################################
     /**
+     * ######################################################################
      * method untuk memperoleh data training berdasarkan fitur garis tepi
      * param:
      * String lokasi : lokasi data training
@@ -84,8 +80,8 @@ public class DataTrainingPrep {
         return datas;
     }
 
-//######################################################################
     /**
+     * ######################################################################
      * method untuk memperoleh data training berdasarkan fitur garis tepi
      * param:
      * String lokasi : lokasi data training
@@ -99,10 +95,8 @@ public class DataTrainingPrep {
     public static Mat getImageEdgeDescriptor(String lokasi, double width, double treshold) {
         Mat hand = Imgcodecs.imread(lokasi, CvType.CV_32FC1);
         Mat trainingDataMat;
-        double width_2, height_2;
-        width_2 = hand.width() * (width / hand.width());
-        height_2 = hand.height() * (width / hand.width());
-        hand = Preprocessing.getEdge(hand, width_2, height_2, treshold);
+        double height = Preprocessing.getHeight(width, hand.width(), hand.height());
+        hand = Preprocessing.getEdge(hand, width, height, treshold);
         float[] trainingData = new float[hand.cols()];
         trainingDataMat = new Mat(1, hand.cols(), CvType.CV_32F);
         for (int j = 0; j < hand.cols(); j++) {
@@ -114,10 +108,8 @@ public class DataTrainingPrep {
 
     public static Mat getImageEdgeDescriptor(Mat hand, double width, double treshold) {
         Mat trainingDataMat;
-        double width_2, height_2;
-        width_2 = hand.width() * (width / hand.width());
-        height_2 = hand.height() * (width / hand.width());
-        hand = Preprocessing.getEdge(hand, width_2, height_2, treshold);
+        double height = Preprocessing.getHeight(width, hand.width(), hand.height());
+        hand = Preprocessing.getEdge(hand, width, height, treshold);
         float[] trainingData = new float[hand.cols()];
         trainingDataMat = new Mat(1, hand.cols(), CvType.CV_32F);
         for (int j = 0; j < hand.cols(); j++) {
@@ -127,71 +119,6 @@ public class DataTrainingPrep {
         return trainingDataMat;
     }
 
-    /**
-     * ######################################################################
-     * method untuk memeriksa memperoleh data training berdasarkan fitur HOG
-     * var:
-     * File folder : lokasi direktori data gambar
-     * File[] listOfFiles :
-     * Mat trainingDataMat :
-     * Mat hand :
-     * float[] trainingData:
-     *
-     * @param lokasi
-     * @param index
-     * @param train
-     * @return
-     *
-     * public static List<Data> getDataSVMHog(String lokasi, List<Integer> index, Boolean train) {
-     * File folder = new File(lokasi);
-     * File[] listOfFiles = folder.listFiles();
-     * List<Data> datas = new ArrayList<>();
-     * int row = 0;
-     * for (int i = 0; i < listOfFiles.length; i++) {
-     * if (!index.contains(i) && train) {
-     * Mat dataFile = new Mat(1, 192780, CvType.CV_32FC1);
-     * dataFile.put(0, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
-     * Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
-     * datas.add(dataTraining);
-     * row++;
-     * } else if (index.contains(i) && !train) {
-     * Mat dataFile = new Mat(1, 192780, CvType.CV_32FC1);
-     * dataFile.put(0, 0, getImageHogDescriptor(listOfFiles[i].getAbsolutePath()));
-     * Data dataTraining = new Data(listOfFiles[i], dataFile, listOfFiles[i].getName(), i);
-     * datas.add(dataTraining);
-     * row++;
-     * }
-     * }
-     * return datas;
-     * }
-     */
-    /**
-     * //######################################################################
-     * method untuk memperoleh data training berdasarkan fitur HOG
-     * param:
-     * String lokasi : lokasi data training
-     * var:
-     * Mat hand : wadah data gambar
-     * float[] trainingData : wadah nilai deskripsi gambar
-     * HOGDescriptor gDescriptor : menampung class HOG
-     * MatOfFloat descriptors : menampung hasil deskripsi image
-     *
-     * @param lokasi
-     * @return
-     *
-     * public static float[] getImageHogDescriptor(String lokasi) {
-     * HOGDescriptor gDescriptor = new HOGDescriptor();
-     * Mat hand = Imgcodecs.imread(lokasi, CvType.CV_32F);
-     * // Imgproc.resize(hand, hand, new Size(192, 144));
-     * MatOfFloat descriptors = new MatOfFloat();
-     * gDescriptor.compute(hand, descriptors);
-     * float[] trainingData = descriptors.toArray();
-     * // for (int j = 0; j < trainingData.length; j++) {
-     * // trainingData[j] = Math.round(trainingData[j] * 100000) / 100;
-     * // }
-     * return trainingData;
-     * }
-     */
     /**
      * ######################################################################
      *
@@ -205,4 +132,5 @@ public class DataTrainingPrep {
         }
         return dataMat;
     }
+
 }

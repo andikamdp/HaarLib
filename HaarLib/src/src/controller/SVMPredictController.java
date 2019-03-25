@@ -8,9 +8,6 @@ package src.controller;
 import java.io.File;
 import src.utils.Utils;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,20 +26,11 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.DirectoryChooser;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfFloat;
-import org.opencv.core.MatOfInt4;
-import org.opencv.core.MatOfPoint;
-import org.opencv.core.Point;
-import org.opencv.core.Size;
-import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.SVM;
-import org.opencv.objdetect.HOGDescriptor;
 import org.opencv.videoio.VideoCapture;
 import src.utils.DataTrainingPrep;
-import static src.utils.DataTrainingPrep.getImageEdgeDescriptor;
 import src.utils.Preprocessing;
 
 /**
@@ -123,7 +111,7 @@ public class SVMPredictController implements Initializable {
                             frame = grabFrame();
                             start(frame);
                         } catch (Exception e) {
-                            System.out.println("startCameraOnClick " + e);
+                            System.err.println("startCameraOnClick " + e);
                         }
                     }
                 };
@@ -164,13 +152,12 @@ public class SVMPredictController implements Initializable {
         Preprocessing.drawRect(frame);
         Mat hand = Preprocessing.getBox(frame.clone());
         //
-        double width_2, height_2, width = Double.valueOf(txtBoxWidth.getText());
-        width_2 = hand.width() * (width / hand.width());
-        height_2 = hand.height() * (width / hand.width());
-        Mat handView = Preprocessing.getEdgeView(hand.clone(), width_2, height_2, treshold);
+        double height_2, width = Double.valueOf(txtBoxWidth.getText());
+        height_2 = Preprocessing.getHeight(width, hand.width(), hand.height());
+        Mat handView = Preprocessing.getEdgeView(hand.clone(), width, height_2, treshold);
         //
         Mat handPredict = hand.clone();
-        getPredictedResult(handPredict, width_2);
+        getPredictedResult(handPredict, width);
         //
         updateImageView(layarMain, frame);
         updateImageView(layarBW, hand);
@@ -203,10 +190,8 @@ public class SVMPredictController implements Initializable {
                 result = "V";
             }
             txtPredictedResult.setText(result);
-            System.out.println(dataFile.rows() + " " + dataFile.cols());
-            System.out.println(hand.rows() + " " + hand.cols());
         } catch (Exception e) {
-            System.out.println("getPredictedResult " + e);
+            System.err.println("getPredictedResult " + e);
         }
     }
 
@@ -363,13 +348,6 @@ public class SVMPredictController implements Initializable {
     @FXML
     private void getClassifierOnClick(ActionEvent event) {
         svm = SVM.load(cmbClassifier.getValue());
-
-//        svm = SVM.load("E:\\TA\\New_Folder\\backgroud_substraction\\lib\\distF 40p\\res 40p\\BT_R_40p_0.xml");
-//        svm = SVM.load("E:\\TA\\New_Folder\\backgroud_substraction\\lib\\distF 40p\\res 40p\\BT_R_40p_0.xml");
-//        svm.load(cmbClassifier.getValue());
-//        svm.load("‪E:\\TA\\file\\Res\\33333_0.xml");
-        System.out.println(CvType.CV_32F);
-        System.out.println(CvType.CV_32FC1);
     }
 
 }

@@ -22,13 +22,10 @@ import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -50,19 +47,17 @@ public class SVMTrainController implements Initializable {
     @FXML
     private Button btnTrain;
     @FXML
-    private TextArea txtAreaStatus;
+    private Button btnBrowsClassification;
+    @FXML
+    private Button btnSaveClasification;
     @FXML
     private Button btnBrowsImage;
     @FXML
     private Label lblImageLocation;
     @FXML
-    private AnchorPane apTrainWindow;
-    @FXML
-    private Button btnBrowsClassification;
-    @FXML
     private Label lblClassificationLocation;
     @FXML
-    private Button btnSaveClasification;
+    private TextArea txtAreaStatus;
     @FXML
     private TextField txtBoxFileName;
     @FXML
@@ -71,11 +66,15 @@ public class SVMTrainController implements Initializable {
     private TextField txtBoxWidthImage;
     @FXML
     private TextField txtBoxLowerTreshold;
+    @FXML
+    private AnchorPane apTrainWindow;
 //
     private int ratio;
     private MainAppController mainAppController;
     private SVM svm;
     private int seed;
+    private double treshold;
+    private String res;
     private List<Double> accuracySeedSampleAvg;
     private List<Double> accuracySeedTrainAvg;
     private List<Double> precisionSeedSampleAvg;
@@ -86,12 +85,9 @@ public class SVMTrainController implements Initializable {
     private List<Double> falsePositiveSeedTrainAvg;
     private List<Double> f1ScoreSeedSampleAvg;
     private List<Double> f1ScoreSeedTrainAvg;
-    private List<SVM> svmList;
-    private double treshold;
-    private String res;
-
     private List<Data> trainingResult;
     private List<Data> sampleResult;
+    private List<SVM> svmList;
 //
 
     /**
@@ -127,8 +123,6 @@ public class SVMTrainController implements Initializable {
         svm = SVM.create();
         svm.setKernel(SVM.LINEAR);
         svm.setType(SVM.C_SVC);
-//        svm = SVM.load("E:\\TA\\New_Folder\\backgroud_substraction\\lib\\dist\\res 48\\" + txtBoxFileName.getText() + seed + "_48.xml");
-
     }
 
     /**
@@ -170,17 +164,12 @@ public class SVMTrainController implements Initializable {
             trainingResult.add(new Data("SVM Training Iterasi ", (i + 1)));
             sampleResult.add(new Data("SVM Testing Iterasi ", (i + 1)));
             res += "Waktu Mulai seed " + LocalTime.now() + " \n\n";
-            System.out.println(i + " " + LocalTime.now());
-            System.out.println(i + " " + LocalTime.now());
             res += "Train SVM Iterasi " + (i + 1) + " \n";
             svmEdgeRandom();
-
-            System.out.println(i + " " + LocalTime.now());
             svmList.add(svm);
             res += "Waktu Selesai seed " + LocalTime.now() + " \n\n";
         }
         rataRataAkurasiSeed();
-        System.out.println("");
         printPredictedResult();
         txtAreaStatus.setText(res);
     }
@@ -197,16 +186,9 @@ public class SVMTrainController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk train SVM dengan deskripsi gambar Edge
-     * var:
-     * SVM svm : variabel klasifikasi dengan SVM
-     * Mat trainingDataMat : variabel penampung data training
-     * Mat labelsMat : variabel penampung label data training
-     * Mat sampleDataMat : variabel penampung data testing
-     * int rows :
-     * File file : variabel penampung lokasi file data gambar
-     * File[] listOfFiles : variabe penampung isi file data gambar
-     * int[][] confusionMatrix : variabel penampung confussion matriks
+     * method untuk train SVM dengan fitur gambar garis tepi
+     * pada method ini terjadi proses pengambilan data gambar tiap kelas
+     * data gambar akan diekstrak fiturnya di method lain
      */
     public void svmEdgeRandom() {
 
@@ -234,12 +216,9 @@ public class SVMTrainController implements Initializable {
             labels.add(files.getName());
         }
         dataTraining = DataTrainingPrep.getDataMat(trainingDataMat);
-
         res += "Waktu Mulai Training " + LocalTime.now() + " \n";
-        System.out.println("Waktu Mulai Training " + LocalTime.now());
         svm.train(dataTraining, Ml.ROW_SAMPLE, labelsMat);
         res += "Waktu Selesai Training " + LocalTime.now() + " \n\n";
-        System.out.println("Waktu Selesai Training " + LocalTime.now());
         //######################################################################
         int[][] confusionMatrix = predictClassifier(labels, trainingDataMat, true);
         confusionMatriks(confusionMatrix, trainingDataMat.size(), true);
@@ -269,10 +248,10 @@ public class SVMTrainController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk menghitung akurasi training
+     * method untuk menghitung evaluasi classifier yang terbentuk
      * var:
      * float TP, TN, FP, FN : fariabel penampung nilai True, Positif, False, Negatif
-     * float precision, recall, accuracy :
+     * float precision, recall, accuracy, f1Score, falsePositiveRate :
      *
      * @param predict
      * @param jumlahData
@@ -347,8 +326,6 @@ public class SVMTrainController implements Initializable {
         res += "Avg precision: " + avgPrecision + " \n\n";
         res += "avg falsePositiveRate: " + avgfalsePositiveRate + " \n\n";
         res += "avg F1Score: " + avgf1Score + " \n\n\n";
-//        res += "overAllAccuracy: " + overAllAccuracy + " \n\n\n\n";
-
         if (train) {
             accuracySeedTrainAvg.add(Double.valueOf(avgAccuracy));
             precisionSeedTrainAvg.add(Double.valueOf(avgPrecision));
@@ -366,7 +343,7 @@ public class SVMTrainController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk menghitung rata-rata akurasi
+     * method untuk menghitung rata-rata hasil perhitungan evaluasi per jumlah seed
      * var:
      * float i : menghitung jumlah akurasi
      */
@@ -406,7 +383,7 @@ public class SVMTrainController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk train SVM dengan data gambar kombinasi jari terangkat
+     * method untuk menghasilkan nilai random indeks data sampel yang akan diambil
      * param:
      * int jumlahData : variabel penampung jumlah data training perClass(label)
      * var:
@@ -438,13 +415,13 @@ public class SVMTrainController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk
+     * method untuk memprediksi gambar dari classifier yang telah terbentuk
      * param:
      *
      * var:
      *
-     * @param fileName
      * @param labels
+     * @param train
      * @param data
      * @return
      */
@@ -468,17 +445,17 @@ public class SVMTrainController implements Initializable {
             } else if (data.get(j).getDataName().contains(labels.get(5).substring(0, 1))) {
                 l = 5;
             }
-            if (label == 0) {
+            if (label == 0.0) {
                 m = 0;
-            } else if (label == 1) {
+            } else if (label == 1.0) {
                 m = 1;
-            } else if (label == 2) {
+            } else if (label == 2.0) {
                 m = 2;
-            } else if (label == 3) {
+            } else if (label == 3.0) {
                 m = 3;
-            } else if (label == 4) {
+            } else if (label == 4.0) {
                 m = 4;
-            } else if (label == 5) {
+            } else if (label == 5.0) {
                 m = 5;
             }
             if (train) {
@@ -488,7 +465,6 @@ public class SVMTrainController implements Initializable {
             }
             confusionMatrix[m][l] += 1;
         }
-        res += " \n\n";
         return confusionMatrix;
     }
 

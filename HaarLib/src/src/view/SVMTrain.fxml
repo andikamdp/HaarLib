@@ -24,7 +24,7 @@
                   <VBox prefHeight="61.0" prefWidth="199.0" spacing="5.0" style="-fx-border-insets: 1;">
                      <children>
                         <Button fx:id="btnBrowsImage" mnemonicParsing="false" onAction="#browsImageOnClick" text="Browse Image File" />
-                        <Label fx:id="lblImageLocation" text="Image Folder" />
+                        <Label fx:id="lblImageLocation" text="Image Folder" wrapText="true" />
                      </children>
                   </VBox>
                   <VBox prefHeight="120.0" prefWidth="199.0" spacing="10.0">
