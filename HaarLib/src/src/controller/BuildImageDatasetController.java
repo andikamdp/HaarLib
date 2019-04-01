@@ -16,11 +16,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -40,11 +43,9 @@ public class BuildImageDatasetController implements Initializable {
     @FXML
     private Button btnStartCamera;
     @FXML
-    private TextField txtSaveFileLocation;
-    @FXML
     private Button btnCreateFolder;
     @FXML
-    private AnchorPane apGetImage;
+    private BorderPane apGetImage;
     @FXML
     private TextField txtBoxClassName;
     @FXML
@@ -55,6 +56,10 @@ public class BuildImageDatasetController implements Initializable {
     private ImageView MainFrame;
     @FXML
     private Button btnBrowseSaveFile;
+    @FXML
+    private GridPane gridPane;
+    @FXML
+    private Label lblSaveLocation;
 //
     private ScheduledExecutorService timer;
     private VideoCapture capture;
@@ -100,7 +105,7 @@ public class BuildImageDatasetController implements Initializable {
     private void startCameraOnClick(ActionEvent event) {
         i = 0;
         j = Integer.valueOf(txtBoxImageCount.getText());
-        if (!txtBoxClassName.getText().equals("") && !txtSaveFileLocation.getText().equals("") && imgDir.exists() && imgLblDir.exists()) {
+        if (!txtBoxClassName.getText().equals("") && !lblSaveLocation.getText().equals("") && imgDir.exists() && imgLblDir.exists()) {
             if (!cameraActive) {
                 capture.open(0);
                 if (this.capture.isOpened()) {
@@ -155,7 +160,7 @@ public class BuildImageDatasetController implements Initializable {
         brows.setTitle("Buka Folder Data Training");
         imgDir = brows.showDialog(apGetImage.getScene().getWindow());
         if (imgDir != null) {
-            txtSaveFileLocation.setText(imgDir.getAbsolutePath());
+            lblSaveLocation.setText(imgDir.getAbsolutePath());
         }
     }
 
@@ -293,6 +298,10 @@ public class BuildImageDatasetController implements Initializable {
 
     void setMainController(MainAppController aThis) {
         this.mainAppController = aThis;
+    }
+
+    private void setVisibleGridPaneOnClick(ActionEvent event) {
+        gridPane.setVisible(false);
     }
 
 }

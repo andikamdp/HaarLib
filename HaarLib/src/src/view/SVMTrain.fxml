@@ -11,37 +11,58 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="apTrainWindow" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.SVMTrainController">
-   <children>
-      <HBox prefHeight="400.0" prefWidth="600.0">
+<BorderPane fx:id="apTrainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="589.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.SVMTrainController">
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <VBox prefHeight="400.0" prefWidth="199.0" spacing="20.0">
-               <children>
-                  <Button fx:id="btnTrain" mnemonicParsing="false" onAction="#trainOnClick" prefHeight="25.0" prefWidth="95.0" text="Start Training" />
-                  <TextField fx:id="txtBoxSeed" promptText="Seed" />
-                  <TextField fx:id="txtBoxWidthImage" promptText="Width" />
-                  <TextField fx:id="txtBoxLowerTreshold" promptText="Lower Treshold" />
-                  <VBox prefHeight="61.0" prefWidth="199.0" spacing="5.0" style="-fx-border-insets: 1;">
-                     <children>
-                        <Button fx:id="btnBrowsImage" mnemonicParsing="false" onAction="#browsImageOnClick" text="Browse Image File" />
-                        <Label fx:id="lblImageLocation" text="Image Folder" wrapText="true" />
-                     </children>
-                  </VBox>
-                  <VBox prefHeight="120.0" prefWidth="199.0" spacing="10.0">
-                     <children>
-                        <Button fx:id="btnBrowsClassification" mnemonicParsing="false" onAction="#browsClassificationOnClick" text="Browse Save Location" />
-                        <Label fx:id="lblClassificationLocation" text="Classification Folder" />
-                        <Button fx:id="btnSaveClasification" mnemonicParsing="false" onAction="#saveClasssificationOnClilck" text="Save" />
-                        <TextField fx:id="txtBoxFileName" promptText="File Name" />
-                     </children>
-                  </VBox>
-               </children>
-               <padding>
-                  <Insets left="5.0" top="5.0" />
-               </padding>
-            </VBox>
-            <TextArea fx:id="txtAreaStatus" prefHeight="400.0" prefWidth="401.0" />
+            <TextArea fx:id="txtAreaStatus" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
-      </HBox>
-   </children>
-</AnchorPane>
+      </AnchorPane>
+   </center>
+   <top>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane alignment="CENTER" layoutX="100.0" layoutY="10.0" vgap="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0">
+               <children>
+                  <TextField fx:id="txtBoxSeed" promptText="Seed" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <TextField fx:id="txtBoxWidthImage" promptText="Width" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <TextField fx:id="txtBoxLowerTreshold" promptText="Lower Treshold" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <Button fx:id="btnTrain" mnemonicParsing="false" onAction="#trainOnClick" prefHeight="25.0" prefWidth="95.0" text="Start Training" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <Button fx:id="btnBrowsImage" mnemonicParsing="false" onAction="#browsImageOnClick" text="Browse Image Location" />
+                  <Label fx:id="lblImageLocation" prefHeight="17.0" prefWidth="442.0" text="Image Dataset Location" wrapText="true" GridPane.columnIndex="2" />
+                  <Button fx:id="btnBrowsClassification" mnemonicParsing="false" onAction="#browsClassificationOnClick" text="Browse Save Location" GridPane.rowIndex="5" />
+                  <Label fx:id="lblClassificationLocation" prefHeight="17.0" prefWidth="456.0" text="Classifier Save Location" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <Button fx:id="btnSaveClasification" mnemonicParsing="false" onAction="#saveClasssificationOnClilck" text="Save Classifier" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                  <TextField fx:id="txtBoxFileName" promptText="File Name" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                  <Label text="Seed " GridPane.rowIndex="1" />
+                  <Label text="Lower Treshold " GridPane.rowIndex="3" />
+                  <Label text="Minimum Width" GridPane.rowIndex="2" />
+                  <Label text="Classifier Name" GridPane.rowIndex="6" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="6" />
+               </children>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="154.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="3.0" prefWidth="14.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="435.0" minWidth="10.0" prefWidth="292.0" />
+               </columnConstraints>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
+         </children>
+      </AnchorPane>
+   </top>
+</BorderPane>

@@ -12,28 +12,56 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="apHandViewWindow" prefHeight="590.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.SVMPredictController">
-    <children>
-        <BorderPane layoutX="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <center>
-                <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getPoint" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-            </center>
-            <left>
-                <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
-                    <children>
-                        <ImageView fx:id="layarBW" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#bwToMn" pickOnBounds="true" preserveRatio="true" />
-                        <ImageView fx:id="layarEdge" fitHeight="150.0" fitWidth="200.0" onMouseClicked="#edgeToMn" pickOnBounds="true" preserveRatio="true" />
+<BorderPane fx:id="apHandViewWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="710.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.SVMPredictController">
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getPoint" pickOnBounds="true" preserveRatio="true" />
+         </children>
+      </AnchorPane>
+   </center>
+   <top>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <GridPane layoutX="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+               <children>
+                  <TextField fx:id="txtPredictedResult" promptText="Prediction Result" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <TextField fx:id="txtBoxLowerTreshold" promptText="Lower Treshold" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <TextField fx:id="txtBoxWidth" promptText="width" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="cmbClassifier" prefWidth="150.0" promptText="Classifier" GridPane.columnIndex="2" />
+                  <Label text="Minimum Width" GridPane.rowIndex="2" />
+                  <Label text="Lower Treshold " GridPane.rowIndex="3" />
+                  <Label text="Prediction Result" GridPane.rowIndex="5" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                     <children>
                         <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" />
-                        <TextField fx:id="txtMainFramePoint" promptText="Main Frame Point" />
-                        <Button mnemonicParsing="false" onAction="#browseClassifierOnClick" text="Browse" />
-                  <ComboBox fx:id="cmbClassifier" prefWidth="150.0" promptText="Classifier" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <children>
                         <Button fx:id="btnUpdateCamera" mnemonicParsing="false" onAction="#getClassifierOnClick" text="Get Classifier" />
-                        <TextField fx:id="txtBoxWidth" promptText="width" />
-                  <TextField fx:id="txtBoxLowerTreshold" promptText="Lower Treshold" />
-                  <TextField fx:id="txtPredictedResult" promptText="Predicted Result" />
-                    </children>
-                </VBox>
-            </left>
-        </BorderPane>
-    </children>
-</AnchorPane>
+                     </children>
+                  </HBox>
+                  <Button mnemonicParsing="false" onAction="#browseClassifierOnClick" text="Browse Classifier Location" />
+               </children>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="161.0" minWidth="10.0" prefWidth="155.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="186.0" minWidth="0.0" prefWidth="14.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="433.0" minWidth="10.0" prefWidth="411.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
+         </children>
+      </AnchorPane>
+   </top>
+</BorderPane>

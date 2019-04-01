@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javafx.scene.Scene;
 
 import java.util.logging.Level;
+import javafx.scene.layout.BorderPane;
 import src.MainApp;
 
 /**
@@ -46,8 +47,7 @@ public class MainAppController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-        btnRenameData.setVisible(false);
+        // TOD
     }
     private Stage stage;
 
@@ -60,7 +60,7 @@ public class MainAppController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/SVMTrain.fxml"));
-            AnchorPane root = loader.load();
+            BorderPane root = loader.load();
             SVMTrainController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
@@ -68,6 +68,7 @@ public class MainAppController implements Initializable {
             stage.initOwner(mainAppView.getScene().getWindow());
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(scene);
+            stage.setTitle("Training Classifier");
             stage.show();
         } catch (IOException iOException) {
             Logger.getLogger(MainAppController.class.getName()).
@@ -84,7 +85,7 @@ public class MainAppController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/SVMPredict.fxml"));
-            AnchorPane root = loader.load();
+            BorderPane root = loader.load();
             SVMPredictController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
@@ -92,6 +93,7 @@ public class MainAppController implements Initializable {
             stage.initOwner(mainAppView.getScene().getWindow());
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(scene);
+            stage.setTitle("Live Prediction");
             stage.show();
         } catch (IOException iOException) {
             Logger.getLogger(MainAppController.class.getName()).
@@ -107,7 +109,7 @@ public class MainAppController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(MainApp.class.getResource("view/BuildImageDataset.fxml"));
-            AnchorPane root = loader.load();
+            BorderPane root = loader.load();
             BuildImageDatasetController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
@@ -115,29 +117,7 @@ public class MainAppController implements Initializable {
             stage.initOwner(mainAppView.getScene().getWindow());
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(scene);
-            stage.show();
-        } catch (IOException iOException) {
-            Logger.getLogger(MainAppController.class.getName()).
-                    log(Level.SEVERE, null, iOException);
-        }
-    }
-
-    /**
-     * onClick action membuka window baru untuk melakukan rename file
-     */
-    @FXML
-    private void renameFileViewOnClick(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/RenameData.fxml"));
-            AnchorPane root = loader.load();
-            RenameDataController controller = loader.getController();
-            controller.setMainController(this);
-            Scene scene = new Scene(root);
-            stage = new Stage();
-            stage.initOwner(mainAppView.getScene().getWindow());
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.setScene(scene);
+            stage.setTitle("Build Image Dataset");
             stage.show();
         } catch (IOException iOException) {
             Logger.getLogger(MainAppController.class.getName()).

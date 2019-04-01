@@ -17,7 +17,7 @@ import src.entity.Data;
  *
  * @author Andika Mulyawan
  */
-public class DataTrainingPrep {
+public final class DataTrainingPrep {
 
     /**
      * ######################################################################

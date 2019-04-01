@@ -29,6 +29,7 @@ public class MainApp extends Application {
         AnchorPane root = loader.load();
         Scene scane = new Scene(root);
         primaryStage.setScene(scane);
+        primaryStage.setTitle("Main Window");
         primaryStage.show();
     }
 

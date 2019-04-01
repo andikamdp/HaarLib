@@ -13,7 +13,6 @@
                 <Button fx:id="btnSvmTrain" mnemonicParsing="false" onAction="#svmTrainViewOnClick" text="SVM Training" />
                 <Button fx:id="btnSvmPredict" mnemonicParsing="false" onAction="#svmPredictViewOnClick" prefHeight="25.0" prefWidth="88.0" text="SVM Predict" />
                 <Button fx:id="btnSetImage" mnemonicParsing="false" onAction="#buildImageDatasetViewOnClick" prefHeight="25.0" prefWidth="88.0" text="Get Image" />
-                <Button fx:id="btnRenameData" mnemonicParsing="false" onAction="#renameFileViewOnClick" text="RenameData" />
             </children>
         </VBox>
     </children>

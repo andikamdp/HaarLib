@@ -12,32 +12,48 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="apGetImage" prefHeight="590.0" prefWidth="831.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.BuildImageDatasetController">
-   <children>
-      <BorderPane layoutX="6.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-         <center>
-            <ImageView fx:id="MainFrame" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getFramePointOnClick" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
-         </center>
-         <left>
-            <VBox alignment="CENTER_LEFT" prefHeight="602.0" prefWidth="180.0" spacing="10.0" BorderPane.alignment="CENTER">
+<BorderPane fx:id="apGetImage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="704.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.BuildImageDatasetController">
+   <center>
+      <AnchorPane BorderPane.alignment="CENTER_LEFT">
+         <children>
+            <ImageView fx:id="MainFrame" fitHeight="506.0" fitWidth="596.0" onMouseClicked="#getFramePointOnClick" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
+   </center>
+   <top>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <children>
+            <GridPane fx:id="gridPane" layoutX="76.0" layoutY="55.0" prefHeight="180.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                <children>
-                  <VBox alignment="CENTER_LEFT" prefHeight="115.0" prefWidth="200.0" spacing="10.0">
-                     <children>
-                        <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" />
-                        <Button fx:id="btnBrowseSaveFile" mnemonicParsing="false" onAction="#browsSaveFileOnClick" text="Browse" />
-                        <TextField fx:id="txtSaveFileLocation" promptText="Save Location" />
-                     </children>
-                  </VBox>
-                  <Button fx:id="btnCreateFolder" mnemonicParsing="false" onAction="#createFolderOnClick" text="Create Folder" />
-                  <TextField fx:id="txtBoxClassName" promptText="Class Name" />
-                  <TextField fx:id="txtBoxImageCount" promptText="Image Count" />
-                  <TextField fx:id="txtBoxClassCount" promptText="Class Count" />
+                  <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <Button fx:id="btnBrowseSaveFile" mnemonicParsing="false" onAction="#browsSaveFileOnClick" text="Browse Save Location" />
+                  <Button fx:id="btnCreateFolder" mnemonicParsing="false" onAction="#createFolderOnClick" text="Create Folder" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <TextField fx:id="txtBoxClassName" prefHeight="25.0" prefWidth="379.0" promptText="Class Name" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <TextField fx:id="txtBoxImageCount" promptText="Image Count" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <TextField fx:id="txtBoxClassCount" promptText="Class Count" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <Label fx:id="lblSaveLocation" prefHeight="17.0" prefWidth="453.0" text="Image Save Location" GridPane.columnIndex="2" />
+                  <Label text="Image Class Name" GridPane.rowIndex="1" />
+                  <Label text="Number Of Image Classes" GridPane.rowIndex="3" />
+                  <Label text="Number Of Images" GridPane.rowIndex="4" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="4" />
                </children>
-               <padding>
-                  <Insets left="10.0" />
-               </padding>
-            </VBox>
-         </left>
-      </BorderPane>
-   </children>
-</AnchorPane>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="147.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="285.0" minWidth="10.0" prefWidth="14.0" />
+                  <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="463.0" minWidth="10.0" prefWidth="409.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
+         </children>
+      </AnchorPane>
+   </top>
+</BorderPane>

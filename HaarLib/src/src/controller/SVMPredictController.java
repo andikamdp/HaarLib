@@ -24,6 +24,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -40,9 +41,7 @@ import src.utils.Preprocessing;
  */
 public class SVMPredictController implements Initializable {
 
-    @FXML
     private ImageView layarBW;
-    @FXML
     private ImageView layarEdge;
     @FXML
     private ImageView layarMain;
@@ -50,14 +49,17 @@ public class SVMPredictController implements Initializable {
     private Button btnStartCamera;
     @FXML
     private Button btnUpdateCamera;
-    @FXML
     private TextField txtMainFramePoint;
     @FXML
     private TextField txtPredictedResult;
     @FXML
     private ComboBox<String> cmbClassifier;
     @FXML
-    private AnchorPane apHandViewWindow;
+    private BorderPane apHandViewWindow;
+    @FXML
+    private TextField txtBoxWidth;
+    @FXML
+    private TextField txtBoxLowerTreshold;
 //
     private MainAppController mainAppController;
     private ScheduledExecutorService timer;
@@ -65,10 +67,6 @@ public class SVMPredictController implements Initializable {
     private boolean cameraActive;
     private SVM svm;
     private double treshold;
-    @FXML
-    private TextField txtBoxWidth;
-    @FXML
-    private TextField txtBoxLowerTreshold;
 
     /**
      * Initializes the controller class.
@@ -285,7 +283,6 @@ public class SVMPredictController implements Initializable {
      * ImageView layarBW : titik sebelumnya
      * ImageView layarMain
      */
-    @FXML
     private void bwToMn(MouseEvent event) {
         Image Mn = layarBW.getImage();
         layarBW.setImage(layarMain.getImage());
@@ -301,7 +298,6 @@ public class SVMPredictController implements Initializable {
      * ImageView layarEdge : titik sebelumnya
      * ImageView layarMain
      */
-    @FXML
     private void edgeToMn(MouseEvent event) {
         Image Mn = layarEdge.getImage();
         layarEdge.setImage(layarMain.getImage());
