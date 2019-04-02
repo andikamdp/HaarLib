@@ -16,7 +16,7 @@
    <center>
       <AnchorPane BorderPane.alignment="CENTER_LEFT">
          <children>
-            <ImageView fx:id="MainFrame" fitHeight="506.0" fitWidth="596.0" onMouseClicked="#getFramePointOnClick" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <ImageView fx:id="MainFrame" fitHeight="506.0" fitWidth="596.0" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
    </center>
@@ -33,7 +33,7 @@
                   <TextField fx:id="txtBoxClassCount" promptText="Class Count" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                   <Label fx:id="lblSaveLocation" prefHeight="17.0" prefWidth="453.0" text="Image Save Location" GridPane.columnIndex="2" />
                   <Label text="Image Class Name" GridPane.rowIndex="1" />
-                  <Label text="Number Of Image Classes" GridPane.rowIndex="3" />
+                  <Label text="Class Count" GridPane.rowIndex="3" />
                   <Label text="Number Of Images" GridPane.rowIndex="4" />
                   <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="3" />

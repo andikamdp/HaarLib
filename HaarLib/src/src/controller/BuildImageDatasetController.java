@@ -187,11 +187,6 @@ public class BuildImageDatasetController implements Initializable {
         imgLblDir = file;
     }
 
-    @FXML
-    private void getFramePointOnClick(MouseEvent event
-    ) {
-    }
-
     /**
      * ######################################################################
      *
@@ -298,10 +293,6 @@ public class BuildImageDatasetController implements Initializable {
 
     void setMainController(MainAppController aThis) {
         this.mainAppController = aThis;
-    }
-
-    private void setVisibleGridPaneOnClick(ActionEvent event) {
-        gridPane.setVisible(false);
     }
 
 }

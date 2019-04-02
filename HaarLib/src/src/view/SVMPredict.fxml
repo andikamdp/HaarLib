@@ -16,7 +16,7 @@
    <center>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
-            <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" onMouseClicked="#getPoint" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="layarMain" fitHeight="532.0" fitWidth="596.0" pickOnBounds="true" preserveRatio="true" />
          </children>
       </AnchorPane>
    </center>
@@ -25,12 +25,12 @@
          <children>
             <GridPane layoutX="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                <children>
-                  <TextField fx:id="txtPredictedResult" promptText="Prediction Result" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <TextField fx:id="txtBoxLowerTreshold" promptText="Lower Treshold" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <TextField fx:id="txtPredictedResult" promptText="Predicted Result" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                  <TextField fx:id="txtBoxLowerTreshold" promptText="Lower Threshold" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                   <TextField fx:id="txtBoxWidth" promptText="width" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <ComboBox fx:id="cmbClassifier" prefWidth="150.0" promptText="Classifier" GridPane.columnIndex="2" />
                   <Label text="Minimum Width" GridPane.rowIndex="2" />
-                  <Label text="Lower Treshold " GridPane.rowIndex="3" />
+                  <Label text="Lower Threshold " GridPane.rowIndex="3" />
                   <Label text="Prediction Result" GridPane.rowIndex="5" />
                   <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label text=" : " GridPane.columnIndex="1" GridPane.rowIndex="3" />

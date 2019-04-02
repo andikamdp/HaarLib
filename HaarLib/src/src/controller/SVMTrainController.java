@@ -54,7 +54,7 @@ public class SVMTrainController implements Initializable {
     @FXML
     private Label lblImageLocation;
     @FXML
-    private TextArea txtAreaStatus;
+    private TextArea txtAreaEvaluationRes;
     @FXML
     private TextField txtBoxFileName;
     @FXML
@@ -155,7 +155,7 @@ public class SVMTrainController implements Initializable {
         f1ScoreSeedSampleAvg.clear();
         f1ScoreSeedTrainAvg.clear();
         //
-        txtAreaStatus.setText("");
+        txtAreaEvaluationRes.setText("");
         res += "Lokasi Data : " + lblImageLocation.getText() + " \n";
         svmList = new ArrayList<>();
         int seedC = Integer.valueOf(txtBoxSeed.getText());
@@ -172,7 +172,7 @@ public class SVMTrainController implements Initializable {
         }
         rataRataAkurasiSeed();
         printPredictedResult();
-        txtAreaStatus.setText(res);
+        txtAreaEvaluationRes.setText(res);
     }
 
     /**
@@ -482,7 +482,7 @@ public class SVMTrainController implements Initializable {
     @FXML
     private void saveClasssificationOnClilck(ActionEvent event) {
         try {
-            String string = txtAreaStatus.getText();
+            String string = txtAreaEvaluationRes.getText();
             File file = new File(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + txtBoxLowerTreshold.getText() + "_" + txtBoxWidthImage.getText() + ".txt");
             try (
                     BufferedReader reader = new BufferedReader(new StringReader(string));

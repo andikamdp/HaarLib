@@ -41,15 +41,12 @@ import src.utils.Preprocessing;
  */
 public class SVMPredictController implements Initializable {
 
-    private ImageView layarBW;
-    private ImageView layarEdge;
     @FXML
     private ImageView layarMain;
     @FXML
     private Button btnStartCamera;
     @FXML
     private Button btnUpdateCamera;
-    private TextField txtMainFramePoint;
     @FXML
     private TextField txtPredictedResult;
     @FXML
@@ -158,8 +155,6 @@ public class SVMPredictController implements Initializable {
         getPredictedResult(handPredict, width);
         //
         updateImageView(layarMain, frame);
-        updateImageView(layarBW, hand);
-        updateImageView(layarEdge, handView);
     }
 
     /**
@@ -272,50 +267,6 @@ public class SVMPredictController implements Initializable {
             }
         }
         return frame;
-    }
-
-    /**
-     * ######################################################################
-     * method layarBW OnClick
-     * method untuk menukar image pada layarBW ke Main
-     * var:
-     * Image Mn : titik saat ini
-     * ImageView layarBW : titik sebelumnya
-     * ImageView layarMain
-     */
-    private void bwToMn(MouseEvent event) {
-        Image Mn = layarBW.getImage();
-        layarBW.setImage(layarMain.getImage());
-        layarMain.setImage(Mn);
-    }
-
-    /**
-     * ######################################################################
-     * method layarEdge OnClick
-     * method untuk menukar image pada layarEdge ke Main
-     * var:
-     * Image Mn : titik saat ini
-     * ImageView layarEdge : titik sebelumnya
-     * ImageView layarMain
-     */
-    private void edgeToMn(MouseEvent event) {
-        Image Mn = layarEdge.getImage();
-        layarEdge.setImage(layarMain.getImage());
-        layarMain.setImage(Mn);
-    }
-
-    /**
-     * ######################################################################
-     * method layarMain OnClick
-     * memperoleh nilai koordinat layarMain
-     * var:
-     * TextField txtV : text field menyimpan koordinat X
-     * TextField txtS : text field menyimpan koordinat Y
-     *
-     */
-    @FXML
-    private void getPoint(MouseEvent event) {
-        txtMainFramePoint.setText("(" + String.valueOf(event.getX()) + ", " + String.valueOf(event.getY()) + ")");
     }
 
     /**
