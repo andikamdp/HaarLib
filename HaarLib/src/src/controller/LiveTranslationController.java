@@ -22,8 +22,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
 import org.opencv.core.Core;
@@ -39,24 +37,26 @@ import src.utils.Preprocessing;
  *
  * @author Andika Mulyawan
  */
-public class SVMPredictController implements Initializable {
+public class LiveTranslationController implements Initializable {
 
+    @FXML
+    private TextField txtBoxLowerThreshold;
+    @FXML
+    private TextField txtBoxMinWidth;
+    @FXML
+    private Button btnGetClassifier;
+    @FXML
+    private Button btnBrowseClassifierLocation;
     @FXML
     private ImageView layarMain;
     @FXML
     private Button btnStartCamera;
-    @FXML
-    private Button btnUpdateCamera;
     @FXML
     private TextField txtPredictedResult;
     @FXML
     private ComboBox<String> cmbClassifier;
     @FXML
     private BorderPane apHandViewWindow;
-    @FXML
-    private TextField txtBoxWidth;
-    @FXML
-    private TextField txtBoxLowerTreshold;
 //
     private MainAppController mainAppController;
     private ScheduledExecutorService timer;
@@ -93,7 +93,7 @@ public class SVMPredictController implements Initializable {
      */
     @FXML
     private void startCameraOnClick(ActionEvent event) {
-        treshold = Double.valueOf(txtBoxLowerTreshold.getText());
+        treshold = Double.valueOf(txtBoxLowerThreshold.getText());
         if (!cameraActive) {
             capture.open(0);
             if (this.capture.isOpened()) {
@@ -124,67 +124,6 @@ public class SVMPredictController implements Initializable {
             this.btnStartCamera.setText("Start Camera");
             // stop the timer
             this.stopAcquisition();
-        }
-    }
-
-    /**
-     * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
-     * Mat frame : titik saat ini
-     * Image imageToMat : titik sebelumnya
-     * Mat hand :
-     * Mat tresholded :
-     * double x, x_, y, y_:
-     * Point p, p_ :
-     * List<MatOfPoint> countour :
-     * List<MatOfInt4> devOfInt4s :
-     * List<MatOfPoint> devOfPoints :
-     */
-    private void start(Mat frame) {
-        Core.flip(frame, frame, 1);
-        Preprocessing.drawRect(frame);
-        Mat hand = Preprocessing.getBox(frame.clone());
-        //
-        double height_2, width = Double.valueOf(txtBoxWidth.getText());
-        height_2 = Preprocessing.getHeight(width, hand.width(), hand.height());
-        Mat handView = Preprocessing.getEdgeView(hand.clone(), width, height_2, treshold);
-        //
-        Mat handPredict = hand.clone();
-        getPredictedResult(handPredict, width);
-        //
-        updateImageView(layarMain, frame);
-    }
-
-    /**
-     * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
-     *
-     */
-    public void getPredictedResult(Mat hand, double width) {
-        try {
-            Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone(), width, treshold);
-            float label = svm.predict(dataFile);
-            String result = "";
-            if (label == 0) {
-                result = "C";
-            } else if (label == 1) {
-                result = "I";
-            } else if (label == 2) {
-                result = "L";
-            } else if (label == 3) {
-                result = "O";
-            } else if (label == 4) {
-                result = "U";
-            } else if (label == 5) {
-                result = "V";
-            }
-            txtPredictedResult.setText(result);
-        } catch (Exception e) {
-            System.err.println("getPredictedResult " + e);
         }
     }
 
@@ -279,9 +218,9 @@ public class SVMPredictController implements Initializable {
      *
      */
     @FXML
-    private void browseClassifierOnClick(ActionEvent event) {
+    private void browseClassifierLocationOnClick(ActionEvent event) {
         DirectoryChooser brows = new DirectoryChooser();
-        brows.setTitle("Buka Folder Classification Save Lokasi");
+        brows.setTitle("Open Folder");
         File Path = brows.showDialog(apHandViewWindow.getScene().getWindow());
 
         File[] files = Path.listFiles();
@@ -297,4 +236,63 @@ public class SVMPredictController implements Initializable {
         svm = SVM.load(cmbClassifier.getValue());
     }
 
+    /**
+     * ######################################################################
+     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
+     * semakin kecil nilai titik pada frame semakin tinggi
+     * var:
+     * Mat frame : titik saat ini
+     * Image imageToMat : titik sebelumnya
+     * Mat hand :
+     * Mat tresholded :
+     * double x, x_, y, y_:
+     * Point p, p_ :
+     * List<MatOfPoint> countour :
+     * List<MatOfInt4> devOfInt4s :
+     * List<MatOfPoint> devOfPoints :
+     */
+    private void start(Mat frame) {
+        Core.flip(frame, frame, 1);
+        Preprocessing.drawRect(frame);
+        Mat hand = Preprocessing.getBox(frame.clone());
+        //
+        double height_2, width = Double.valueOf(txtBoxMinWidth.getText());
+        height_2 = Preprocessing.getHeight(width, hand.width(), hand.height());
+        //
+        Mat handPredict = hand.clone();
+        getPredictedResult(handPredict, width);
+        //
+        updateImageView(layarMain, frame);
+    }
+
+    /**
+     * ######################################################################
+     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
+     * semakin kecil nilai titik pada frame semakin tinggi
+     * var:
+     *
+     */
+    public void getPredictedResult(Mat hand, double width) {
+        try {
+            Mat dataFile = DataTrainingPrep.getImageEdgeDescriptor(hand.clone(), width, treshold);
+            float label = svm.predict(dataFile);
+            String result = "";
+            if (label == 0) {
+                result = "C";
+            } else if (label == 1) {
+                result = "I";
+            } else if (label == 2) {
+                result = "L";
+            } else if (label == 3) {
+                result = "O";
+            } else if (label == 4) {
+                result = "U";
+            } else if (label == 5) {
+                result = "V";
+            }
+            txtPredictedResult.setText(result);
+        } catch (Exception e) {
+            System.err.println("getPredictedResult " + e);
+        }
+    }
 }

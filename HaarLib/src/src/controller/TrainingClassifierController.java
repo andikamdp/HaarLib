@@ -43,32 +43,32 @@ import src.utils.DataTrainingPrep;
  *
  * @author Andika Mulyawan
  */
-public class SVMTrainController implements Initializable {
+public class TrainingClassifierController implements Initializable {
 
     @FXML
-    private Button btnTrain;
+    private TextField txtBoxMinWidth;
     @FXML
-    private Button btnSaveClasification;
+    private TextField txtBoxLowerThreshold;
     @FXML
-    private Button btnBrowsImage;
+    private Button btnStartTrain;
     @FXML
-    private Label lblImageLocation;
+    private Button btnBrowseImageLctn;
+    @FXML
+    private Label lblImageDatasetLctn;
+    @FXML
+    private Button btnBrowseSaveLctn;
+    @FXML
+    private Label lblClassifierSaveLctn;
+    @FXML
+    private Button btnSaveClassifier;
+    @FXML
+    private TextField txtBoxClassifierName;
     @FXML
     private TextArea txtAreaEvaluationRes;
     @FXML
-    private TextField txtBoxFileName;
-    @FXML
     private TextField txtBoxSeed;
     @FXML
-    private TextField txtBoxWidthImage;
-    @FXML
-    private TextField txtBoxLowerTreshold;
-    @FXML
     private BorderPane apTrainWindow;
-    @FXML
-    private Button btnBrowsClassification;
-    @FXML
-    private Label lblClassificationLocation;
 //
     private int ratio;
     private MainAppController mainAppController;
@@ -135,10 +135,10 @@ public class SVMTrainController implements Initializable {
      *
      */
     @FXML
-    private void trainOnClick(ActionEvent event) {
+    private void startTrainOnClick(ActionEvent event) {
         res = "";
         //
-        treshold = Double.valueOf(txtBoxLowerTreshold.getText());
+        treshold = Double.valueOf(txtBoxLowerThreshold.getText());
         //
         accuracySeedTrainAvg.clear();
         accuracySeedSampleAvg.clear();
@@ -156,7 +156,7 @@ public class SVMTrainController implements Initializable {
         f1ScoreSeedTrainAvg.clear();
         //
         txtAreaEvaluationRes.setText("");
-        res += "Lokasi Data : " + lblImageLocation.getText() + " \n";
+        res += "Lokasi Data : " + lblImageDatasetLctn.getText() + " \n";
         svmList = new ArrayList<>();
         int seedC = Integer.valueOf(txtBoxSeed.getText());
         for (int i = 0; i < seedC; i++) {
@@ -193,7 +193,7 @@ public class SVMTrainController implements Initializable {
      */
     public void svmEdgeRandom() {
 
-        File file = new File(lblImageLocation.getText());
+        File file = new File(lblImageDatasetLctn.getText());
         File[] listFiles = file.listFiles();
 //######################################################################
         List<Integer> index = getRandomIndex(listFiles[0].listFiles().length);
@@ -205,7 +205,7 @@ public class SVMTrainController implements Initializable {
         List<Data> trainingDataMat = new ArrayList<>();
         List<Data> sampleDataMat = new ArrayList<>();
         Mat labelsMat = new Mat();
-        double width = Double.valueOf(txtBoxWidthImage.getText());
+        double width = Double.valueOf(txtBoxMinWidth.getText());
         for (int i = 0; i < listFiles.length; i++) {
             files = listFiles[i];
             trainingDataMat.addAll(DataTrainingPrep.getDataSVMEdge(files.getAbsolutePath(), index, true, width, treshold));
@@ -237,12 +237,12 @@ public class SVMTrainController implements Initializable {
      * File Path :
      */
     @FXML
-    private void browsImageOnClick(ActionEvent event) {
+    private void browseImageLctnOnClick(ActionEvent event) {
         DirectoryChooser brows = new DirectoryChooser();
-        brows.setTitle("Buka Folder Data Training");
+        brows.setTitle("Open Folder");
         File Path = brows.showDialog(apTrainWindow.getScene().getWindow());
         if (Path != null) {
-            lblImageLocation.setText(Path.getAbsolutePath());
+            lblImageDatasetLctn.setText(Path.getAbsolutePath());
         }
 
     }
@@ -470,20 +470,20 @@ public class SVMTrainController implements Initializable {
     }
 
     @FXML
-    private void browsClassificationOnClick(ActionEvent event) {
+    private void browseSaveLctnOnClick(ActionEvent event) {
         DirectoryChooser brows = new DirectoryChooser();
-        brows.setTitle("Buka Folder Classification Save Lokasi");
+        brows.setTitle("Open Folder");
         File Path = brows.showDialog(apTrainWindow.getScene().getWindow());
         if (Path != null) {
-            lblClassificationLocation.setText(Path.getAbsolutePath());
+            lblClassifierSaveLctn.setText(Path.getAbsolutePath());
         }
     }
 
     @FXML
-    private void saveClasssificationOnClilck(ActionEvent event) {
+    private void saveClassifierOnClilck(ActionEvent event) {
         try {
             String string = txtAreaEvaluationRes.getText();
-            File file = new File(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + txtBoxLowerTreshold.getText() + "_" + txtBoxWidthImage.getText() + ".txt");
+            File file = new File(lblClassifierSaveLctn.getText() + "\\" + txtBoxClassifierName.getText() + "_" + txtBoxLowerThreshold.getText() + "_" + txtBoxMinWidth.getText() + ".txt");
             try (
                     BufferedReader reader = new BufferedReader(new StringReader(string));
                     PrintWriter writer = new PrintWriter(new FileWriter(file));) {
@@ -495,10 +495,10 @@ public class SVMTrainController implements Initializable {
                 });
             }
         } catch (IOException ex) {
-            Logger.getLogger(SVMTrainController.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TrainingClassifierController.class.getName()).log(Level.SEVERE, null, ex);
         }
         for (int i = 0; i < svmList.size(); i++) {
-            svmList.get(i).save(lblClassificationLocation.getText() + "\\" + txtBoxFileName.getText() + "_" + i + "_" + txtBoxLowerTreshold.getText() + "_" + txtBoxWidthImage.getText() + ".xml");
+            svmList.get(i).save(lblClassifierSaveLctn.getText() + "\\" + txtBoxClassifierName.getText() + "_" + i + "_" + txtBoxLowerThreshold.getText() + "_" + txtBoxMinWidth.getText() + ".xml");
         }
     }
 
@@ -512,4 +512,5 @@ public class SVMTrainController implements Initializable {
             res += data.getDataName() + "_" + data.getPredictResult() + " \n";
         }
     }
+
 }

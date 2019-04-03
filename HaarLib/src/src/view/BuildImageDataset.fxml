@@ -23,15 +23,15 @@
    <top>
       <AnchorPane BorderPane.alignment="CENTER">
          <children>
-            <GridPane fx:id="gridPane" layoutX="76.0" layoutY="55.0" prefHeight="180.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <GridPane layoutX="76.0" layoutY="55.0" prefHeight="180.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
                <children>
                   <Button fx:id="btnStartCamera" mnemonicParsing="false" onAction="#startCameraOnClick" text="Start Camera" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <Button fx:id="btnBrowseSaveFile" mnemonicParsing="false" onAction="#browsSaveFileOnClick" text="Browse Save Location" />
+                  <Button fx:id="btnBrowseSaveLocation" mnemonicParsing="false" onAction="#browseSaveLocationOnClick" text="Browse Save Location" />
                   <Button fx:id="btnCreateFolder" mnemonicParsing="false" onAction="#createFolderOnClick" text="Create Folder" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <TextField fx:id="txtBoxClassName" prefHeight="25.0" prefWidth="379.0" promptText="Class Name" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <TextField fx:id="txtBoxImageCount" promptText="Image Count" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <TextField fx:id="txtBoxImageClassName" prefHeight="25.0" prefWidth="379.0" promptText="Image Class Name" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <TextField fx:id="txtBoxNumberOfImage" promptText="Number Of Image" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                   <TextField fx:id="txtBoxClassCount" promptText="Class Count" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <Label fx:id="lblSaveLocation" prefHeight="17.0" prefWidth="453.0" text="Image Save Location" GridPane.columnIndex="2" />
+                  <Label fx:id="lblImageSaveLocation" prefHeight="17.0" prefWidth="453.0" text="Image Save Location" GridPane.columnIndex="2" />
                   <Label text="Image Class Name" GridPane.rowIndex="1" />
                   <Label text="Class Count" GridPane.rowIndex="3" />
                   <Label text="Number Of Images" GridPane.rowIndex="4" />

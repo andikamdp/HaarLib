@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="apTrainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="589.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.SVMTrainController">
+<BorderPane fx:id="apTrainWindow" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="589.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="src.controller.TrainingClassifierController">
     <center>
         <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -25,15 +25,15 @@
                 <GridPane alignment="CENTER" layoutX="100.0" layoutY="10.0" vgap="20.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="20.0">
                     <children>
                         <TextField fx:id="txtBoxSeed" promptText="Seed" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <TextField fx:id="txtBoxWidthImage" promptText="Width" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <TextField fx:id="txtBoxLowerTreshold" promptText="Lower Threshold" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <Button fx:id="btnTrain" mnemonicParsing="false" onAction="#trainOnClick" prefHeight="25.0" prefWidth="95.0" text="Start Training" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                        <Button fx:id="btnBrowsImage" mnemonicParsing="false" onAction="#browsImageOnClick" text="Browse Image Location" />
-                        <Label fx:id="lblImageLocation" prefHeight="17.0" prefWidth="442.0" text="Image Dataset Location" wrapText="true" GridPane.columnIndex="2" />
-                        <Button fx:id="btnBrowsClassification" mnemonicParsing="false" onAction="#browsClassificationOnClick" text="Browse Save Location" GridPane.rowIndex="5" />
-                        <Label fx:id="lblClassificationLocation" prefHeight="17.0" prefWidth="456.0" text="Classifier Save Location" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                        <Button fx:id="btnSaveClasification" mnemonicParsing="false" onAction="#saveClasssificationOnClilck" text="Save Classifier" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-                        <TextField fx:id="txtBoxFileName" promptText="File Name" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                        <TextField fx:id="txtBoxMinWidth" promptText="Minimum Width" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtBoxLowerThreshold" promptText="Lower Threshold" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Button fx:id="btnStartTrain" mnemonicParsing="false" onAction="#startTrainOnClick" prefHeight="25.0" prefWidth="95.0" text="Start Training" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Button fx:id="btnBrowseImageLctn" mnemonicParsing="false" onAction="#browseImageLctnOnClick" text="Browse Image Location" />
+                        <Label fx:id="lblImageDatasetLctn" prefHeight="17.0" prefWidth="442.0" text="Image Dataset Location" wrapText="true" GridPane.columnIndex="2" />
+                        <Button fx:id="btnBrowseSaveLctn" mnemonicParsing="false" onAction="#browseSaveLctnOnClick" text="Browse Save Location" GridPane.rowIndex="5" />
+                        <Label fx:id="lblClassifierSaveLctn" prefHeight="17.0" prefWidth="456.0" text="Classifier Save Location" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                        <Button fx:id="btnSaveClassifier" mnemonicParsing="false" onAction="#saveClassifierOnClilck" text="Save Classifier" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                        <TextField fx:id="txtBoxClassifierName" promptText="Classifier Name" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                         <Label text="Seed " GridPane.rowIndex="1" />
                         <Label text="Lower Threshold " GridPane.rowIndex="3" />
                         <Label text="Minimum Width" GridPane.rowIndex="2" />

@@ -10,9 +10,9 @@
     <children>
         <VBox alignment="CENTER" layoutY="-1.0" prefHeight="150.0" prefWidth="100.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Button fx:id="btnSvmTrain" mnemonicParsing="false" onAction="#svmTrainViewOnClick" text="SVM Training" />
-                <Button fx:id="btnSvmPredict" mnemonicParsing="false" onAction="#svmPredictViewOnClick" prefHeight="25.0" prefWidth="88.0" text="SVM Predict" />
-                <Button fx:id="btnSetImage" mnemonicParsing="false" onAction="#buildImageDatasetViewOnClick" prefHeight="25.0" prefWidth="88.0" text="Get Image" />
+                <Button fx:id="btnBuildImageView" mnemonicParsing="false" onAction="#buildImageDatasetViewOnClick" prefHeight="25.0" prefWidth="130.0" text="Build Image Dataset" />
+                <Button fx:id="btnTrainingClassifierView" mnemonicParsing="false" onAction="#trainingClassifierViewOnClick" prefHeight="25.0" prefWidth="130.0" text="Training Classifier" />
+                <Button fx:id="btnLiveTranslationView" mnemonicParsing="false" onAction="#liveTranslationViewOnClick" prefHeight="25.0" prefWidth="130.0" text="Live Translation" />
             </children>
         </VBox>
     </children>

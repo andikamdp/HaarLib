@@ -32,15 +32,13 @@ import src.MainApp;
 public class MainAppController implements Initializable {
 
     @FXML
-    private Button btnSvmTrain;
+    private Button btnTrainingClassifierView;
     @FXML
-    private Button btnSvmPredict;
+    private Button btnLiveTranslationView;
     @FXML
     private AnchorPane mainAppView;
     @FXML
-    private Button btnSetImage;
-    @FXML
-    private Button btnRenameData;
+    private Button btnBuildImageView;
 
     /**
      * Initializes the controller class.
@@ -56,12 +54,12 @@ public class MainAppController implements Initializable {
      *
      */
     @FXML
-    private void svmTrainViewOnClick(ActionEvent event) {
+    private void trainingClassifierViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/SVMTrain.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/TrainingClassifier.fxml"));
             BorderPane root = loader.load();
-            SVMTrainController controller = loader.getController();
+            TrainingClassifierController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
             stage = new Stage();
@@ -81,19 +79,19 @@ public class MainAppController implements Initializable {
      *
      */
     @FXML
-    private void svmPredictViewOnClick(ActionEvent event) {
+    private void liveTranslationViewOnClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(MainApp.class.getResource("view/SVMPredict.fxml"));
+            loader.setLocation(MainApp.class.getResource("view/LiveTranslation.fxml"));
             BorderPane root = loader.load();
-            SVMPredictController controller = loader.getController();
+            LiveTranslationController controller = loader.getController();
             controller.setMainController(this);
             Scene scene = new Scene(root);
             stage = new Stage();
             stage.initOwner(mainAppView.getScene().getWindow());
             stage.initModality(Modality.WINDOW_MODAL);
             stage.setScene(scene);
-            stage.setTitle("Live Prediction");
+            stage.setTitle("Live Translation");
             stage.show();
         } catch (IOException iOException) {
             Logger.getLogger(MainAppController.class.getName()).

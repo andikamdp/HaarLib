@@ -21,22 +21,6 @@ public final class Preprocessing {
     /**
      * ######################################################################
      * method memperoleh garis tepi pada gambar
-     * method akan mengembalikan gambar berisi garis tapi
-     * var:
-     * Mat frame : berisi gambar awal
-     */
-    public static Mat getEdgeView(Mat frame, double width, double height, double treshold) {
-
-        Imgproc.resize(frame, frame, new Size(width, height));
-        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.GaussianBlur(frame, frame, new Size(7.0, 7.0), 0.0);
-        Imgproc.Canny(frame, frame, treshold, treshold * 3);
-        return frame;
-    }
-
-    /**
-     * ######################################################################
-     * method memperoleh garis tepi pada gambar
      * gambar yang diperoleh akan dilakukan resaping agar diperoleh fitur
      * method akan mengembalikan nilai fitur hasil reshaping
      * var:
