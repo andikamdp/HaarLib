@@ -120,19 +120,23 @@ public class TrainingClassifierController implements Initializable {
         sampleResult = new ArrayList<>();
     }
 
+    /**
+     * ######################################################################
+     * Method inisialisasi SVM
+     *
+     */
     public void initSvm() {
         svm = SVM.create();
         svm.setKernel(SVM.LINEAR);
         svm.setType(SVM.C_SVC);
+
     }
 
     /**
      * ######################################################################
-     * OnClick Action memulai Training diikuti Testing
+     * Method aksi onClick untuk memulai pengulangan training classifier.
      * training dan testing akan dilakukan sebanyak 10 kali dengan data teracak setiap training
-     * training dengan deskripsi gambar edge dan hog
-     * var:
-     *
+     * training dengan deskripsi gambar edge
      */
     @FXML
     private void startTrainOnClick(ActionEvent event) {
@@ -187,8 +191,8 @@ public class TrainingClassifierController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk train SVM dengan fitur gambar garis tepi
-     * pada method ini terjadi proses pengambilan data gambar tiap kelas
+     * Method untuk memulai proses pengulangan training dan testing
+     * pada method ini terjadi proses pengambilan nama dan alamat gambar tiap kelas
      * data gambar akan diekstrak fiturnya di method lain
      */
     public void svmEdgeRandom() {
@@ -231,10 +235,7 @@ public class TrainingClassifierController implements Initializable {
 
     /**
      * ######################################################################
-     * OnClick Action untuk memperoleh lokasi data gambar
-     * var:
-     * DirectoryChooser brows :
-     * File Path :
+     * Method untuk mencari lokasi peyimpanan data gambar
      */
     @FXML
     private void browseImageLctnOnClick(ActionEvent event) {
@@ -250,9 +251,6 @@ public class TrainingClassifierController implements Initializable {
     /**
      * ######################################################################
      * method untuk menghitung evaluasi classifier yang terbentuk
-     * var:
-     * float TP, TN, FP, FN : fariabel penampung nilai True, Positif, False, Negatif
-     * float precision, recall, accuracy, f1Score, falsePositiveRate :
      *
      * @param predict
      * @param jumlahData
@@ -344,9 +342,7 @@ public class TrainingClassifierController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk menghitung rata-rata hasil perhitungan evaluasi per jumlah seed
-     * var:
-     * float i : menghitung jumlah akurasi
+     * Method untuk menghitung hasil rata - rata evaluasi classifier dari keseluruhan pengulangan.
      */
     private void rataRataAkurasiSeed() {
         float accTrn = 0, accSmpl = 0, fPTrn = 0, fPSmp = 0, f1ScoreSmpl = 0, f1ScoreTrn = 0, prcTrn = 0, prcSmpl = 0, rclTrn = 0, rclSmpl = 0;
@@ -384,15 +380,7 @@ public class TrainingClassifierController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk menghasilkan nilai random indeks data sampel yang akan diambil
-     * param:
-     * int jumlahData : variabel penampung jumlah data training perClass(label)
-     * var:
-     * List<Integer> index : variabel penampung urutan angka sebanyak jumlahData
-     * List<Integer> indexSample : variabel penampung angka random
-     * Random rand : variabel penampung jumlah data training
-     * int numberOfElements :
-     *
+     * Method untuk menentukan nilai acak indeks data gambar yang akan digunakan sebagai data testing.
      *
      * @param jumlahData
      * @return
@@ -416,10 +404,7 @@ public class TrainingClassifierController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk memprediksi gambar dari classifier yang telah terbentuk
-     * param:
-     *
-     * var:
+     * Method untuk melakukan prediksi pada data testing dari classifier yang terbentuk dan membangun confusion matriks.
      *
      * @param labels
      * @param train
@@ -469,6 +454,10 @@ public class TrainingClassifierController implements Initializable {
         return confusionMatrix;
     }
 
+    /**
+     * ######################################################################
+     * Method untuk mencari lokasi penyimpanan classifier dan hasil evaluasi.
+     */
     @FXML
     private void browseSaveLctnOnClick(ActionEvent event) {
         DirectoryChooser brows = new DirectoryChooser();
@@ -479,6 +468,10 @@ public class TrainingClassifierController implements Initializable {
         }
     }
 
+    /**
+     * ######################################################################
+     * Method aksi onClick untuk menyimpan hasil classifier dan hasil evaluasi.
+     */
     @FXML
     private void saveClassifierOnClilck(ActionEvent event) {
         try {
@@ -502,6 +495,10 @@ public class TrainingClassifierController implements Initializable {
         }
     }
 
+    /**
+     * ######################################################################
+     * Method untuk menyimpan hasil prediksi pada variable res untuk ditampilakn pada text area evaluation result.
+     */
     private void printPredictedResult() {
         res += " \n\n\n\n";
         for (Data data : trainingResult) {

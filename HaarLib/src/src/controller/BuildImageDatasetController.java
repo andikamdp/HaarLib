@@ -23,7 +23,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
@@ -78,19 +80,15 @@ public class BuildImageDatasetController implements Initializable {
         txtBoxNumberOfImage.setText(String.valueOf(i));
         imgDir = null;
         imgLblDir = null;
-
+        Mat image = new Mat(480, 640, CvType.CV_8UC3, new Scalar(255, 255, 255));
+        image = Preprocessing.drawRect(image);
+        updateImageView(MainFrame, image);
     }
 
     /**
      * ######################################################################
-     * Method awal untuk membuka kamera dan memanggil method
-     * var:
-     * boolean cameraActive :
-     * VideoCapture capture :
-     * Runnable frameGrabber :
-     * Mat frame :
-     * ScheduledExecutorService timer :
-     * Button btnStartCamera :
+     * Method awal untuk memulai membuka kamera dan memulai proses pengambilan gambar.
+     * Method ini pun menjalankan thread untuk terus melakukan proses pengambilan gambar.
      */
     @FXML
     private void startCameraOnClick(ActionEvent event) {
@@ -137,9 +135,7 @@ public class BuildImageDatasetController implements Initializable {
 
     /**
      * ######################################################################
-     * OnClick Action Untuk mencari Folder untuk menyimpan gambar
-     * var:
-     *
+     * Method untuk mencari lokasi direktori untuk menyimpan data gambar.
      */
     @FXML
     private void browseSaveLocationOnClick(ActionEvent event) {
@@ -154,9 +150,7 @@ public class BuildImageDatasetController implements Initializable {
 
     /**
      * ######################################################################
-     * OnCllick Action creating new folder
-     * var:
-     * File file : lable file location
+     * Method untuk membuat folder baru dari lokasi penyimpanan yang dipilih dengan nama sesuai txtBoxClassName.
      */
     @FXML
     private void createFolderOnClick(ActionEvent event
@@ -173,7 +167,7 @@ public class BuildImageDatasetController implements Initializable {
 
     /**
      * ######################################################################
-     *
+     * Method ini menghentikan thread yang dijalankan oleh method startCameraOnClick.
      *
      */
     private void stopAcquisition() {
@@ -198,7 +192,7 @@ public class BuildImageDatasetController implements Initializable {
     /**
      * ######################################################################
      * update tampilan pada frame
-     * var:
+     * var: Method untuk mengganti gambar dari main frame.
      *
      */
     private void updateImageView(ImageView view, Mat image) {
@@ -210,8 +204,6 @@ public class BuildImageDatasetController implements Initializable {
     /**
      * ######################################################################
      * On application close, stop the acquisition from the camera
-     * var:
-     *
      */
     protected void setClosed() {
         this.stopAcquisition();
@@ -219,8 +211,7 @@ public class BuildImageDatasetController implements Initializable {
 
     /**
      * ######################################################################
-     * Method untuk memperoleh Frame dari kamera
-     *
+     * Method untuk memperoleh gambar dari kamera.
      */
     private Mat grabFrame() {
         // init everything
@@ -248,7 +239,7 @@ public class BuildImageDatasetController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk menyimpan gambar dalam kotak merah MainFrame
+     * Method untuk menambahkan ROI pada gambar dan memulai menyimpan gambar pada main frame.
      *
      */
     private void start(Mat frame) {
@@ -272,6 +263,11 @@ public class BuildImageDatasetController implements Initializable {
 
     }
 
+    /**
+     * ######################################################################
+     * Method untuk menentukan Main Controller dari tampilan.
+     *
+     */
     void setMainController(MainAppController aThis) {
         this.mainAppController = aThis;
     }

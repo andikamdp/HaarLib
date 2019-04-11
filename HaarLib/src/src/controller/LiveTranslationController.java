@@ -25,7 +25,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.DirectoryChooser;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.ml.SVM;
 import org.opencv.videoio.VideoCapture;
@@ -48,7 +50,7 @@ public class LiveTranslationController implements Initializable {
     @FXML
     private Button btnBrowseClassifierLocation;
     @FXML
-    private ImageView layarMain;
+    private ImageView MainFrame;
     @FXML
     private Button btnStartCamera;
     @FXML
@@ -73,23 +75,24 @@ public class LiveTranslationController implements Initializable {
         // TODO
         capture = new VideoCapture();
         cameraActive = false;
+        //
 
+        Mat image = new Mat(480, 640, CvType.CV_8UC3, new Scalar(255, 255, 255));
+        image = Preprocessing.drawRect(image);
+        updateImageView(MainFrame, image);
     }
 
+    /**
+     * ######################################################################
+     * Method untuk menentukan Main Controller dari tampilan.
+     */
     public void setMainController(MainAppController aThis) {
         mainAppController = aThis;
     }
 
     /**
      * ######################################################################
-     * Method awal untuk membuka kamera dan memanggil method
-     * var:
-     * boolean cameraActive : titik saat ini
-     * VideoCapture capture : titik sebelumnya
-     * Runnable frameGrabber :
-     * Mat frame :
-     * ScheduledExecutorService timer :
-     * Button btnStartCamera :
+     * Method awal untuk memulai membuka kamera dan memulai proses pengambilan gambar.
      */
     @FXML
     private void startCameraOnClick(ActionEvent event) {
@@ -129,11 +132,7 @@ public class LiveTranslationController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
-     * VideoCapture capture : titik saat ini
-     * ScheduledExecutorService timer : titik sebelumnya
+     * Method ini menghentikan thread yang dijalankan oleh method startCameraOnClick.
      *
      */
     private void stopAcquisition() {
@@ -157,7 +156,7 @@ public class LiveTranslationController implements Initializable {
 
     /**
      * ######################################################################
-     * update tampilan pada frame utama
+     * Method untuk mengganti gambar dari main frame.
      * var:
      *
      */
@@ -179,9 +178,7 @@ public class LiveTranslationController implements Initializable {
 
     /**
      * ######################################################################
-     *
-     * var:
-     * VideoCapture capture :
+     * Method untuk memperoleh gambar dari kamera.
      *
      */
     private Mat grabFrame() {
@@ -210,11 +207,7 @@ public class LiveTranslationController implements Initializable {
 
     /**
      * ######################################################################
-     * method browse classifier OnClick
-     * memperoleh nilai koordinat layarMain
-     * var:
-     * TextField txtV : text field menyimpan koordinat X
-     * TextField txtS : text field menyimpan koordinat Y
+     * Method onClick untuk mencari lokasi penyimpanan classifier.
      *
      */
     @FXML
@@ -231,6 +224,11 @@ public class LiveTranslationController implements Initializable {
         cmbClassifier.setItems(typeClassifier);
     }
 
+    /**
+     * ######################################################################
+     * Method onClick untuk me-load classifier
+     *
+     */
     @FXML
     private void getClassifierOnClick(ActionEvent event) {
         svm = SVM.load(cmbClassifier.getValue());
@@ -238,18 +236,7 @@ public class LiveTranslationController implements Initializable {
 
     /**
      * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
-     * Mat frame : titik saat ini
-     * Image imageToMat : titik sebelumnya
-     * Mat hand :
-     * Mat tresholded :
-     * double x, x_, y, y_:
-     * Point p, p_ :
-     * List<MatOfPoint> countour :
-     * List<MatOfInt4> devOfInt4s :
-     * List<MatOfPoint> devOfPoints :
+     * Method untuk menambahkan ROI pada gambar main frame dan memanggil method lain untuk melakukan pemrosesan gambar dan proses prediksi
      */
     private void start(Mat frame) {
         Core.flip(frame, frame, 1);
@@ -262,14 +249,12 @@ public class LiveTranslationController implements Initializable {
         Mat handPredict = hand.clone();
         getPredictedResult(handPredict, width);
         //
-        updateImageView(layarMain, frame);
+        updateImageView(MainFrame, frame);
     }
 
     /**
      * ######################################################################
-     * method untuk memeriksa apakah titik saat ini lebih tinggi dari titik sebelumnya
-     * semakin kecil nilai titik pada frame semakin tinggi
-     * var:
+     * Method untuk memprediksi hasil gambar yang terambil kamera.
      *
      */
     public void getPredictedResult(Mat hand, double width) {

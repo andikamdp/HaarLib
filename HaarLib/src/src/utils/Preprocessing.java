@@ -5,6 +5,7 @@
  */
 package src.utils;
 
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -20,11 +21,7 @@ public final class Preprocessing {
 
     /**
      * ######################################################################
-     * method memperoleh garis tepi pada gambar
-     * gambar yang diperoleh akan dilakukan resaping agar diperoleh fitur
-     * method akan mengembalikan nilai fitur hasil reshaping
-     * var:
-     * Mat frame : berisi gambar awal
+     * Method untuk memperoleh fitur gambar dalam bentuk data satu dimensi.
      *
      */
     public static Mat getEdge(Mat frame, double width, double height, double treshold) {
@@ -38,12 +35,7 @@ public final class Preprocessing {
 
     /**
      * ######################################################################
-     * method memperoleh gambar dalam ROI kotak merah
-     * method akan mengembalikan gambar setalah dilakukan bluring
-     * var:
-     * Mat frame : berisi gambar awal dengan dari kamera
-     * Rect rectCrop : berisi koordinat ROI kotak merah
-     * 12/6/18 6:59 AM
+     * Method untuk mengambil gambar dalam ROI.
      */
     public static Mat getBox(Mat frame) {
         Rect rectCrop = new Rect(
@@ -55,12 +47,7 @@ public final class Preprocessing {
 
     /**
      * ######################################################################
-     * method memperoleh gambar dalam ROI kotak merah
-     * method akan mengembalikan gambar setalah dilakukan bluring
-     * var:
-     * Mat frame : berisi gambar awal dengan dari kamera
-     * Rect rectCrop : berisi koordinat ROI kotak merah
-     * 12/6/18 6:59 AM
+     * Method untuk menggambar kotak ROI pada gambar.
      */
     public static Mat drawRect(Mat frame) {
         Imgproc.rectangle(frame,
@@ -73,6 +60,7 @@ public final class Preprocessing {
 
     /**
      * ######################################################################
+     * Method untuk menghitung nilai tinggi gambar dengan perbandingan lebar
      *
      * @param data
      * @return

@@ -21,13 +21,7 @@ public final class DataTrainingPrep {
 
     /**
      * ######################################################################
-     * method untuk menyiapkan label data training
-     * param:
-     * int i : jumlah data training
-     * int label : label (class) data training
-     * var:
-     * Mat labelsMat : wadah label data training
-     * int[] labels : wadah label untuk dimasukan ke labelsMat
+     * Method untuk menyiapkan label data training.
      *
      * @param i
      * @param label
@@ -44,15 +38,7 @@ public final class DataTrainingPrep {
 
     /**
      * ######################################################################
-     * method untuk memperoleh data training berdasarkan fitur garis tepi
-     * param:
-     * String lokasi : lokasi data training
-     * List<Integer> index : indeks file untuk sampel
-     * Boolean train : menentukan data untuk sampel atau training
-     * var:
-     * File folder : lokasi direktori data gambar
-     * File[] listOfFiles : wadah array file gambar dalam folder
-     * Mat trainingDataMat : wadah hasil deskripsi gambar dalam bentuk Mat
+     * Method untuk meload data training atau data testing berdasarkan indeks yang diminta.
      *
      * @param lokasi
      * @param index
@@ -82,12 +68,7 @@ public final class DataTrainingPrep {
 
     /**
      * ######################################################################
-     * method untuk memperoleh data training berdasarkan fitur garis tepi
-     * param:
-     * String lokasi : lokasi data training
-     * var:
-     * Mat hand : wadah data gambar
-     * float[] trainingData : wadah nilai deskripsi gambar
+     * Method untuk menyiapkan data training dan testing.
      *
      * @param lokasi
      * @return
@@ -106,6 +87,13 @@ public final class DataTrainingPrep {
         return trainingDataMat;
     }
 
+    /**
+     * ######################################################################
+     * Method untuk menyiapkan data menerjemahkan live.
+     *
+     * @param lokasi
+     * @return
+     */
     public static Mat getImageEdgeDescriptor(Mat hand, double width, double treshold) {
         Mat trainingDataMat;
         double height = Preprocessing.getHeight(width, hand.width(), hand.height());
@@ -121,6 +109,7 @@ public final class DataTrainingPrep {
 
     /**
      * ######################################################################
+     * Method untuk menyusun data yang telah disiapkan.
      *
      * @param data
      * @return
