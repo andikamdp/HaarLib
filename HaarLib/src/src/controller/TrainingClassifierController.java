@@ -416,7 +416,6 @@ public class TrainingClassifierController implements Initializable {
         for (int j = 0; j < data.size(); j++) {
             float label = svm.predict(data.get(j).getDataMat());
             data.get(j).setPredictResult(label);
-//            res += data.get(j).getDataName() + "_" + label + " \n";
             int l = 0, m = 0;
             if (data.get(j).getDataName().contains(labels.get(0).substring(0, 1))) {
                 l = 0;
